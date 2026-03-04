@@ -18,7 +18,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    /* 乾淨高質感配色 (維持原美感) */
+    /* 乾淨高質感配色 */
     :root {
       --primary: #FF5A5F; 
       --primary-hover: #E35156; 
@@ -40,7 +40,7 @@
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* 按鈕與表單 (電腦版 Hover 點擊回饋) */
+    /* 按鈕與表單 */
     .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
     .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
     .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
@@ -111,7 +111,7 @@
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
-    /* 交通方式選擇區塊 (智能重構版) */
+    /* 交通方式選擇區塊 */
     .transit-block { margin-left: 66px; margin-top: -4px; margin-bottom: 12px; padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; z-index: 5; position: relative; transition: 0.2s;}
     .transit-block:hover { background: #E2E8F0; }
     .transit-block:active { transform: scale(0.95); }
@@ -139,16 +139,21 @@
     .pin-blue { background: var(--secondary); }
     .day-tooltip { background: var(--surface); color: var(--text-main); border: none; border-radius: 12px; font-weight: bold; padding: 6px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 13px; }
 
-    /* 需求4: 復原漂亮的上傳照片區塊 */
     .plan-img-preview { width: 100%; max-height: 150px; object-fit: cover; border-radius: 12px; margin-top: 12px; display: none; border: 1px solid var(--border); }
     .plan-img-display { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid #eee; }
     .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
     .file-upload-label:hover { background: #F1F5F9; border-color: var(--secondary); color: var(--secondary); }
     
-    /* 底部懸浮面板 */
+    /* 底部懸浮面板 (支援輸入框) */
     .bottom-sheet { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); z-index: 2000; transition: bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .bottom-sheet.active { bottom: 0; }
     .sheet-handle { width: 40px; height: 5px; background: #E4E8ED; border-radius: 10px; margin: 0 auto 16px auto; }
+    
+    /* 地圖面板輸入框美化 */
+    .sheet-input-title { font-size:22px; font-weight:800; color:var(--text-main); border:none; border-bottom: 2px dashed #CBD5E1; width:100%; margin-bottom:6px; padding:4px 0; background:transparent; transition:0.2s; }
+    .sheet-input-title:focus { border-bottom-color: var(--primary); border-style: solid; outline:none; }
+    .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
+    .sheet-input-desc:focus { border-bottom-color: var(--secondary); border-style: solid; outline:none; }
 
     /* iOS 風格切換開關 */
     .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
@@ -169,6 +174,15 @@
     .tool-btn:hover { background: #E2E8F0; }
     .tool-btn:active { transform: scale(0.96); }
     .tool-btn.call { background: #E8F4FD; color: #0284C7; }
+
+    /* 行李清單 */
+    .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor:pointer;}
+    .checklist-item:hover { background: #FAFBFC; }
+    .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; font-size: 12px;}
+    .checklist-item.done .check-circle { background: var(--secondary); border-color: var(--secondary); }
+    .checklist-item.done .check-circle::after { content: '✓'; }
+    .checklist-text { flex: 1; font-weight: 600; font-size: 15px; transition: 0.2s; }
+    .checklist-item.done .checklist-text { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
 
     #sync-status { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(26, 26, 26, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; display: none; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.15); backdrop-filter: blur(8px); }
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); padding: 20px; }
@@ -242,7 +256,7 @@
         <div class="nav-item active" onclick="switchTab('itinerary')"><div class="nav-icon">📅</div><div class="nav-text">行程</div></div>
         <div class="nav-item" onclick="switchTab('map')"><div class="nav-icon">🗺️</div><div class="nav-text">地圖</div></div>
         <div class="nav-item" onclick="switchTab('budget')"><div class="nav-icon">💰</div><div class="nav-text">分帳</div></div>
-        <div class="nav-item" onclick="switchTab('notes')"><div class="nav-icon">📝<span id="note-count" class="notification-dot" style="width:14px; height:14px; right:-6px; top:-4px; font-size:9px; display:none; align-items:center; justify-content:center; animation:none;"></span></div><div class="nav-text">記事</div></div>
+        <div class="nav-item" onclick="switchTab('notes')"><div class="nav-icon">📝</div><div class="nav-text">記事</div></div>
         <div class="nav-item" onclick="switchTab('more')"><div class="nav-icon">⚙️<span id="more-poll-dot" class="notification-dot"></span></div><div class="nav-text">更多</div></div>
     </div>
 
@@ -290,7 +304,6 @@
           <input type="text" id="map-url-input" class="form-control" style="margin-bottom:0; flex:1; border-color:var(--secondary);" placeholder="🔗 貼上 Google Maps 網址">
           <button id="map-parse-btn" class="btn btn-action" style="border-radius:14px; white-space:nowrap; padding: 14px 20px;" onclick="parseGoogleMapUrl()">解析</button>
       </div>
-      
       <div class="map-search-bar">
           <input type="text" id="map-search-input" class="form-control" placeholder="輸入地標或餐廳搜尋...">
           <button class="btn" style="border-radius:14px; padding:14px 20px;" onclick="searchMap()">🔍</button>
@@ -343,12 +356,13 @@
     </div>
 
     <div id="tab-more" class="module-content">
-        <div style="display:flex; gap:12px; margin-bottom:20px;">
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px;" onclick="document.getElementById('more-poll').style.display='none'; document.getElementById('more-contact').style.display='block';">📞 聯絡人</div>
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; position:relative;" onclick="document.getElementById('more-contact').style.display='none'; document.getElementById('more-poll').style.display='block';">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:15px; top:12px;"></span></div>
+        <div style="display:flex; gap:12px; margin-bottom:20px; overflow-x:auto; padding-bottom:8px;">
+            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; white-space:nowrap;" onclick="switchMoreTab('more-contact')">📞 聯絡人</div>
+            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; position:relative; white-space:nowrap;" onclick="switchMoreTab('more-poll')">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:10px; top:12px;"></span></div>
+            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; white-space:nowrap;" onclick="switchMoreTab('more-checklist')">🎒 行李清單</div>
         </div>
 
-        <div id="more-contact" style="display:block;">
+        <div id="more-contact" class="more-section" style="display:block;">
           <div id="contact-form-card" class="card-panel">
             <h4 id="contact-form-title" style="margin-bottom: 12px; font-size: 16px;">新增聯絡人</h4>
             <input type="hidden" id="edit-contact-id" value="">
@@ -362,25 +376,21 @@
           <div id="contacts-list"></div>
         </div>
 
-        <div id="more-poll" style="display:none;">
+        <div id="more-poll" class="more-section" style="display:none;">
           <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';">➕ 建立新投票</button>
           
           <div id="poll-form-card" class="card-panel" style="display:none;">
             <h4 id="poll-form-title" style="margin-bottom: 12px; font-size:16px;">建立投票</h4>
             <input type="hidden" id="edit-poll-id" value="">
-            
             <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">📅 截止日期 (選填)</label>
             <input type="date" id="poll-date" class="form-control" style="margin-bottom:12px;">
-
             <label style="font-size:12px; font-weight:bold; color:var(--primary); margin-bottom:4px; display:block;">👇 設定投票問題</label>
             <input type="text" id="poll-title" class="form-control poll-title-input" placeholder="例: 晚餐吃什麼？" style="border: 2px solid var(--primary); font-weight:800; font-size:18px;">
-            
             <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; margin-top:8px; display:block;">選項清單</label>
             <div id="poll-options-container">
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div>
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>
             </div>
-            
             <button class="btn btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; font-weight:bold;" onclick="addPollOptionField()">➕ 新增選項</button>
             <div style="display: flex; gap: 12px;">
                 <button id="cancel-poll-btn" class="btn btn-outline" style="flex: 1;" onclick="cancelEditPoll()">取消</button>
@@ -388,6 +398,24 @@
             </div>
           </div>
           <div id="polls-list"></div>
+        </div>
+
+        <div id="more-checklist" class="more-section" style="display:none;">
+            <div class="card-panel" style="padding:16px;">
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="checklist-input" class="form-control" style="margin:0;" placeholder="新增待辦或行李...">
+                    <button class="btn btn-action" onclick="addChecklistItem()">新增</button>
+                </div>
+            </div>
+            <div class="card-panel" style="padding:12px 20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:800; color:var(--text-main);">
+                    <span>清單進度</span> <span id="checklist-progress-text">0 / 0</span>
+                </div>
+                <div style="width:100%; height:8px; background:#E4E8ED; border-radius:4px; margin-bottom:16px; overflow:hidden;">
+                    <div id="checklist-progress-bar" style="height:100%; background:var(--secondary); width:0%; transition:0.3s;"></div>
+                </div>
+                <div id="checklist-container"></div>
+            </div>
         </div>
     </div>
   </div>
@@ -397,9 +425,9 @@
         <h3 style="margin-bottom:20px; font-weight:800;">切換交通方式</h3>
         <input type="hidden" id="transit-plan-id">
         <div style="display:flex; flex-direction:column; gap:12px;">
-            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('walking')">🚶 步行</button>
-            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('driving')">🚗 開車</button>
-            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('transit')">🚇 大眾運輸</button>
+            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('walking', '🚶 步行')">🚶 步行</button>
+            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('driving', '🚗 開車')">🚗 開車</button>
+            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('transit', '🚇 大眾運輸')">🚇 大眾運輸</button>
         </div>
         <button class="btn btn-small" style="background:#F1F5F9; color:var(--text-muted); margin-top:20px; box-shadow:none; padding:10px 20px;" onclick="closeModal('transit-modal')">取消</button>
     </div>
@@ -408,12 +436,12 @@
   <div id="map-bottom-sheet" class="bottom-sheet">
     <div class="sheet-handle"></div>
     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <h3 id="sheet-place-name" style="margin-bottom:8px; color:var(--text-main); font-size:20px; font-weight:800;">載入中...</h3>
+        <div style="flex:1; padding-right:12px;">
+            <input type="text" id="sheet-place-name-input" class="sheet-input-title" placeholder="景點/餐廳名稱">
+        </div>
         <span class="action-text" style="background:#F1F5F9; margin:0;" onclick="closeBottomSheet()">✕ 關閉</span>
     </div>
-    <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px; font-weight:500;" id="sheet-place-address"></p>
-    
-    <img id="sheet-auto-image" style="width:100%; height:120px; object-fit:cover; border-radius:12px; margin-bottom:16px; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+    <input type="text" id="sheet-place-address-input" class="sheet-input-desc" placeholder="地址或備註">
     
     <div id="sheet-normal-action">
         <div class="flex-row">
@@ -472,7 +500,8 @@
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
 
-    const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏轩': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
+    // 需求3: 錯字修復 魏敏軒
+    const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     let customUsers = JSON.parse(localStorage.getItem(`app_users_${currentWorkspace}`) || '{}');
     let authRules = { ...baseAuthRules, ...customUsers };
     let allMembers = Object.keys(authRules);
@@ -484,7 +513,7 @@
         return L.divIcon({ className: 'custom-leaflet-icon', html: `<div class="custom-map-pin ${isBlue ? 'pin-blue' : ''}"><div class="custom-map-pin-inner">${number}</div></div>`, iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -35] });
     };
 
-    // --- 需求10: 重新整理記住狀態防呆 ---
+    // --- 需求2: 重新整理記住狀態防呆 (徹底重構修復版) ---
     window.onload = () => { 
         renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
         const savedUser = localStorage.getItem('app_savedUser');
@@ -498,10 +527,12 @@
             if(savedDayIdx !== null) activeDayIndex = parseInt(savedDayIdx);
             
             if(getDB().length > 0) {
-                renderDashboard(); switchView('dashboard-view');
+                renderDashboard(); 
                 if(savedProjectId && getDB().find(p => p.id == savedProjectId)) { 
-                    openProject(parseInt(savedProjectId), true); 
+                    openProject(parseInt(savedProjectId), false); // false 代表正式進入專案視圖
                     setTimeout(() => switchTab(savedTabId), 50); 
+                } else {
+                    switchView('dashboard-view');
                 }
                 document.getElementById('global-loader').classList.remove('active');
             }
@@ -516,13 +547,13 @@
         }
     };
 
-    // 需求6: 獨立防護網渲染函數 (避免單一錯誤導致全版空白)
+    // 需求6: 獨立防護網渲染函數 (確保資料絕對顯示)
     function safeRenderAll() {
-        try { renderItinerary(); } catch(e){ console.error("Itin Error", e); }
+        try { renderItinerary(); } catch(e){ console.error("Itinerary Error", e); }
         try { renderBudget(); } catch(e){ console.error("Budget Error", e); }
         try { renderContacts(); } catch(e){ console.error("Contact Error", e); }
         try { renderPolls(); } catch(e){ console.error("Poll Error", e); }
-        try { renderNotes(); } catch(e){ console.error("Note Error", e); }
+        try { renderChecklist(); } catch(e){ console.error("Checklist Error", e); }
     }
 
     function renderUserSelect() { const select = document.getElementById('user-select'); select.innerHTML = allMembers.map(m => `<option value="${m}">👤 ${m}</option>`).join(''); }
@@ -588,6 +619,7 @@
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     function saveNewUser() { const name = document.getElementById('new-user-name').value.trim(); const pwd = document.getElementById('new-user-pwd').value.trim(); if(!name || !pwd) return alert("請輸入完整名稱與密碼"); if(authRules[name]) return alert("此名稱已存在"); customUsers[name] = pwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...baseAuthRules, ...customUsers }; allMembers = Object.keys(authRules); renderUserSelect(); closeModal('add-user-modal'); document.getElementById('user-select').value = name; document.getElementById('password-input').value = pwd; }
+    
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     
     function switchTab(tabId) { 
@@ -600,21 +632,30 @@
       localStorage.setItem('app_lastTab', tabId); 
       if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
     }
+    
+    function switchMoreTab(sectionId) {
+        document.querySelectorAll('.more-section').forEach(s => s.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
+    }
 
     function createProject() {
       const loc = document.getElementById('trip-location').value; const rawDate = document.getElementById('trip-date-range').value; const dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
       if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期區間");
-      const db = getDB(); db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], plans: [], expenses: [], polls: [], contacts: [], notes: [], activeUsers: {} });
+      const db = getDB(); db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], activeUsers: {} });
       saveDB(db); closeModal('add-modal'); document.getElementById('trip-location').value = ''; document.getElementById('trip-date-range').value = ''; renderDashboard();
     }
 
     function renderDashboard() {
       const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
-      db.slice().reverse().forEach(p => {
-        html += `<div class="project-card" onclick="openProject(${p.id})">
+      db.slice().reverse().forEach((p, idx) => {
+        // 自動生成漸層背景色
+        const gradients = ['linear-gradient(135deg, #FF5A5F, #FF8A8E)', 'linear-gradient(135deg, #00A699, #4DD0C8)', 'linear-gradient(135deg, #FFC107, #FFD54F)'];
+        const bg = gradients[idx % gradients.length];
+        
+        html += `<div class="project-card" style="background: ${bg}; color: white;" onclick="openProject(${p.id})">
             <button class="del-btn-card" onclick="delProject(${p.id}, event)">✕</button>
-            <div style="font-size:13px; color:var(--secondary); font-weight:800; margin-bottom:6px;">${p.start} ~ ${p.end}</div>
-            <h3 style="padding-right: 35px; font-size: 22px; font-weight:800; color:var(--text-main);">📍 ${p.location}</h3>
+            <div style="font-size:13px; font-weight:800; margin-bottom:6px; opacity:0.9;">${p.start} ~ ${p.end}</div>
+            <h3 style="padding-right: 35px; font-size: 24px; font-weight:800; color:white; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">📍 ${p.location}</h3>
           </div>`;
       });
       grid.innerHTML = html;
@@ -623,7 +664,8 @@
     function delProject(id, e) { e.stopPropagation(); if(confirm("⚠️ 確定要刪除整個旅程嗎？")) { const db = getDB().filter(p => p.id !== id); saveDB(db); renderDashboard(); } }
 
     function openProject(id, silent = false) {
-      currentProjectId = id; activeDayIndex = 0; const p = getCurProject(); if(!p || !p.location) return;
+      currentProjectId = id; activeDayIndex = localStorage.getItem('app_lastDayIdx') ? parseInt(localStorage.getItem('app_lastDayIdx')) : 0; 
+      const p = getCurProject(); if(!p || !p.location) return;
       localStorage.setItem('app_lastProj', id); 
       document.getElementById('project-title-display').textContent = `${p.location}`;
       document.getElementById('exp-payer').innerHTML = allMembers.map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
@@ -643,10 +685,8 @@
     function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }
 
     function changeDayIndex(idx) {
-        activeDayIndex = idx;
-        localStorage.setItem('app_lastDayIdx', idx);
-        renderItinerary();
-        if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
+        activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx);
+        renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
     }
 
     // --- 🌍 智能距離計算 ---
@@ -655,6 +695,15 @@
         const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; // 加入道路蜿蜒補償
+    }
+
+    // 需求4: 排序行程功能
+    function movePlan(id, direction) {
+        const p = getCurProject(); const dayPlans = p.plans.filter(x => x.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
+        const idx = dayPlans.findIndex(x => x.id === id); if(idx < 0) return;
+        if(direction === -1 && idx > 0) { const temp = dayPlans[idx].time; p.plans.find(x=>x.id===dayPlans[idx].id).time = dayPlans[idx-1].time; p.plans.find(x=>x.id===dayPlans[idx-1].id).time = temp; } 
+        else if(direction === 1 && idx < dayPlans.length - 1) { const temp = dayPlans[idx].time; p.plans.find(x=>x.id===dayPlans[idx].id).time = dayPlans[idx+1].time; p.plans.find(x=>x.id===dayPlans[idx+1].id).time = temp; }
+        updateCurProject(p); renderItinerary();
     }
 
     // --- 📅 行程核心邏輯 (日期獨立標題 + 智能交通A->B) ---
@@ -673,7 +722,7 @@
         </button>`;
       }
       document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()">+ 延一天</button>`;
-      document.getElementById('map-day-buttons').innerHTML = daysHtml; // 需求6: 地圖同步切換天數
+      document.getElementById('map-day-buttons').innerHTML = daysHtml; 
       
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex);
       const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
@@ -686,10 +735,10 @@
       else {
           let html = '';
           dayPlans.forEach((plan, index) => {
-             const gmapsUrl = plan.lat ? `https://www.google.com/maps/search/?api=1&query=${plan.lat},${plan.lng}` : '';
-             
-             // 需求4 & 8: 智能交通與一鍵導航
+             // 需求1 & 8: 智能交通與一鍵導航修復
              let transitHtml = '';
+             let finalGmapsUrl = plan.lat ? `https://www.google.com/maps/search/?api=1&query=${plan.lat},${plan.lng}` : ''; // 修復單點 Google Maps
+
              if (index < dayPlans.length - 1) {
                  const nextPlan = dayPlans[index + 1];
                  const dist = getDistance(plan.lat, plan.lng, nextPlan.lat, nextPlan.lng);
@@ -698,13 +747,14 @@
                  let timeStr = ""; let travelModeParam = mode;
 
                  if (dist !== null) {
-                     if (mode === 'walking') timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`;
-                     else if (mode === 'transit') timeStr = `🚇 大眾運輸預估 ${Math.round((dist / 20) * 60) + 10} 分鐘`;
-                     else timeStr = `🚗 開車約 ${Math.round((dist / 40) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`;
+                     if (mode === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelModeParam = 'walking'; }
+                     else if (mode === 'transit') { timeStr = `🚇 大眾運輸約 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
+                     else { timeStr = `🚗 開車約 ${Math.round((dist / 40) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
                  } else {
-                     timeStr = `📍 點擊設定交通`;
+                     timeStr = `📍 點擊估算交通`;
                  }
                  
+                 // 正確的 Google Maps 路線 API
                  const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
 
                  transitHtml = `
@@ -712,7 +762,7 @@
                     <div class="plan-timeline-line" style="top:-20px; bottom:0;"></div>
                     <div style="display:flex; align-items:center; gap:8px;">
                         <div class="transit-block" onclick="openTransitModal(${plan.id})">${timeStr}</div>
-                        ${dirUrl ? `<a href="${dirUrl}" target="_blank" class="gmaps-link-btn">🗺️ 在地圖查看導航</a>` : ''}
+                        ${dirUrl ? `<a href="${dirUrl}" target="_blank" class="gmaps-link-btn">🗺️ 查看導航</a>` : ''}
                     </div>
                  </div>`;
              }
@@ -728,9 +778,11 @@
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                             <div style="flex:1;">
                                 <strong style="font-size:18px;">${plan.place}</strong>
-                                ${gmapsUrl ? `<a href="${gmapsUrl}" target="_blank" style="display:block; margin-top:6px; font-size:13px; color:var(--secondary); text-decoration:none; font-weight:800;">📍 Google Maps 單點</a>` : ''}
+                                ${finalGmapsUrl ? `<a href="${finalGmapsUrl}" target="_blank" style="display:block; margin-top:6px; font-size:13px; color:var(--secondary); text-decoration:none; font-weight:800;">📍 Google Maps 單點</a>` : ''}
                             </div>
                             <div style="display:flex; gap:6px;">
+                                <span class="action-text edit-text" onclick="movePlan(${plan.id}, -1)">⬆️</span>
+                                <span class="action-text edit-text" onclick="movePlan(${plan.id}, 1)">⬇️</span>
                                 <span class="action-text edit-text" onclick="editPlan(${plan.id})">✏️</span>
                                 <span class="action-text del-text" onclick="delPlan(${plan.id})">✕</span>
                             </div>
@@ -748,7 +800,7 @@
     }
 
     function openTransitModal(planId) { document.getElementById('transit-plan-id').value = planId; openModal('transit-modal'); }
-    function saveTransitMode(modeStr) {
+    function saveTransitMode(modeStr, textLabel) {
         const planId = document.getElementById('transit-plan-id').value; const p = getCurProject(); const plan = p.plans.find(x => x.id == planId);
         if(plan) { plan.transitMode = modeStr; updateCurProject(p); renderItinerary(); }
         closeModal('transit-modal');
@@ -788,7 +840,7 @@
     function delPlan(id) { if(confirm("確定刪除此行程？")) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); } }
     function exportItinerary() { const p = getCurProject(); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time)); if(dayPlans.length === 0) return alert("這天還沒有行程可以複製喔！"); let text = `📍 ${p.location} - 第 ${activeDayIndex + 1} 天行程\n\n`; dayPlans.forEach((plan, i) => { text += `${i+1}. [${plan.time}] ${plan.place}\n`; }); navigator.clipboard.writeText(text).then(() => showSync("📋 行程已複製", 2000)); }
 
-    // --- 🗺️ 地圖核心 (需求5: 神級網址解析器) ---
+    // --- 🗺️ 地圖核心 (需求5: 神級網址解析器與可編輯面板) ---
     function initMap() {
       if (!map) {
         map = L.map('map-container', {zoomControl: false}).setView([23.6978, 120.9605], 7); 
@@ -827,12 +879,10 @@
         btn.innerHTML = '⏳...'; btn.disabled = true;
         let lat = null, lng = null, placeName = "📍 網址匯入地標";
 
-        // 從網址抽名字
         const nameMatch = url.match(/\/place\/([^\/]+)\//);
         if(nameMatch && nameMatch[1]) placeName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
         else { const qMatch = url.match(/[\?&]q=([^&]+)/); if(qMatch && qMatch[1]) placeName = decodeURIComponent(qMatch[1]).replace(/\+/g, ' '); }
 
-        // 抽座標
         const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
         if(match) { lat = parseFloat(match[1]); lng = parseFloat(match[2]); }
 
@@ -847,16 +897,12 @@
         }, 600);
     }
 
-    function fetchLocationImage(lat, lng) {
-        document.getElementById('sheet-auto-image').style.display = 'none';
-        fetch(`https://zh.wikipedia.org/w/api.php?action=query&generator=geosearch&ggsradius=1000&ggscoord=${lat}|${lng}&prop=pageimages&pithumbsize=400&format=json&origin=*`)
-        .then(r=>r.json()).then(data=>{ const pages = data.query?.pages; if(pages) { const page = Object.values(pages).find(p => p.thumbnail); if(page && page.thumbnail) { document.getElementById('sheet-auto-image').src = page.thumbnail.source; document.getElementById('sheet-auto-image').style.display = 'block'; } } }).catch(e=>{});
-    }
-
+    // 需求1: 面板輸入框賦值
     function openMapForEdit() { isEditingLocation = true; switchTab('map'); showSync("在地圖上點擊或貼上網址更換地標", 3000); }
     function openBottomSheet(name, address, lat, lng) {
-        currentSheetSelection = { name, lat, lng }; document.getElementById('sheet-place-name').textContent = name; document.getElementById('sheet-place-address').textContent = address || `經緯度: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-        fetchLocationImage(lat, lng); 
+        currentSheetSelection = { name, lat, lng }; 
+        document.getElementById('sheet-place-name-input').value = name; 
+        document.getElementById('sheet-place-address-input').value = address || `經緯度: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 
         if(isEditingLocation) { document.getElementById('sheet-normal-action').style.display = 'none'; document.getElementById('sheet-edit-action').style.display = 'block'; } 
         else {
@@ -869,8 +915,19 @@
     }
     function closeBottomSheet() { document.getElementById('map-bottom-sheet').classList.remove('active'); setTimeout(() => { document.getElementById('sheet-overlay').style.display = 'none'; }, 300); currentSheetSelection = null; }
 
-    function addFromSheet() { if(!currentSheetSelection) return; const day = parseInt(document.getElementById('sheet-popup-day').value); const time = document.getElementById('sheet-popup-time').value; showAddPlanForm(); addOrUpdatePlan(currentSheetSelection.name, currentSheetSelection.lat, currentSheetSelection.lng, day, time); closeBottomSheet(); switchTab('itinerary'); }
-    function updateLocationToForm() { if(!currentSheetSelection) return; document.getElementById('plan-place').value = currentSheetSelection.name; document.getElementById('edit-lat').value = currentSheetSelection.lat; document.getElementById('edit-lng').value = currentSheetSelection.lng; closeBottomSheet(); isEditingLocation = false; switchTab('itinerary'); showSync("📍 地標已帶入，請確認後點擊儲存", 2500); }
+    function addFromSheet() { 
+        if(!currentSheetSelection) return; 
+        const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
+        const day = parseInt(document.getElementById('sheet-popup-day').value); const time = document.getElementById('sheet-popup-time').value; 
+        showAddPlanForm(); addOrUpdatePlan(finalName, currentSheetSelection.lat, currentSheetSelection.lng, day, time); 
+        closeBottomSheet(); switchTab('itinerary'); 
+    }
+    function updateLocationToForm() { 
+        if(!currentSheetSelection) return; 
+        const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
+        document.getElementById('plan-place').value = finalName; document.getElementById('edit-lat').value = currentSheetSelection.lat; document.getElementById('edit-lng').value = currentSheetSelection.lng; 
+        closeBottomSheet(); isEditingLocation = false; switchTab('itinerary'); showSync("📍 地標已帶入，請確認後點擊儲存", 2500); 
+    }
 
     function renderMapRoute() {
       if(!map) return; mapMarkers.forEach(m => map.removeLayer(m)); mapMarkers = []; if(routeLine) map.removeLayer(routeLine); if(activeClickMarker) map.removeLayer(activeClickMarker);
@@ -887,7 +944,7 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // --- 💰 分帳邏輯 (精準小數點修復 + 需求1 原地編輯 + 需求12 防呆) ---
+    // --- 💰 分帳邏輯 ---
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
@@ -989,7 +1046,7 @@
     function cancelEditNote() { document.getElementById('note-text').value = ''; document.getElementById('edit-note-id').value = ''; document.getElementById('note-form-title').innerHTML = "新增記事"; document.getElementById('save-note-btn').innerHTML = "儲存"; document.getElementById('cancel-note-btn').style.display = "none"; document.getElementById('note-form-card').classList.remove('edit-mode-active'); }
     function delNote(id) { if(confirm("確定刪除此記事？")) { const p = getCurProject(); p.notes = p.notes.filter(x => x.id !== id); updateCurProject(p); renderNotes(); } }
 
-    // --- 📞 工具 (聯絡人與投票) ---
+    // --- 📞 工具與投票 ---
     function copyPhone(phone) { navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500)); }
     function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
     function addOrUpdateContact() { const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; const editId = document.getElementById('edit-contact-id').value; if(!name || !phone) return; const p = getCurProject(); if(!p.contacts) p.contacts = []; if(editId) { const idx = p.contacts.findIndex(x => x.id == editId); if(idx>-1) {p.contacts[idx].name=name; p.contacts[idx].phone=phone;} cancelEditContact(); } else p.contacts.push({ id: Date.now(), name, phone, creator: currentUser }); updateCurProject(p); renderContacts(); }
@@ -998,14 +1055,12 @@
     function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
 
     function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()">✕</button>`; container.appendChild(div); }
-    
     function checkPollNotification() { 
         const p = getCurProject(); const dot = document.getElementById('more-poll-dot'); const innerDot = document.getElementById('inner-poll-dot');
         if(!p || !p.polls || p.polls.length === 0) { if(dot) dot.style.display = 'none'; if(innerDot) innerDot.style.display = 'none'; return; } 
         const hasUnvoted = p.polls.some(poll => !poll.options.some(opt => opt.voters.includes(currentUser))); 
         if(dot) dot.style.display = hasUnvoted ? 'block' : 'none'; if(innerDot) innerDot.style.display = hasUnvoted ? 'block' : 'none'; 
     }
-    
     function renderPolls() { 
         const p = getCurProject(); const list = document.getElementById('polls-list'); checkPollNotification(); 
         if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無投票</div>`; return; } 
@@ -1027,6 +1082,26 @@
     function cancelEditPoll() { document.getElementById('poll-title').value = ''; document.getElementById('edit-poll-id').value = ''; document.getElementById('poll-date').value = ''; document.getElementById('poll-options-container').innerHTML = `<div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div><div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>`; document.getElementById('poll-form-title').innerHTML = "建立投票"; document.getElementById('save-poll-btn').innerHTML = "發布投票"; document.getElementById('cancel-poll-btn').style.display = "none"; document.getElementById('poll-form-card').classList.remove('edit-mode-active'); document.getElementById('poll-form-card').style.display='none'; document.getElementById('show-poll-btn').style.display='block'; }
     function delPoll(id) { if(confirm("確定刪除此投票？")) { const p = getCurProject(); p.polls = p.polls.filter(x => x.id !== id); updateCurProject(p); renderPolls(); } }
     function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
+
+    // --- 🎒 行李清單 (新功能) ---
+    function renderChecklist() {
+        const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
+        if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:20px 0; font-weight:bold;">尚無待辦事項</div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
+        const doneCount = p.checklist.filter(c => c.done).length;
+        progText.textContent = `${doneCount} / ${p.checklist.length}`;
+        progBar.style.width = `${(doneCount / p.checklist.length) * 100}%`;
+        
+        list.innerHTML = p.checklist.map(c => `
+            <div class="checklist-item ${c.done ? 'done' : ''}" onclick="toggleChecklist(${c.id})">
+                <div class="check-circle"></div>
+                <div class="checklist-text">${c.text}</div>
+                <span class="action-text del-text" style="padding:4px 8px; margin:0;" onclick="delChecklist(${c.id}, event)">✕</span>
+            </div>
+        `).join('');
+    }
+    function addChecklistItem() { const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return; const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, done: false }); updateCurProject(p); input.value = ''; renderChecklist(); }
+    function toggleChecklist(id) { const p = getCurProject(); const item = p.checklist.find(x => x.id === id); if(item) { item.done = !item.done; updateCurProject(p); renderChecklist(); } }
+    function delChecklist(id, e) { e.stopPropagation(); const p = getCurProject(); p.checklist = p.checklist.filter(x => x.id !== id); updateCurProject(p); renderChecklist(); }
 
   </script>
 </body>
