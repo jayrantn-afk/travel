@@ -11,81 +11,67 @@
   <script src="https://npmcdn.com/flatpickr/dist/l10n/zh-tw.js"></script>
 
   <style>
-    /* ✨ 現代化色彩與變數 */
     :root {
-      --primary: #FF5A5F; /* Airbnb 紅 */
-      --primary-hover: #E35156;
-      --secondary: #00A699; /* 湖水綠 */
-      --danger: #ff3b30; 
-      --bg-color: #F7F9FC; /* 柔和的高級灰白底 */
-      --surface: #ffffff; 
-      --text-main: #222222; /* 柔和的深色 */
-      --text-muted: #717171; 
-      --border: #EBEBEB; 
-      --shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
-      --shadow-hover: rgba(0, 0, 0, 0.12) 0px 8px 24px;
-      --radius: 16px; /* 大圓角更具現代感 */
+      --primary: #FF5A5F; --primary-hover: #E35156; --secondary: #00A699; --danger: #ff3b30; 
+      --bg-color: #F7F9FC; --surface: #ffffff; --text-main: #222222; --text-muted: #717171; 
+      --border: #EBEBEB; --shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px; --shadow-hover: rgba(0, 0, 0, 0.12) 0px 8px 24px;
+      --radius: 16px;
     }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', -apple-system, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: 60px; -webkit-font-smoothing: antialiased;}
-
-    /* 頁面切換 */
     .view { display: none; min-height: 100vh; padding: 20px; max-width: 600px; margin: 0 auto; }
     .view.active { display: block; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* UI 元件升級 */
+    /* UI 元件 */
     .btn { padding: 12px 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 15px;}
     .btn:hover { background: var(--primary-hover); transform: scale(0.98); }
     .btn-small { padding: 8px 14px; font-size: 13px; border-radius: 8px;}
     .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
     .btn-action { background: var(--secondary); }
+    .btn-upload { background: #f1f5f9; color: var(--text-main); border: 1px dashed #cbd5e1; }
     
     .form-control { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; margin-bottom: 12px; background: #fafafa; transition: 0.2s;}
     .form-control:focus { outline: none; border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px rgba(255,90,95,0.1);}
-    
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02);}
     .flex-row { display: flex; gap: 10px; align-items: center; }
     
-    /* 標籤設計 */
     .creator-badge { display: inline-block; font-size: 11px; background: #f1f5f9; color: var(--text-muted); padding: 3px 8px; border-radius: 12px; margin-top: 4px; font-weight: 500;}
 
-    /* 儀表板與卡片 */
+    /* 專案與導覽列 */
     .app-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 20px;}
-    .app-header h3 { font-size: 24px; font-weight: 700; }
     .projects-container { display: grid; grid-template-columns: 1fr; gap: 16px; }
     .project-card { position: relative; background: var(--surface); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); cursor: pointer; transition: 0.3s; border: 1px solid var(--border);}
-    .project-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
-    .project-card h3 { font-size: 20px; margin-bottom: 6px; }
     
-    /* 詳情與導覽列 (可橫向滑動) */
     .detail-header { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border);}
     .tabs-wrapper { margin-bottom: 20px; margin: 0 -20px 20px -20px; padding: 0 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
     .tabs { display: inline-flex; background: #eceff1; border-radius: 14px; padding: 4px; }
-    .tab { padding: 10px 20px; cursor: pointer; border-radius: 10px; font-weight: 600; color: var(--text-muted); font-size: 14px; transition: 0.3s;}
+    .tab { position: relative; padding: 10px 20px; cursor: pointer; border-radius: 10px; font-weight: 600; color: var(--text-muted); font-size: 14px; transition: 0.3s;}
     .tab.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     
+    /* 🔴 未投票紅點 */
+    .notification-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; box-shadow: 0 0 0 2px #eceff1; display: none; }
+    .tab.active .notification-dot { box-shadow: 0 0 0 2px var(--surface); }
+
     .module-content { display: none; }
     .module-content.active { display: block; animation: slideUp 0.3s ease; }
 
-    /* 列表共用 */
+    /* 行程清單 */
     .list-item { padding: 16px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start;}
     .list-item:last-child { border-bottom: none; padding-bottom: 0;}
-    .del-text { color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 600; padding: 4px 8px; border-radius: 6px; background: #fff0f0;}
-
-    /* 1. 行程區塊 */
+    .del-text { color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 8px; background: #fff0f0;}
+    
     .day-selector { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 8px;}
     .day-btn { padding: 10px 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; font-weight: 600; color: var(--text-muted); box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
     .day-btn.active { background: var(--text-main); color: white; border-color: var(--text-main);}
     .time-badge { background: #e8f4fd; color: #0284c7; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 14px; margin-right: 12px; display: inline-block;}
+    .plan-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border);}
 
-    /* 3. 投票區塊 */
+    /* 投票 */
     .poll-opt { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px 15px; border-radius: 8px; margin-top: 8px; cursor: pointer;}
     .poll-opt:hover { background: #e9ecef; }
     .vote-count { background: var(--primary); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;}
-
-    /* Modal */
+    
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px);}
     .modal-overlay.active { display: flex; }
     .modal { background: var(--surface); width: 92%; max-width: 400px; padding: 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
@@ -98,13 +84,11 @@
       <div style="font-size: 48px; margin-bottom: 10px;">🎒</div>
       <h1 style="margin-bottom: 30px; font-weight: 800;">家族旅遊秘書</h1>
       <div class="card-panel" style="text-align: left;">
-        <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">選擇使用者</label>
         <select id="user-select" class="form-control">
           <option value="魏嘉宏">魏嘉宏</option><option value="魏卉姍">魏卉姍</option>
           <option value="魏敏軒">魏敏軒</option><option value="魏珮芯">魏珮芯</option>
           <option value="陳筱雙">陳筱雙 (獨立專案)</option>
         </select>
-        <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">專屬密碼</label>
         <input type="password" id="password-input" class="form-control" placeholder="請輸入密碼">
         <button class="btn" style="width: 100%; margin-top: 10px;" onclick="handleLogin()">進入系統</button>
       </div>
@@ -123,10 +107,7 @@
     <div class="detail-header">
       <button class="btn btn-outline btn-small" onclick="switchView('dashboard-view')" style="margin-bottom: 15px;">← 返回列表</button>
       <h2 id="project-title-display" style="font-size:22px; margin-bottom: 5px;">載入中...</h2>
-      <div style="font-size: 13px; color: var(--text-muted);">
-        📅 <span id="project-dates-display"></span> <br>
-        👑 <span id="project-creator-display"></span>
-      </div>
+      <div style="font-size: 13px; color: var(--text-muted);">📅 <span id="project-dates-display"></span> <br>👑 <span id="project-creator-display"></span></div>
     </div>
     
     <div class="tabs-wrapper">
@@ -134,7 +115,7 @@
         <div class="tab active" onclick="switchTab('itinerary')">📅 行程</div>
         <div class="tab" onclick="switchTab('map')">🗺️ 搜地圖</div>
         <div class="tab" onclick="switchTab('notes')">📝 記事本</div>
-        <div class="tab" onclick="switchTab('poll')">🗳️ 投票</div>
+        <div class="tab" onclick="switchTab('poll')">🗳️ 投票<div class="notification-dot" id="poll-dot"></div></div>
         <div class="tab" onclick="switchTab('budget')">💰 記帳</div>
       </div>
     </div>
@@ -144,9 +125,14 @@
       <div class="card-panel">
         <h4 style="margin-bottom: 12px; font-size: 15px;">＋ 新增行程</h4>
         <div class="flex-row" style="margin-bottom: 10px;">
-          <input type="time" id="plan-time" class="form-control" style="width: 120px; margin: 0;">
-          <input type="text" id="plan-place" class="form-control" placeholder="景點或活動" style="margin: 0;">
+          <input type="text" id="plan-time" class="form-control" style="flex: 1; margin: 0; text-align: center; background: white;" placeholder="選擇時間" readonly>
+          <input type="text" id="plan-place" class="form-control" style="flex: 2; margin: 0;" placeholder="景點或活動名稱">
         </div>
+        
+        <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+        <button class="btn btn-upload btn-small" style="width: 100%; margin-bottom: 10px;" onclick="document.getElementById('image-upload').click()">📸 附加參考照片 (選填)</button>
+        <img id="img-preview" style="display: none; width: 100%; max-height: 150px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background: #eee;">
+        
         <button class="btn btn-action" style="width: 100%;" onclick="addPlan()">加入當天行程</button>
       </div>
       <div class="card-panel" style="padding: 10px 20px;" id="plan-list"></div>
@@ -156,15 +142,14 @@
       <div class="card-panel" style="background: #eef2ff; border: 1px solid #c7d2fe;">
         <h4 style="margin-bottom: 10px;">🔍 搜尋地點並加入行程</h4>
         <div class="flex-row" style="margin-bottom: 10px;">
-          <input type="text" id="map-search-input" class="form-control" placeholder="輸入想去的景點 (例: 熊本城)" style="margin:0;">
+          <input type="text" id="map-search-input" class="form-control" placeholder="輸入想去的景點" style="margin:0;">
           <button class="btn" onclick="searchMap()">搜尋</button>
         </div>
-        
         <div id="map-add-box" style="display: none; background: white; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid var(--border);">
           <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">加入到行程表：</div>
           <div class="flex-row" style="margin-bottom: 10px;">
-            <select id="map-add-day" class="form-control" style="margin:0; width: 40%; padding: 8px;"></select>
-            <input type="time" id="map-add-time" class="form-control" style="margin:0; width: 60%; padding: 8px;">
+            <select id="map-add-day" class="form-control" style="margin:0; flex:1; padding: 8px;"></select>
+            <input type="text" id="map-add-time" class="form-control" style="margin:0; flex:1; padding: 8px; text-align: center; background: white;" placeholder="選時間" readonly>
           </div>
           <button class="btn btn-action btn-small" style="width: 100%;" onclick="addPlanFromMap()">一鍵加入行程表</button>
         </div>
@@ -178,7 +163,7 @@
       <div class="card-panel">
         <h4 style="margin-bottom: 10px;">💡 願望清單 / 待確認事項</h4>
         <div class="flex-row">
-          <input type="text" id="note-input" class="form-control" placeholder="例如：想吃和牛、記得買網卡..." style="margin:0;">
+          <input type="text" id="note-input" class="form-control" placeholder="例如：想吃和牛..." style="margin:0;">
           <button class="btn btn-action" onclick="addNote()">記錄</button>
         </div>
       </div>
@@ -188,7 +173,7 @@
     <div id="tab-poll" class="module-content">
       <div class="card-panel">
         <h4 style="margin-bottom: 10px;">🗳️ 發起新投票</h4>
-        <input type="text" id="poll-title" class="form-control" placeholder="問題 (例: Day 2 晚餐吃什麼？)">
+        <input type="text" id="poll-title" class="form-control" placeholder="問題 (例: 晚餐吃什麼？)">
         <input type="text" id="poll-options" class="form-control" placeholder="選項 (請用逗號 , 分隔)">
         <button class="btn btn-action" style="width: 100%;" onclick="addPoll()">建立投票</button>
       </div>
@@ -230,10 +215,17 @@
 
   <script>
     let currentUser = null; let currentWorkspace = null; let currentProjectId = null; let activeDayIndex = 0; 
+    let currentUploadedImageBase64 = null; // 儲存上傳圖片的變數
+
     const authRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     const wsMap = { '陳筱雙': 'chen_project' };
 
+    // --- 套件初始化 ---
     flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
+    // 解決時間輸入卡卡的問題：用 flatpickr 接管時間選擇
+    const timePickerConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, locale: "zh_tw", disableMobile: "true" };
+    const planTimePicker = flatpickr("#plan-time", timePickerConfig);
+    const mapTimePicker = flatpickr("#map-add-time", timePickerConfig);
 
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     function switchTab(tabId) { 
@@ -252,12 +244,10 @@
     }
     function handleLogout() { currentUser = null; switchView('login-view'); }
 
-    // --- 資料庫操作 (補齊新功能的陣列防呆) ---
     function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
     function saveDB(data) { localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); }
     function getCurProject() { 
       let p = getDB().find(p => p.id === currentProjectId); 
-      // 確保舊專案也有新陣列
       if(!p.notes) p.notes = []; if(!p.polls) p.polls = []; 
       return p;
     }
@@ -297,17 +287,49 @@
       document.getElementById('project-creator-display').textContent = `總提議者：${p.creator}`;
       
       document.querySelector('.tab').click(); 
-      renderItinerary(); renderNotes(); renderPolls(); renderBudget();
+      renderItinerary(); renderNotes(); renderPolls(); renderBudget(); updateNotificationBadge();
       switchView('detail-view');
     }
 
+    // --- 🔔 紅點通知系統 ---
+    function updateNotificationBadge() {
+      const p = getCurProject();
+      if(!p || !p.polls) return;
+      // 檢查是否還有任何一個投票，當前使用者沒有參與
+      const hasUnvoted = p.polls.some(poll => !poll.options.some(opt => opt.voters.includes(currentUser)));
+      document.getElementById('poll-dot').style.display = hasUnvoted ? 'block' : 'none';
+    }
+
     function getDaysDiff(start, end) { return Math.floor((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1; }
+
+    // --- 🖼️ 照片上傳與壓縮引擎 ---
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 600; // 自動壓縮寬度，防止存檔爆掉
+          let width = img.width; let height = img.height;
+          if (width > MAX_WIDTH) { height = Math.round((height * MAX_WIDTH) / width); width = MAX_WIDTH; }
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          currentUploadedImageBase64 = canvas.toDataURL('image/jpeg', 0.7); // 70% 壓縮率
+          document.getElementById('img-preview').src = currentUploadedImageBase64;
+          document.getElementById('img-preview').style.display = 'block';
+        }
+        img.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
 
     // --- 1. 行程模組 ---
     function renderItinerary() {
       const p = getCurProject(); const totalDays = getDaysDiff(p.start, p.end);
       
-      // 更新天數按鈕 & 地圖區的天數選單
       let daysHtml = ''; let mapSelectHtml = '';
       for(let i=0; i<totalDays; i++) {
         let d = new Date(p.start); d.setDate(d.getDate() + i); let ds = `${d.getMonth()+1}/${d.getDate()}`;
@@ -324,9 +346,10 @@
       else {
         list.innerHTML = dayPlans.map(plan => `
           <div class="list-item">
-            <div>
-              <div class="flex-row"><span class="time-badge">${plan.time}</span> <span style="font-weight:600; font-size:16px;">${plan.place}</span></div>
-              <div class="creator-badge" style="margin-left: 75px;">由 ${plan.creator} 新增</div>
+            <div style="flex: 1; padding-right: 10px;">
+              <div class="flex-row" style="align-items: flex-start;"><span class="time-badge">${plan.time}</span> <span style="font-weight:600; font-size:16px;">${plan.place}</span></div>
+              ${plan.image ? `<img src="${plan.image}" class="plan-img">` : ''}
+              <div class="creator-badge" style="margin-left: 75px; margin-top: 8px;">由 ${plan.creator} 新增</div>
             </div>
             <div class="del-text" onclick="delPlan(${plan.id})">刪除</div>
           </div>
@@ -336,9 +359,15 @@
     function changeDay(idx) { activeDayIndex = idx; renderItinerary(); }
     function addPlan() {
       const time = document.getElementById('plan-time').value; const place = document.getElementById('plan-place').value;
-      if(!time || !place) return alert("輸入不完整");
-      const p = getCurProject(); p.plans.push({ id: Date.now(), dayIdx: activeDayIndex, time, place, creator: currentUser });
-      updateCurProject(p); document.getElementById('plan-time').value = ''; document.getElementById('plan-place').value = ''; renderItinerary();
+      if(!time || !place) return alert("請輸入時間與景點！");
+      const p = getCurProject(); 
+      p.plans.push({ id: Date.now(), dayIdx: activeDayIndex, time, place, image: currentUploadedImageBase64, creator: currentUser });
+      updateCurProject(p); 
+      
+      // 清空表單與照片預覽
+      planTimePicker.clear(); document.getElementById('plan-place').value = ''; 
+      currentUploadedImageBase64 = null; document.getElementById('img-preview').style.display = 'none'; document.getElementById('image-upload').value = '';
+      renderItinerary();
     }
     function delPlan(id) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); }
 
@@ -350,10 +379,9 @@
       }
     }
     function searchMap() {
-      const query = document.getElementById('map-search-input').value;
-      if(!query) return;
+      const query = document.getElementById('map-search-input').value; if(!query) return;
       document.getElementById('map-iframe').src = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&t=m&z=15&output=embed`;
-      document.getElementById('map-add-box').style.display = 'block'; // 顯示加入行程表單
+      document.getElementById('map-add-box').style.display = 'block';
     }
     function addPlanFromMap() {
       const query = document.getElementById('map-search-input').value;
@@ -362,16 +390,14 @@
       if(!time) return alert("請選擇預計安排的時間！");
       
       const p = getCurProject();
-      p.plans.push({ id: Date.now(), dayIdx: dayIdx, time: time, place: query, creator: currentUser });
+      p.plans.push({ id: Date.now(), dayIdx: dayIdx, time: time, place: query, image: null, creator: currentUser });
       updateCurProject(p);
       alert(`已成功將「${query}」加入 Day ${dayIdx + 1} 的行程中！`);
       
-      // 切換回行程 Tab 觀看
-      document.querySelectorAll('.tab')[0].click(); 
-      changeDay(dayIdx);
+      document.querySelectorAll('.tab')[0].click(); changeDay(dayIdx); mapTimePicker.clear();
     }
 
-    // --- 3. 記事本 (Wishlist) ---
+    // --- 3. 記事本 ---
     function renderNotes() {
       const p = getCurProject(); const list = document.getElementById('notes-list');
       if(p.notes.length === 0) list.innerHTML = `<div style="text-align:center; color:#ccc;">無紀錄</div>`;
@@ -391,7 +417,7 @@
     }
     function delNote(id) { const p = getCurProject(); p.notes = p.notes.filter(x => x.id !== id); updateCurProject(p); renderNotes(); }
 
-    // --- 4. 投票區 (Polls) ---
+    // --- 4. 投票區 ---
     function renderPolls() {
       const p = getCurProject(); const list = document.getElementById('polls-list');
       list.innerHTML = p.polls.map(poll => `
@@ -405,14 +431,14 @@
               <span>${opt.name}</span>
               <span class="vote-count">${opt.voters.length} 票</span>
             </div>
-            ${opt.voters.length > 0 ? `<div style="font-size:11px; color:#aaa; margin-left:15px;">投票者: ${opt.voters.join(', ')}</div>` : ''}
+            ${opt.voters.length > 0 ? `<div style="font-size:11px; color:#aaa; margin-left:15px;">已投: ${opt.voters.join(', ')}</div>` : ''}
           `).join('')}
         </div>
       `).join('');
+      updateNotificationBadge(); // 渲染時也檢查一次紅點
     }
     function addPoll() {
-      const title = document.getElementById('poll-title').value;
-      const optsRaw = document.getElementById('poll-options').value;
+      const title = document.getElementById('poll-title').value; const optsRaw = document.getElementById('poll-options').value;
       if(!title || !optsRaw) return alert("請輸入問題與選項");
       const options = optsRaw.split(',').map(o => ({ name: o.trim(), voters: [] }));
       const p = getCurProject(); p.polls.push({ id: Date.now(), title, creator: currentUser, options });
@@ -420,14 +446,12 @@
     }
     function vote(pollId, optIdx) {
       const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId);
-      // 先移除該使用者在該問題的舊投票 (防重複投票)
       poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); });
-      // 投給新選項
       poll.options[optIdx].voters.push(currentUser);
       updateCurProject(p); renderPolls();
     }
 
-    // --- 5. 記帳區塊 ---
+    // --- 5. 記帳 ---
     function renderBudget() {
       const p = getCurProject(); const list = document.getElementById('expense-list'); let total = 0;
       if(p.expenses.length === 0) list.innerHTML = `<div style="text-align:center; color:#ccc;">無花費紀錄</div>`;
