@@ -74,10 +74,17 @@
     <div class="login-container">
       <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">✈️ 旅遊規劃秘書</h2>
       <select id="user-select" class="form-control">
-        <optgroup label="家族帳號"><option value="魏嘉宏">魏嘉宏</option><option value="魏卉姍">魏卉姍</option><option value="魏敏軒">魏敏軒</option><option value="魏珮芯">魏珮芯</option></optgroup>
-        <optgroup label="獨立專案"><option value="陳筱雙">陳筱雙</option></optgroup>
+        <optgroup label="家族帳號">
+          <option value="魏嘉宏">魏嘉宏</option>
+          <option value="魏卉姍">魏卉姍</option>
+          <option value="魏敏軒">魏敏軒</option>
+          <option value="魏珮芯">魏珮芯</option>
+        </optgroup>
+        <optgroup label="獨立專案">
+          <option value="陳筱雙">陳筱雙</option>
+        </optgroup>
       </select>
-      <input type="password" id="password-input" class="form-control" placeholder="請輸入密碼 (35195 或 1206)">
+      <input type="password" id="password-input" class="form-control" placeholder="請輸入專屬密碼">
       <button class="btn" style="width: 100%;" onclick="handleLogin()">登入</button>
     </div>
   </div>
@@ -163,11 +170,10 @@
   </div>
 
   <script>
-    // --- 核心變數與資料初始化 ---
     let currentUser = null;
     let currentWorkspace = null;
     let currentProjectId = null;
-    let activeDayIndex = 0; // 行程表目前選擇的第幾天
+    let activeDayIndex = 0; 
 
     const authRules = {
       '魏嘉宏': { pwd: '35195', ws: 'wei_family' }, '魏卉姍': { pwd: '35195', ws: 'wei_family' },
@@ -178,7 +184,6 @@
     flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
     flatpickr("#hotel-date", { mode: "range", locale: "zh_tw" });
 
-    // --- 畫面切換與登入 ---
     function switchView(id) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -189,7 +194,7 @@
       event.target.classList.add('active');
       document.querySelectorAll('.module-content').forEach(c => c.classList.remove('active'));
       document.getElementById(`tab-${tabId}`).classList.add('active');
-      if(tabId === 'map') renderMap(); // 確保切換到地圖時重新載入 iframe
+      if(tabId === 'map') renderMap(); 
     }
 
     function handleLogin() {
@@ -205,7 +210,6 @@
 
     function handleLogout() { currentUser = null; currentWorkspace = null; switchView('login-view'); }
 
-    // --- 資料庫操作 (LocalStorage) ---
     function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
     function saveDB(data) { localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); }
     function getCurProject() { return getDB().find(p => p.id === currentProjectId); }
@@ -216,19 +220,23 @@
       saveDB(db);
     }
 
-    // --- 儀表板與專案管理 ---
     function openModal() { document.getElementById('add-modal').classList.add('active'); }
     function closeModal() { document.getElementById('add-modal').classList.remove('active'); }
 
     function createProject() {
       const loc = document.getElementById('trip-location').value;
-      const dates = document.getElementById('trip-date-range').value.split(' to ');
-      if(!loc || dates.length !== 2) return alert("請填完整地點與日期區間！");
+      const dateVal = document.getElementById('trip-date-range').value;
+      
+      // 修正 2：動態判斷日期分隔符號是中文的「至」還是英文的「to」
+      const separator = dateVal.includes('至') ? ' 至 ' : ' to ';
+      const dates = dateVal.split(separator);
+
+      if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期區間！");
       
       const db = getDB();
       db.push({
         id: Date.now(), location: loc, start: dates[0], end: dates[1], creator: currentUser,
-        plans: [], hotels: [], expenses: [] // 建立真實資料結構
+        plans: [], hotels: [], expenses: []
       });
       saveDB(db); closeModal(); renderDashboard();
     }
@@ -254,22 +262,16 @@
       });
     }
 
-    // --- 專案詳情與四大模組實作 ---
     function openProject(id) {
       currentProjectId = id;
       activeDayIndex = 0;
       const p = getCurProject();
       document.getElementById('project-title-display').textContent = `📍 ${p.location}`;
-      
-      // 初始化模組
-      document.querySelector('.tab').click(); // 預設點擊第一個 Tab (行程)
-      renderItinerary();
-      renderHotels();
-      renderBudget();
+      document.querySelector('.tab').click(); 
+      renderItinerary(); renderHotels(); renderBudget();
       switchView('detail-view');
     }
 
-    // 模組 1: 行程
     function getDaysDiff(start, end) {
       const ms = new Date(end) - new Date(start);
       return Math.floor(ms / (1000 * 60 * 60 * 24)) + 1;
@@ -279,7 +281,6 @@
       const p = getCurProject();
       const totalDays = getDaysDiff(p.start, p.end);
       
-      // 生成天數按鈕
       let daysHtml = '';
       for(let i=0; i<totalDays; i++) {
         let d = new Date(p.start); d.setDate(d.getDate() + i);
@@ -288,7 +289,6 @@
       }
       document.getElementById('day-buttons').innerHTML = daysHtml;
 
-      // 渲染當天行程
       const list = document.getElementById('plan-list');
       const dayPlans = p.plans.filter(plan => plan.dayIdx === activeDayIndex).sort((a,b) => a.time.localeCompare(b.time));
       
@@ -325,15 +325,12 @@
       updateCurProject(p); renderItinerary();
     }
 
-    // 模組 2: 地圖
     function renderMap() {
       const p = getCurProject();
-      // 使用 Google Maps 的 embed 參數，免 API Key 即可搜尋地點
       const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(p.location)}&t=m&z=13&output=embed&iwloc=near`;
       document.getElementById('map-iframe').src = mapUrl;
     }
 
-    // 模組 3: 住宿
     function renderHotels() {
       const p = getCurProject();
       const list = document.getElementById('hotel-list');
@@ -363,7 +360,6 @@
        const p = getCurProject(); p.hotels = p.hotels.filter(h => h.id !== hId); updateCurProject(p); renderHotels();
     }
 
-    // 模組 4: 記帳
     function renderBudget() {
       const p = getCurProject();
       const list = document.getElementById('expense-list');
@@ -388,7 +384,7 @@
     function addExpense() {
       const item = document.getElementById('exp-item').value;
       const cost = document.getElementById('exp-cost').value;
-      const payer = document.getElementById('exp-payer').value || currentUser; // 沒填預設自己代墊
+      const payer = document.getElementById('exp-payer').value || currentUser;
       if(!item || !cost) return alert("請輸入花費項目與金額");
       
       const p = getCurProject();
