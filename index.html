@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>家族旅遊秘書</title>
+  <title>家族旅遊秘書 Pro</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,58 +19,73 @@
 
   <style>
     :root {
-      --primary: #FF5A5F; --primary-hover: #E35156; --secondary: #00A699; --danger: #ff3b30; 
-      --bg-color: #F7F9FC; --surface: #ffffff; --text-main: #222222; --text-muted: #717171; 
-      --border: #EBEBEB; --shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px; --radius: 16px;
+      --primary: #FF5A5F; --primary-hover: #E35156; --secondary: #00A699; --danger: #ff3b30; --warning: #FFC107;
+      --bg-color: #F4F7FC; --surface: #ffffff; --text-main: #1A1A1A; --text-muted: #666666; 
+      --border: #E4E8ED; --shadow: rgba(0, 0, 0, 0.06) 0px 8px 24px; --radius: 20px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: 60px; }
+    body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: 80px; }
     
     .view { display: none; min-height: 100vh; padding: 20px; max-width: 600px; margin: 0 auto; }
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    .btn { padding: 12px 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    /* 按鈕與表單專業化 */
+    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;}
     .btn:active { transform: scale(0.96); }
-    .btn-small { padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+    .btn-small { padding: 8px 16px; font-size: 13px; border-radius: 10px; }
     .btn-action { background: var(--secondary); }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-    .form-control { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 16px; margin-bottom: 12px; background: var(--surface); }
+    .btn-outline { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .form-control { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; transition: 0.2s; }
+    .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.1); }
     
-    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .detail-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-
-    .project-card { position: relative; background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: transform 0.2s; border: 2px solid transparent; }
+    /* 卡片與容器 */
+    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .project-card { position: relative; background: var(--surface); padding: 22px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
     .project-card:active { transform: scale(0.98); }
-    
-    .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; }
-    .flex-row { display: flex; gap: 10px; align-items: center; }
+    .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); }
+    .flex-row { display: flex; gap: 12px; align-items: center; }
 
+    /* 頁籤優化與紅點提示 */
     .tabs-wrapper, .day-selector { margin: 0 -20px 20px -20px; padding: 0 20px 10px 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-    .tabs { display: inline-flex; background: #eceff1; border-radius: 14px; padding: 4px; }
-    .tab { padding: 10px 20px; cursor: pointer; border-radius: 10px; font-weight: 600; color: var(--text-muted); font-size: 14px; transition: 0.2s; }
-    .tab.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .tabs { display: inline-flex; background: #E9ECEF; border-radius: 16px; padding: 5px; }
+    .tab { position: relative; padding: 10px 20px; cursor: pointer; border-radius: 12px; font-weight: 600; color: var(--text-muted); font-size: 14px; transition: 0.2s; }
+    .tab.active { background: var(--surface); color: var(--text-main); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
     .module-content { display: none; }
     .module-content.active { display: block; animation: fadeIn 0.2s; }
-    
-    .day-btn { display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; margin-right: 8px; font-weight: 600; color: var(--text-muted); transition: 0.2s; }
+    .notification-dot { display: none; position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; box-shadow: 0 0 0 2px var(--surface); }
+
+    /* 天數選擇器 (+ 號功能) */
+    .day-btn { display: inline-flex; align-items: center; padding: 10px 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; margin-right: 8px; font-weight: 600; color: var(--text-muted); transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
     .day-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
-    .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 10px; margin-left: 6px; }
+    .day-add-btn { background: #f0fdf4; color: var(--secondary); border-color: #bbf7d0; border-style: dashed; }
     
-    .time-badge { background: #e8f4fd; color: #0284c7; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 14px; }
-    .creator-badge { font-size: 11px; background: #f1f5f9; color: var(--text-muted); padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
-    .del-text { color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 600; background: #fff0f0; padding: 6px 10px; border-radius: 6px; }
-    .del-btn-card { position: absolute; top: 12px; right: 12px; background: #fff0f0; color: var(--danger); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s; }
-
-    #sync-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(34, 34, 34, 0.9); color: white; padding: 10px 20px; border-radius: 24px; font-size: 13px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(5px); }
+    /* 標籤與文字 */
+    .time-badge { background: #E8F4FD; color: #0284C7; padding: 6px 12px; border-radius: 10px; font-weight: 800; font-size: 14px; }
+    .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; margin-top: 8px; display: inline-block; font-weight: 600; }
+    .del-text { color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 600; background: #FFF0F0; padding: 6px 12px; border-radius: 8px; }
+    .del-btn-card { position: absolute; top: 12px; right: 12px; background: #FFF0F0; color: var(--danger); border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s; }
     
-    /* 🗺️ 地圖區塊樣式 */
-    #map-container { height: 400px; width: 100%; border-radius: 12px; margin-top: 10px; z-index: 1; border: 1px solid var(--border); }
-    .map-popup-btn { background: var(--secondary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 8px; width: 100%; }
+    /* 在線名單 UI */
+    .online-users-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--secondary); background: #e8f4fd; padding: 6px 12px; border-radius: 20px; width: fit-content; margin-top: 8px; font-weight: 600; }
+    .online-dot { width: 8px; height: 8px; background: var(--secondary); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 153, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 166, 153, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 153, 0); } }
 
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
+    /* 地圖與圖片 */
+    #map-container { height: 420px; width: 100%; border-radius: 16px; margin-top: 12px; z-index: 1; border: 2px solid var(--border); }
+    .plan-img-preview { width: 100%; max-height: 150px; object-fit: cover; border-radius: 12px; margin-top: 12px; display: none; border: 1px solid var(--border); }
+    .plan-img-display { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-top: 10px; border: 1px solid #eee; }
+    .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed var(--border); border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
+    .file-upload-label:active { background: #e9ecef; }
+    
+    /* 工具列按鈕 (聯絡人) */
+    .tool-btn { flex: 1; background: #f1f5f9; color: var(--text-main); border: none; padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; text-decoration: none; text-align: center; display: inline-block; cursor: pointer; }
+    .tool-btn.call { background: #E8F4FD; color: #0284C7; }
+
+    #sync-status { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(26, 26, 26, 0.95); color: white; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.2); backdrop-filter: blur(5px); }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); padding: 20px; }
     .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
-    .modal { background: var(--surface); width: 92%; max-width: 400px; padding: 25px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .modal { background: var(--surface); width: 100%; max-width: 420px; padding: 28px; border-radius: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
   </style>
 </head>
 <body>
@@ -78,10 +93,12 @@
   <div id="sync-status">☁️ 資料同步中...</div>
 
   <div id="login-view" class="view active">
-    <div style="margin-top: 15vh; text-align: center;">
-      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" style="width: 80px; margin-bottom: 15px;">
-      <h1 style="margin-bottom: 30px; font-weight: 800; color: var(--primary);">家族旅遊秘書</h1>
-      <div class="card-panel" style="text-align: left;">
+    <div style="margin-top: 10vh; text-align: center;">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" style="width: 90px; margin-bottom: 20px; filter: drop-shadow(0px 8px 16px rgba(255,90,95,0.3));">
+      <h1 style="margin-bottom: 10px; font-weight: 800; color: var(--primary); font-size: 28px;">家族旅遊秘書 Pro</h1>
+      <p style="color: var(--text-muted); margin-bottom: 30px; font-weight: 600;">專業的自助旅行協作平台</p>
+      
+      <div class="card-panel" style="text-align: left; padding: 28px;">
         <select id="user-select" class="form-control">
           <option value="魏嘉宏">👨‍💼 魏嘉宏</option>
           <option value="魏卉姍">👩‍💼 魏卉姍</option>
@@ -90,17 +107,17 @@
           <option value="陳筱雙">👩‍ 陳筱雙</option>
         </select>
         <input type="password" id="password-input" class="form-control" placeholder="請輸入登入密碼">
-        <button class="btn" style="width: 100%; font-size: 16px; margin-top: 8px;" onclick="handleLogin()">進入系統</button>
+        <button class="btn" style="width: 100%; font-size: 16px; margin-top: 12px; padding: 16px;" onclick="handleLogin()">進入系統 🚀</button>
       </div>
     </div>
   </div>
 
   <div id="dashboard-view" class="view">
     <div class="app-header">
-      <h3>👋 <span id="display-name"></span></h3>
+      <h2 style="font-weight: 800;">👋 <span id="display-name"></span></h2>
       <div style="display: flex; gap: 8px;">
-        <button class="btn btn-outline btn-small" onclick="syncFromCloud(true)">🔄 強制更新</button>
-        <button class="btn btn-action btn-small" onclick="openInstallModal()">📱 加到桌面</button>
+        <button class="btn btn-outline btn-small" onclick="syncFromCloud(true)">🔄 更新</button>
+        <button class="btn btn-outline btn-small" onclick="handleLogout()" style="color: var(--text-muted);">登出</button>
       </div>
     </div>
     <div class="projects-container" id="projects-grid"></div>
@@ -108,59 +125,79 @@
 
   <div id="detail-view" class="view">
     <div class="detail-header">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button class="btn btn-outline btn-small" onclick="switchView('dashboard-view')">← 返回</button>
-        <span style="font-size: 12px; color: var(--secondary); background: #e8f4fd; padding: 4px 8px; border-radius: 8px;">⚡ 即時同步中</span>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <button class="btn btn-outline btn-small" onclick="switchView('dashboard-view')">← 返回列表</button>
+        <button class="btn btn-outline btn-small" onclick="handleLogout()" style="border: none; color: var(--text-muted);">登出</button>
       </div>
-      <h2 id="project-title-display">載入中...</h2>
+      <div style="margin-top: 12px;">
+        <h2 id="project-title-display" style="font-size: 24px; font-weight: 800;">載入中...</h2>
+        <div class="online-users-bar">
+          <div class="online-dot"></div>
+          <span id="online-users-text">讀取中...</span>
+        </div>
+      </div>
     </div>
     
     <div class="tabs-wrapper">
       <div class="tabs">
         <div class="tab active" onclick="switchTab('itinerary')">📅 行程</div>
-        <div class="tab" onclick="switchTab('map')">🗺️ 地圖</div> <div class="tab" onclick="switchTab('budget')">💰 分帳</div>
+        <div class="tab" onclick="switchTab('map')">🗺️ 地圖尋點</div>
+        <div class="tab" onclick="switchTab('budget')">💰 分帳</div>
         <div class="tab" onclick="switchTab('contacts')">📞 電話</div>
-        <div class="tab" onclick="switchTab('poll')">🗳️ 投票</div>
+        <div class="tab" onclick="switchTab('poll')">🗳️ 投票 <span id="poll-dot" class="notification-dot"></span></div>
       </div>
     </div>
 
     <div id="tab-itinerary" class="module-content active">
       <div class="day-selector" id="day-buttons"></div>
-      <div class="card-panel" style="padding: 15px;">
+      
+      <div class="card-panel" style="padding: 20px; border: 2px solid var(--border);">
+        <h4 style="margin-bottom: 12px; color: var(--text-main);">➕ 手動新增行程</h4>
         <div class="flex-row">
           <input type="time" id="plan-time" class="form-control" style="flex: 1; margin: 0;" value="09:00">
           <input type="text" id="plan-place" class="form-control" style="flex: 2; margin: 0;" placeholder="景點名稱">
         </div>
-        <button class="btn btn-action" style="width: 100%; margin-top: 10px;" onclick="addPlan()">+ 手動加入</button>
+        
+        <label class="file-upload-label" style="margin-top: 12px;">
+          <span>📷 附加照片 (選填)</span>
+          <input type="file" id="plan-image-input" accept="image/*" style="display: none;" onchange="previewImage(event)">
+        </label>
+        <img id="plan-img-preview" class="plan-img-preview">
+        
+        <button class="btn btn-action" style="width: 100%; margin-top: 12px;" onclick="addPlan()">儲存行程</button>
       </div>
+      
       <div id="plan-list"></div>
     </div>
 
     <div id="tab-map" class="module-content">
-      <div class="card-panel" style="padding: 15px;">
-        <h4 style="margin-bottom: 10px;">🔍 搜尋並加入行程</h4>
+      <div class="card-panel" style="padding: 20px;">
+        <h4 style="margin-bottom: 12px;">🔍 搜尋並加入行程</h4>
         <div class="flex-row">
-          <input type="text" id="map-search-input" class="form-control" style="margin: 0;" placeholder="搜尋景點或地址...">
-          <button class="btn" onclick="searchMap()">搜尋</button>
+          <input type="text" id="map-search-input" class="form-control" style="margin: 0;" placeholder="輸入地名、車站、餐廳...">
+          <button class="btn" onclick="searchMap()" style="padding: 14px 20px;">搜尋</button>
         </div>
         <div id="map-container"></div>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px; text-align: center;">地圖會顯示 Day <span id="map-day-indicator">1</span> 的路線軌跡</p>
+        <div style="display:flex; justify-content:space-between; margin-top:12px; align-items:center;">
+            <p style="font-size: 13px; color: var(--text-muted); font-weight:600;">地圖顯示 Day <span id="map-day-indicator">1</span> 的路線軌跡</p>
+            <button class="btn-small btn-outline" style="background:#fff;" onclick="initMap(); renderMapRoute();">重新定位</button>
+        </div>
       </div>
     </div>
 
     <div id="tab-contacts" class="module-content">
       <div class="card-panel">
-        <input type="text" id="contact-name" class="form-control" placeholder="名稱 (如: 租車公司)">
+        <input type="text" id="contact-name" class="form-control" placeholder="名稱 (如: 租車公司、保險)">
         <input type="tel" id="contact-phone" class="form-control" placeholder="電話號碼">
-        <button class="btn btn-action" style="width: 100%;" onclick="addContact()">+ 新增聯絡人</button>
+        <button class="btn btn-action" style="width: 100%;" onclick="addContact()">儲存聯絡人</button>
       </div>
       <div id="contacts-list"></div>
     </div>
 
     <div id="tab-budget" class="module-content">
-      <div class="card-panel" style="background: linear-gradient(135deg, var(--primary), #FF7E82); color: white; border: none;">
-        <div style="font-size: 14px; opacity: 0.9;">旅程總花費</div>
-        <div style="font-size: 36px; font-weight: 800; margin-top: 4px;">$ <span id="total-expense">0</span></div>
+      <div class="card-panel" style="background: linear-gradient(135deg, var(--primary), #FF7E82); color: white; border: none; box-shadow: 0 10px 20px rgba(255,90,95,0.3);">
+        <div style="font-size: 15px; opacity: 0.9; font-weight: 600;">旅程總花費</div>
+        <div style="font-size: 40px; font-weight: 800; margin-top: 4px; letter-spacing: -1px;">$ <span id="total-expense">0</span></div>
       </div>
       <div class="card-panel">
         <input type="text" id="exp-item" class="form-control" placeholder="花費項目 (如: 晚餐)">
@@ -185,26 +222,13 @@
 
   <div id="add-modal" class="modal-overlay">
     <div class="modal">
-      <h2 style="margin-bottom: 20px;">✈️ 新增旅程</h2>
-      <input type="text" id="trip-location" class="form-control" placeholder="目的地 (如: 日本熊本)">
+      <h2 style="margin-bottom: 24px; font-weight:800;">✈️ 建立新旅程</h2>
+      <input type="text" id="trip-location" class="form-control" placeholder="目的地 (如: 日本福岡)">
       <input type="text" id="trip-date-range" class="form-control" placeholder="點擊選擇日期區間" readonly>
-      <div style="display: flex; gap: 10px; margin-top: 24px;">
-        <button class="btn btn-outline" style="flex:1;" onclick="closeModal()">取消</button>
-        <button class="btn" style="flex:1;" onclick="createProject()">建立</button>
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button class="btn btn-outline" style="flex:1; padding: 14px;" onclick="closeModal()">取消</button>
+        <button class="btn" style="flex:1; padding: 14px;" onclick="createProject()">立即建立</button>
       </div>
-    </div>
-  </div>
-
-  <div id="install-modal" class="modal-overlay">
-    <div class="modal">
-      <h2 style="text-align: center; margin-bottom: 15px;">📱 加到主畫面</h2>
-      <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.8;">
-        <strong>🍎 iPhone 用戶：</strong><br>
-        1. 點擊螢幕下方的「分享」圖示 📤<br>
-        2. 往下拖曳，選擇 <strong>「加入主畫面」</strong><br>
-        3. 點擊右上角「新增」即可！
-      </div>
-      <button class="btn" style="width: 100%; margin-top: 20px;" onclick="closeInstallModal()">我了解了</button>
     </div>
   </div>
 
@@ -212,14 +236,15 @@
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzXyfuSTyLZXBTQqcMjHglTu00nH2hua6uYKXNQWUbZB1BneeYGu52T56KFUCgJvR0/exec"; 
     
     let currentUser = null; 
-    let currentWorkspace = 'FamilyTrip'; 
+    let currentWorkspace = 'FamilyTripPro'; // 改名避免與舊資料衝突
     let currentProjectId = null; 
     let activeDayIndex = 0;
     
-    let syncInterval = null; // ⚡ 自動同步計時器
-    let map = null; // 🗺️ 地圖實體
-    let mapMarkers = []; // 🗺️ 地圖標記集合
-    let routeLine = null; // 🗺️ 行程折線
+    let syncInterval = null; 
+    let map = null; 
+    let mapMarkers = []; 
+    let routeLine = null; 
+    let currentCompressedImage = null; // 暫存照片
 
     const authRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     const allMembers = Object.keys(authRules);
@@ -228,79 +253,76 @@
 
     function showSync(msg, duration = 2000) { 
       const syncEl = document.getElementById('sync-status');
-      syncEl.textContent = msg;
-      syncEl.style.display = 'block'; 
+      syncEl.textContent = msg; syncEl.style.display = 'block'; 
       setTimeout(() => syncEl.style.display = 'none', duration); 
     }
 
-    // 📡 核心：從雲端抓資料 (支援背景靜默同步)
+    // 📡 同步與在線狀態
     function syncFromCloud(showMsg = false, isBackground = false) {
-      if(showMsg && !isBackground) showSync("☁️ 正在獲取最新資料...");
-      
+      if(showMsg && !isBackground) showSync("☁️ 獲取最新資料...");
       fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}&t=${Date.now()}`)
         .then(res => res.json())
         .then(newData => {
             if(Array.isArray(newData)) {
               const oldDataString = localStorage.getItem(`app_${currentWorkspace}`);
               const newDataString = JSON.stringify(newData);
-              
-              // ⚡ 只有當資料真的改變時，才重新渲染畫面，避免干擾使用者輸入
               if (oldDataString !== newDataString) {
                 localStorage.setItem(`app_${currentWorkspace}`, newDataString);
-                
                 if(currentProjectId) { 
                   const p = getCurProject();
-                  if(!p || !p.id) { switchView('dashboard-view'); } 
+                  if(!p || !p.id) switchView('dashboard-view'); 
                   else { 
-                    renderItinerary(); renderBudget(); renderContacts(); renderPolls(); 
+                    renderItinerary(); renderBudget(); renderContacts(); renderPolls(); updateOnlineUsers();
                     if (document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
-                    if(isBackground) showSync("🔄 收到最新資料", 1500); 
                   }
                 }
                 renderDashboard();
               }
               if(showMsg && !isBackground) showSync("✅ 同步完成", 1000);
             }
-        })
-        .catch(e => {
-            if(!isBackground) console.error("Sync Error", e);
-        });
+        }).catch(e => { if(!isBackground) console.error(e); });
     }
 
-    // ⚡ 啟動背景自動同步 (每 15 秒一次)
     function startAutoSync() {
       if(syncInterval) clearInterval(syncInterval);
-      syncInterval = setInterval(() => {
-        // 只有在瀏覽器開著的時候才去抓
-        if(document.visibilityState === 'visible') {
-           syncFromCloud(false, true);
-        }
-      }, 15000);
+      syncInterval = setInterval(() => { if(document.visibilityState === 'visible') syncFromCloud(false, true); }, 15000);
     }
 
     function saveDB(data) { 
+      // 寫入當前使用者的活躍標記
+      const pIdx = data.findIndex(p => p.id === currentProjectId);
+      if(pIdx > -1) {
+          if(!data[pIdx].activeUsers) data[pIdx].activeUsers = {};
+          data[pIdx].activeUsers[currentUser] = Date.now();
+      }
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
       
       const fd = new URLSearchParams(); fd.append('action', 'save'); fd.append('workspace', currentWorkspace); fd.append('data', JSON.stringify(data));
-      
-      fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-        .catch(() => console.log("Offline save"));
+      fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => console.log("Offline save"));
     }
 
     function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
     function getCurProject() { return getDB().find(p => p.id === currentProjectId) || {}; }
-    function updateCurProject(updatedP) { const db = getDB(); db[db.findIndex(p => p.id === currentProjectId)] = updatedP; saveDB(db); }
+    function updateCurProject(updatedP) { const db = getDB(); db[db.findIndex(p => p.id === currentProjectId)] = updatedP; saveDB(db); updateOnlineUsers(); }
 
     function handleLogin() {
       const u = document.getElementById('user-select').value; const p = document.getElementById('password-input').value;
       if (authRules[u] === p) {
         currentUser = u; 
         document.getElementById('display-name').textContent = currentUser;
-        renderDashboard(); 
-        switchView('dashboard-view');
-        syncFromCloud(true);
-        startAutoSync(); // 登入後啟動自動同步
+        renderDashboard(); switchView('dashboard-view');
+        syncFromCloud(true); startAutoSync();
       } else alert("密碼錯誤，請重新輸入！");
+    }
+    
+    // 🚪 登出
+    function handleLogout() {
+        if(confirm("確定要登出嗎？")) {
+            currentUser = null; currentProjectId = null;
+            if(syncInterval) clearInterval(syncInterval);
+            switchView('login-view');
+            document.getElementById('password-input').value = '';
+        }
     }
     
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
@@ -311,37 +333,29 @@
       document.querySelectorAll('.module-content').forEach(c => c.classList.remove('active')); 
       document.getElementById(`tab-${tabId}`).classList.add('active'); 
 
-      // 🗺️ 當切換到地圖時，必須初始化或重新計算大小
-      if (tabId === 'map') {
-        setTimeout(() => {
-          initMap();
-          renderMapRoute(); // 畫出當天行程軌跡
-        }, 100);
-      }
+      if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
     }
     
     function openModal() { document.getElementById('add-modal').classList.add('active'); }
     function closeModal() { document.getElementById('add-modal').classList.remove('active'); document.getElementById('trip-location').value = ''; document.getElementById('trip-date-range').value = ''; }
-    function openInstallModal() { document.getElementById('install-modal').classList.add('active'); }
-    function closeInstallModal() { document.getElementById('install-modal').classList.remove('active'); }
 
     function createProject() {
       const loc = document.getElementById('trip-location').value; const rawDate = document.getElementById('trip-date-range').value;
       const dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
       if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期區間");
-      const db = getDB(); db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], plans: [], expenses: [], polls: [], contacts: [] });
+      const db = getDB(); db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], plans: [], expenses: [], polls: [], contacts: [], activeUsers: {} });
       saveDB(db); closeModal(); renderDashboard();
     }
 
     function renderDashboard() {
       const grid = document.getElementById('projects-grid'); const db = getDB();
       let html = `<div class="project-card" style="text-align:center; border: 2px dashed var(--border); box-shadow:none; display:flex; flex-direction:column; justify-content:center; background: transparent;" onclick="openModal()">
-        <div style="font-size:32px; color:var(--primary); margin-bottom:4px;">+</div><div style="font-weight:600; color:var(--text-muted);">建立新旅程</div></div>`;
+        <div style="font-size:36px; color:var(--primary); margin-bottom:4px; line-height:1;">+</div><div style="font-weight:700; color:var(--text-muted);">建立新旅程</div></div>`;
       db.slice().reverse().forEach(p => {
         html += `<div class="project-card" onclick="openProject(${p.id})">
-            <button class="del-btn-card" onclick="delProject(${p.id}, event)">×</button>
-            <h3 style="margin-bottom: 8px; padding-right: 35px;">📍 ${p.location}</h3>
-            <p style="font-size: 14px; color: var(--text-muted); font-weight: 500;">📅 ${p.start} ~ ${p.end}</p>
+            <button class="del-btn-card" onclick="delProject(${p.id}, event)">✕</button>
+            <h3 style="margin-bottom: 8px; padding-right: 35px; font-size: 20px;">📍 ${p.location}</h3>
+            <p style="font-size: 14px; color: var(--text-muted); font-weight: 600;">📅 ${p.start} ~ ${p.end}</p>
           </div>`;
       });
       grid.innerHTML = html;
@@ -356,9 +370,38 @@
       currentProjectId = id; activeDayIndex = 0; const p = getCurProject(); if(!p || !p.location) return;
       document.getElementById('project-title-display').textContent = `📍 ${p.location}`;
       document.getElementById('exp-payer').innerHTML = allMembers.map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
-      renderItinerary(); renderBudget(); renderContacts(); renderPolls(); 
-      switchView('detail-view');
-      switchTab('itinerary'); // 預設切換回行程
+      renderItinerary(); renderBudget(); renderContacts(); renderPolls(); updateOnlineUsers();
+      
+      // 寫入自己的活躍紀錄
+      p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
+      
+      switchView('detail-view'); switchTab('itinerary'); 
+    }
+
+    // 👥 更新在線名單
+    function updateOnlineUsers() {
+        const p = getCurProject();
+        if(!p || !p.activeUsers) return;
+        const now = Date.now();
+        // 5分鐘內有操作視為在線
+        const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000);
+        const textEl = document.getElementById('online-users-text');
+        if(activeNames.length > 0) {
+            textEl.textContent = `${activeNames.join('、')} 正在協作`;
+        } else {
+            textEl.textContent = `目前僅你一人在線`;
+        }
+    }
+
+    // ➕ 新增天數
+    function addOneDay() {
+        if(!confirm("確定要將旅程延長一天嗎？")) return;
+        const p = getCurProject();
+        let endDate = new Date(p.end);
+        endDate.setDate(endDate.getDate() + 1);
+        p.end = endDate.toISOString().split('T')[0];
+        updateCurProject(p);
+        renderItinerary();
     }
 
     // --- 📅 行程核心邏輯 ---
@@ -373,56 +416,89 @@
           Day ${i+1} (${d.getMonth()+1}/${d.getDate()}) ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}
         </div>`;
       }
+      // 加入 + 號按鈕
+      daysHtml += `<div class="day-btn day-add-btn" onclick="addOneDay()">+ 延一天</div>`;
       document.getElementById('day-buttons').innerHTML = daysHtml;
       
       const list = document.getElementById('plan-list');
       const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
-      if(dayPlans.length === 0) list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0;">這天還沒有排行程喔</div>`;
+      if(dayPlans.length === 0) list.innerHTML = `<div style="text-align:center; color:#ccc; padding:40px 0; font-weight:600;">這天還沒有排行程喔 🏝️</div>`;
       else {
           list.innerHTML = dayPlans.map(plan => `
-            <div class="card-panel" style="padding:16px; margin-bottom:12px;">
+            <div class="card-panel" style="padding:18px; margin-bottom:14px;">
               <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                  <span class="time-badge">${plan.time}</span> <strong style="font-size:16px; margin-left: 6px;">${plan.place}</strong>
-                  ${plan.lat ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${plan.lat},${plan.lng}" target="_blank" style="display:block; margin-top:8px; font-size:13px; color:var(--secondary); text-decoration:none; background:#e8f4fd; padding:4px 8px; border-radius:6px; display:inline-block;">🧭 導航</a>` : ''}
+                <div style="flex:1;">
+                  <span class="time-badge">${plan.time}</span> <strong style="font-size:18px; margin-left: 8px;">${plan.place}</strong>
+                  ${plan.lat ? `<a href="https://www.google.com/maps/dir/?api=1&destination=$${plan.lat},${plan.lng}" target="_blank" style="display:block; margin-top:10px; font-size:13px; color:white; text-decoration:none; background:var(--secondary); padding:6px 12px; border-radius:8px; display:inline-flex; align-items:center; font-weight:bold;">🧭 導航去</a>` : ''}
                 </div>
                 <span class="del-text" onclick="delPlan(${plan.id})">刪除</span>
               </div>
+              ${plan.image ? `<img src="${plan.image}" class="plan-img-display">` : ''}
+              <div class="creator-badge">由 ${plan.creator || '提議者'} 新增</div>
             </div>
           `).join('');
       }
     }
 
-    // 支援經緯度寫入
-    function addPlan(placeName = null, lat = null, lng = null) {
-      const time = document.getElementById('plan-time').value; 
+    // 📸 圖片壓縮處理
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 600; // 壓縮寬度
+                let width = img.width; let height = img.height;
+                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                currentCompressedImage = canvas.toDataURL('image/jpeg', 0.6); // 轉為輕量 base64
+                const preview = document.getElementById('plan-img-preview');
+                preview.src = currentCompressedImage;
+                preview.style.display = 'block';
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function addPlan(placeName = null, lat = null, lng = null, overrideDay = null, overrideTime = null) {
+      const time = overrideTime || document.getElementById('plan-time').value; 
       const place = placeName || document.getElementById('plan-place').value;
+      const targetDay = overrideDay !== null ? overrideDay : activeDayIndex;
+
       if(!place || !time) return alert("請輸入時間與景點名稱"); 
       
       const p = getCurProject(); if(!p.plans) p.plans = [];
-      p.plans.push({ id: Date.now(), dayIdx: activeDayIndex, time, place, lat, lng, creator: currentUser });
-      updateCurProject(p); document.getElementById('plan-place').value = ''; 
+      p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, lat, lng, image: currentCompressedImage, creator: currentUser });
+      updateCurProject(p); 
       
+      // 清空手動表單
+      document.getElementById('plan-place').value = ''; 
+      currentCompressedImage = null;
+      document.getElementById('plan-img-preview').style.display = 'none';
+      document.getElementById('plan-image-input').value = '';
+
       renderItinerary();
       showSync("✅ 已加入行程", 1500);
       
-      // 如果在地圖頁，重新畫路線並切換回行程
       if(document.getElementById('tab-map').classList.contains('active')) {
-         document.querySelectorAll('.tab')[0].click(); // 切回行程頁
+         activeDayIndex = targetDay; // 切換到加入的那天
+         document.querySelectorAll('.tab')[0].click(); 
       }
     }
     function delPlan(id) { if(confirm("確定刪除此行程？")) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); } }
 
-
-    // --- 🗺️ 地圖核心邏輯 (Leaflet + Nominatim) ---
+    // --- 🗺️ 地圖核心邏輯 (支援選天數與時間) ---
     function initMap() {
       if (!map) {
-        map = L.map('map-container').setView([23.6978, 120.9605], 7); // 預設台灣中心
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        map = L.map('map-container').setView([23.6978, 120.9605], 7); 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSMap' }).addTo(map);
       }
-      map.invalidateSize(); // 修正因 display:none 導致的破圖
+      map.invalidateSize(); 
     }
 
     function searchMap() {
@@ -434,67 +510,103 @@
         .then(res => res.json())
         .then(data => {
           if (data && data.length > 0) {
-            const loc = data[0];
-            const lat = parseFloat(loc.lat); const lng = parseFloat(loc.lon);
+            const loc = data[0]; const lat = parseFloat(loc.lat); const lng = parseFloat(loc.lon);
             map.setView([lat, lng], 16);
             
+            // 🗺️ 彈窗內建「選擇 Day」與「時間」
+            const p = getCurProject();
+            const start = new Date(p.start); const end = new Date(p.end);
+            const totalDays = Math.floor((end - start) / 86400000) + 1;
+            let optionsHtml = '';
+            for(let i=0; i<totalDays; i++) { optionsHtml += `<option value="${i}" ${i===activeDayIndex?'selected':''}>Day ${i+1}</option>`; }
+
+            const placeName = loc.display_name.split(',')[0].replace(/'/g, "\\'");
             const popupContent = `
-              <div style="text-align:center;">
-                <strong style="font-size:14px;">${loc.display_name.split(',')[0]}</strong>
-                <button class="map-popup-btn" onclick="addPlan('${loc.display_name.split(',')[0]}', ${lat}, ${lng})">加入 Day ${activeDayIndex + 1} 行程</button>
+              <div style="text-align:center; min-width: 180px;">
+                <strong style="font-size:15px; display:block; margin-bottom:8px;">${loc.display_name.split(',')[0]}</strong>
+                <select id="popup-day" style="width:100%; padding:6px; margin-bottom:6px; border-radius:6px; border:1px solid #ccc;">${optionsHtml}</select>
+                <input type="time" id="popup-time" value="12:00" style="width:100%; padding:6px; margin-bottom:10px; border-radius:6px; border:1px solid #ccc;">
+                <button class="btn btn-action" style="width:100%; padding:8px; border-radius:8px;" onclick="addPlan('${placeName}', ${lat}, ${lng}, parseInt(document.getElementById('popup-day').value), document.getElementById('popup-time').value)">加到行程</button>
               </div>
             `;
             L.marker([lat, lng]).addTo(map).bindPopup(popupContent).openPopup();
             showSync("📍 找到地點了", 1000);
-          } else {
-            alert("找不到該地點，請換個關鍵字試試");
-          }
-        })
-        .catch(() => alert("搜尋失敗，請檢查網路"));
+          } else alert("找不到該地點，請換個關鍵字試試");
+        }).catch(() => alert("搜尋失敗，請檢查網路"));
     }
 
-    // 畫出當天的行程路線
     function renderMapRoute() {
       if(!map) return;
-      
-      // 清除舊標記與路線
       mapMarkers.forEach(m => map.removeLayer(m)); mapMarkers = [];
       if(routeLine) map.removeLayer(routeLine);
       
       const p = getCurProject();
       const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex && plan.lat && plan.lng).sort((a,b)=>a.time.localeCompare(b.time));
-      
       if(dayPlans.length === 0) return;
 
       const latlngs = [];
       dayPlans.forEach((plan, index) => {
-        const pt = [plan.lat, plan.lng];
-        latlngs.push(pt);
+        const pt = [plan.lat, plan.lng]; latlngs.push(pt);
         const marker = L.marker(pt).addTo(map).bindPopup(`<b>${index+1}. ${plan.place}</b><br>時間: ${plan.time}`);
         mapMarkers.push(marker);
       });
-
-      // 畫折線
-      if(latlngs.length > 1) {
-        routeLine = L.polyline(latlngs, {color: 'var(--primary)', weight: 4, opacity: 0.7, dashArray: '10, 10'}).addTo(map);
-      }
-      
-      // 縮放地圖包覆所有點
-      map.fitBounds(L.latLngBounds(latlngs), { padding: [30, 30] });
+      if(latlngs.length > 1) routeLine = L.polyline(latlngs, {color: 'var(--primary)', weight: 4, opacity: 0.8, dashArray: '8, 8'}).addTo(map);
+      map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // --- 其他功能區段 (電話、記帳、投票) 維持原優化版本 ---
-    function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel flex-row" style="justify-content:space-between; padding:16px;"><div><strong style="font-size:16px;">${c.name}</strong><br><a href="tel:${c.phone}" style="color:var(--secondary); text-decoration:none; font-weight:bold; font-size:15px; display:inline-block; margin-top:4px;">📞 ${c.phone}</a></div><span class="del-text" onclick="delContact(${c.id})">移除</span></div>`).join(''); }
+    // --- 📞 聯絡人核心邏輯 (複製與撥打) ---
+    function copyPhone(phone) {
+        navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500));
+    }
+
+    function renderContacts() { 
+        const p = getCurProject(); const list = document.getElementById('contacts-list'); 
+        if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0; font-weight:600;">無聯絡人紀錄</div>`; return; } 
+        list.innerHTML = p.contacts.map(c => `
+        <div class="card-panel" style="padding:16px;">
+            <div style="display:flex; justify-content:space-between;">
+                <strong style="font-size:18px;">${c.name}</strong>
+                <span class="del-text" style="padding:4px 8px; font-size:11px;" onclick="delContact(${c.id})">✕ 移除</span>
+            </div>
+            <div style="font-size:16px; color:var(--text-muted); margin: 8px 0;">${c.phone}</div>
+            <div style="display:flex; gap:10px; margin-top:12px;">
+                <button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button>
+                <a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a>
+            </div>
+        </div>`).join(''); 
+    }
     function addContact() { const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; if(!name || !phone) return; const p = getCurProject(); if(!p.contacts) p.contacts = []; p.contacts.push({ id: Date.now(), name, phone, creator: currentUser }); updateCurProject(p); document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; renderContacts(); }
     function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
 
-    function renderBudget() { const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return;} list.innerHTML = p.expenses.map(e => { total += Number(e.cost); return `<div class="card-panel flex-row" style="justify-content:space-between; padding:16px; margin-bottom:12px;"><div><div style="font-weight:600; font-size: 16px;">${e.item}</div><div class="creator-badge">${e.payer} 先代墊</div></div><div class="flex-row"><span style="font-weight:800; color:var(--text-main); font-size:18px;">$${e.cost}</span> <span class="del-text" onclick="delExpense(${e.id})" style="padding: 4px 8px;">✕</span></div></div>`; }).join(''); document.getElementById('total-expense').textContent = total.toLocaleString(); let paid = {}; allMembers.forEach(m => paid[m] = 0); p.expenses.forEach(e => { if(paid[e.payer] !== undefined) paid[e.payer] += Number(e.cost); }); const perPerson = total / allMembers.length; let balances = allMembers.map(m => ({ name: m, balance: paid[m] - perPerson })); let debtors = balances.filter(b => b.balance < -0.01).sort((a,b) => a.balance - b.balance); let creditors = balances.filter(b => b.balance > 0.01).sort((a,b) => b.balance - a.balance); let transfers = []; let i=0, j=0; while(i < debtors.length && j < creditors.length) { let amt = Math.min(-debtors[i].balance, creditors[j].balance); transfers.push({ from: debtors[i].name, to: creditors[j].name, amt: amt }); debtors[i].balance += amt; creditors[j].balance -= amt; if(Math.abs(debtors[i].balance) < 0.01) i++; if(Math.abs(creditors[j].balance) < 0.01) j++; } if(transfers.length === 0) adviceBox.innerHTML = `<div style="text-align:center; font-weight:bold; color:var(--secondary); font-size:16px;">🎉 帳目已結清！</div>`; else { let html = `<h4 style="margin-bottom:16px; color:var(--secondary);">💡 結算建議 (每人均攤 $${Math.round(perPerson)})</h4>`; transfers.forEach(t => html += `<div class="flex-row" style="justify-content:space-between; background:#f0fdf4; padding:12px 16px; border-radius:10px; margin-bottom:8px;"><span><strong style="color:var(--danger);">${t.from}</strong> 給 <strong>${t.to}</strong></span><span style="font-weight:bold; color:var(--secondary); font-size:16px;">$${Math.round(t.amt)}</span></div>`); adviceBox.innerHTML = html; } adviceBox.style.display = 'block'; }
+    // --- 💰 記帳核心邏輯 ---
+    function renderBudget() { const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0; font-weight:600;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return;} list.innerHTML = p.expenses.map(e => { total += Number(e.cost); return `<div class="card-panel flex-row" style="justify-content:space-between; padding:18px; margin-bottom:12px;"><div><div style="font-weight:700; font-size: 16px;">${e.item}</div><div class="creator-badge">${e.payer} 先代墊</div></div><div class="flex-row"><span style="font-weight:800; color:var(--text-main); font-size:20px;">$${e.cost}</span> <span class="del-text" onclick="delExpense(${e.id})" style="padding: 6px 10px;">✕</span></div></div>`; }).join(''); document.getElementById('total-expense').textContent = total.toLocaleString(); let paid = {}; allMembers.forEach(m => paid[m] = 0); p.expenses.forEach(e => { if(paid[e.payer] !== undefined) paid[e.payer] += Number(e.cost); }); const perPerson = total / allMembers.length; let balances = allMembers.map(m => ({ name: m, balance: paid[m] - perPerson })); let debtors = balances.filter(b => b.balance < -0.01).sort((a,b) => a.balance - b.balance); let creditors = balances.filter(b => b.balance > 0.01).sort((a,b) => b.balance - a.balance); let transfers = []; let i=0, j=0; while(i < debtors.length && j < creditors.length) { let amt = Math.min(-debtors[i].balance, creditors[j].balance); transfers.push({ from: debtors[i].name, to: creditors[j].name, amt: amt }); debtors[i].balance += amt; creditors[j].balance -= amt; if(Math.abs(debtors[i].balance) < 0.01) i++; if(Math.abs(creditors[j].balance) < 0.01) j++; } if(transfers.length === 0) adviceBox.innerHTML = `<div style="text-align:center; font-weight:bold; color:var(--secondary); font-size:16px;">🎉 帳目已結清！</div>`; else { let html = `<h4 style="margin-bottom:16px; color:var(--secondary);">💡 結算建議 (每人均攤 $${Math.round(perPerson)})</h4>`; transfers.forEach(t => html += `<div class="flex-row" style="justify-content:space-between; background:#f0fdf4; padding:14px 16px; border-radius:12px; margin-bottom:8px;"><span><strong style="color:var(--danger);">${t.from}</strong> 給 <strong style="color:var(--text-main);">${t.to}</strong></span><span style="font-weight:bold; color:var(--secondary); font-size:18px;">$${Math.round(t.amt)}</span></div>`); adviceBox.innerHTML = html; } adviceBox.style.display = 'block'; }
     function addExpense() { const item = document.getElementById('exp-item').value; const cost = document.getElementById('exp-cost').value; const payer = document.getElementById('exp-payer').value; if(!item || !cost) return; const p = getCurProject(); if(!p.expenses) p.expenses = []; p.expenses.push({ id: Date.now(), item, cost, payer }); updateCurProject(p); document.getElementById('exp-item').value = ''; document.getElementById('exp-cost').value = ''; renderBudget(); }
     function delExpense(id) { if(confirm("確定刪除這筆花費？")) { const p = getCurProject(); p.expenses = p.expenses.filter(x => x.id !== id); updateCurProject(p); renderBudget(); } }
 
-    function renderPolls() { const p = getCurProject(); const list = document.getElementById('polls-list'); if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0;">尚無投票</div>`; return; } list.innerHTML = p.polls.map(poll => `<div class="card-panel"><div class="flex-row" style="justify-content:space-between; margin-bottom:12px;"><h4 style="margin:0; font-size:16px;">Q: ${poll.title}</h4><div class="creator-badge" style="margin:0;">${poll.creator || '提議者'} 發起</div></div>${poll.options.map((opt, i) => `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#f8f9fa; margin-top:8px; border-radius:10px; cursor:pointer; border: 1px solid ${opt.voters.includes(currentUser) ? 'var(--primary)' : 'transparent'};" onclick="vote(${poll.id}, ${i})"><span style="font-weight:600;">${opt.name}</span><span style="background:var(--primary); color:white; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 4px 0 0 12px;">已投: ${opt.voters.join(', ')}</div>` : ''}`).join('')}</div>`).join(''); }
+    // --- 🗳️ 投票核心邏輯 (與紅點提示) ---
+    function checkPollNotification() {
+        const p = getCurProject();
+        const dot = document.getElementById('poll-dot');
+        if(!p || !p.polls || p.polls.length === 0) { dot.style.display = 'none'; return; }
+        // 檢查是否有「尚未投票」的問題
+        const hasUnvoted = p.polls.some(poll => !poll.options.some(opt => opt.voters.includes(currentUser)));
+        dot.style.display = hasUnvoted ? 'block' : 'none';
+    }
+
+    function renderPolls() { 
+        const p = getCurProject(); const list = document.getElementById('polls-list'); 
+        checkPollNotification(); // 每次渲染時檢查紅點
+        
+        if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0; font-weight:600;">尚無投票</div>`; return; } 
+        list.innerHTML = p.polls.map(poll => `<div class="card-panel"><div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--primary);">Q: ${poll.title}</h4><span class="del-text" style="font-size:11px; padding:4px 8px;" onclick="delPoll(${poll.id})">✕</span></div>${poll.options.map((opt, i) => {
+            const isVoted = opt.voters.includes(currentUser);
+            return `<div style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:${isVoted ? '#fff0f0' : '#f8f9fa'}; margin-top:8px; border-radius:12px; cursor:pointer; border: 2px solid ${isVoted ? 'var(--primary)' : 'transparent'}; transition:0.2s;" onclick="vote(${poll.id}, ${i})"><span style="font-weight:700; color:${isVoted ? 'var(--primary)' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? 'var(--primary)' : '#ccc'}; color:white; padding:4px 12px; border-radius:12px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 12px; font-weight:600;">已投: ${opt.voters.join(', ')}</div>` : ''}`;
+        }).join('')}</div>`).join(''); 
+    }
     function addPoll() { const title = document.getElementById('poll-title').value; const optsRaw = document.getElementById('poll-options').value; if(!title || !optsRaw) return; const options = optsRaw.split(',').map(o => ({ name: o.trim(), voters: [] })); const p = getCurProject(); if(!p.polls) p.polls=[]; p.polls.push({ id: Date.now(), title, creator: currentUser, options }); updateCurProject(p); document.getElementById('poll-title').value = ''; document.getElementById('poll-options').value = ''; renderPolls(); }
+    function delPoll(id) { if(confirm("確定刪除此投票？")) { const p = getCurProject(); p.polls = p.polls.filter(x => x.id !== id); updateCurProject(p); renderPolls(); } }
     function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
+
   </script>
 </body>
 </html>
