@@ -18,7 +18,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    /* 乾淨高質感配色 */
+    /* 乾淨高質感配色 (維持原美感) */
     :root {
       --primary: #FF5A5F; 
       --primary-hover: #E35156; 
@@ -40,15 +40,16 @@
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* 按鈕與表單 */
+    /* 按鈕與表單 (電腦版 Hover 點擊回饋) */
     .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
-    .btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
-    .btn:active:not(:disabled) { transform: scale(0.96); }
+    .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
+    .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
     .btn:disabled { opacity: 0.7; cursor: not-allowed; }
     .btn-small { padding: 10px 16px; font-size: 14px; border-radius: 12px; box-shadow: none;}
     .btn-action { background: var(--secondary); box-shadow: 0 4px 10px rgba(0, 166, 153, 0.2); }
+    .btn-action:hover { box-shadow: 0 6px 14px rgba(0, 166, 153, 0.3); }
     .btn-outline { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-main); box-shadow: none; }
-    .btn-outline:hover { background: #F8F9FA; }
+    .btn-outline:hover { background: #F8F9FA; border-color: #CBD5E1;}
     .form-control { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; transition: 0.2s; font-weight: 500;}
     .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); }
     
@@ -110,30 +111,35 @@
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
+    /* 交通方式選擇區塊 (智能重構版) */
     .transit-block { margin-left: 66px; margin-top: -4px; margin-bottom: 12px; padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; z-index: 5; position: relative; transition: 0.2s;}
     .transit-block:hover { background: #E2E8F0; }
-    .gmaps-link-btn { background: white; color: var(--secondary); padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight:bold; text-decoration: none; border: 1px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center; cursor: pointer;}
+    .transit-block:active { transform: scale(0.95); }
+    .gmaps-link-btn { background: white; color: var(--secondary); padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
+    /* 標籤與文字 */
     .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; margin-top: 12px; display: inline-block; font-weight: 600; }
     .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
     .action-text:hover { filter: brightness(0.95); }
     .edit-text { color: var(--secondary); margin-right: 6px; }
     .del-text { color: var(--danger); background: #FFF0F0;}
     
-    /* 地圖與自訂地標 */
+    /* 地圖與自訂地標 (懸浮定位) */
     .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; }
     .map-search-bar .form-control { margin-bottom: 0; }
     .map-wrapper { position: relative; }
-    #map-container { height: 480px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
+    #map-container { height: 500px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
     .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s;}
     .map-fab-locate:hover { transform: scale(1.05); }
+    .map-fab-locate:active { transform: scale(0.95); }
     
     .custom-map-pin { width: 30px; height: 30px; background: var(--primary); border: 3px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: -2px 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
     .custom-map-pin-inner { transform: rotate(45deg); color: white; font-weight: bold; font-size: 14px; }
     .pin-blue { background: var(--secondary); }
     .day-tooltip { background: var(--surface); color: var(--text-main); border: none; border-radius: 12px; font-weight: bold; padding: 6px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 13px; }
 
+    /* 需求4: 復原漂亮的上傳照片區塊 */
     .plan-img-preview { width: 100%; max-height: 150px; object-fit: cover; border-radius: 12px; margin-top: 12px; display: none; border: 1px solid var(--border); }
     .plan-img-display { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-top: 12px; border: 1px solid #eee; }
     .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
@@ -161,6 +167,7 @@
     .tool-btn-wrap { display: flex; gap: 10px; margin-top: 16px; }
     .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; display: inline-block; cursor: pointer; transition: 0.2s; box-shadow: none;}
     .tool-btn:hover { background: #E2E8F0; }
+    .tool-btn:active { transform: scale(0.96); }
     .tool-btn.call { background: #E8F4FD; color: #0284C7; }
 
     #sync-status { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(26, 26, 26, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; display: none; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.15); backdrop-filter: blur(8px); }
@@ -169,6 +176,7 @@
     .modal { background: var(--surface); width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 28px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
     .spinner { border: 4px solid rgba(255, 90, 95, 0.2); border-left-color: var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .edit-mode-active { background-color: #FFFDE7 !important; border-color: var(--warning) !important; box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2) !important; }
   </style>
 </head>
 <body>
@@ -176,7 +184,7 @@
   <div id="global-loader" class="modal-overlay">
     <div class="modal" style="text-align: center;">
       <div class="spinner"></div>
-      <h2 style="font-weight: 800; color: var(--primary); margin-top:16px;">還原旅程中...</h2>
+      <h2 style="font-weight: 800; color: var(--primary); margin-top:16px;">開啟旅程中...</h2>
     </div>
   </div>
 
@@ -273,7 +281,7 @@
       <div class="timeline-container" id="plan-list"></div>
       
       <div style="display: flex; justify-content: center; margin-top: 20px;">
-        <button class="btn-small btn-outline" style="border:none; color:var(--secondary); font-weight:bold; background:transparent;" onclick="exportItinerary()">📋 複製本日行程分享</button>
+        <button class="btn-small btn-outline" style="border:none; color:var(--secondary); font-weight:bold; background:transparent;" onclick="exportItinerary()">📋 複製本日行程</button>
       </div>
     </div>
 
@@ -315,7 +323,6 @@
       
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
           <h4 style="margin:0; font-size:16px;">結算建議</h4>
-          <button class="btn-small btn-outline" style="border-radius:12px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
       </div>
       <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4;"></div>
       
@@ -337,8 +344,8 @@
 
     <div id="tab-more" class="module-content">
         <div style="display:flex; gap:12px; margin-bottom:20px;">
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:15px;" onclick="document.getElementById('more-poll').style.display='none'; document.getElementById('more-contact').style.display='block';">📞 聯絡人</div>
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:15px; position:relative;" onclick="document.getElementById('more-contact').style.display='none'; document.getElementById('more-poll').style.display='block';">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:10px; top:12px;"></span></div>
+            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px;" onclick="document.getElementById('more-poll').style.display='none'; document.getElementById('more-contact').style.display='block';">📞 聯絡人</div>
+            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; position:relative;" onclick="document.getElementById('more-contact').style.display='none'; document.getElementById('more-poll').style.display='block';">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:15px; top:12px;"></span></div>
         </div>
 
         <div id="more-contact" style="display:block;">
@@ -390,9 +397,9 @@
         <h3 style="margin-bottom:20px; font-weight:800;">切換交通方式</h3>
         <input type="hidden" id="transit-plan-id">
         <div style="display:flex; flex-direction:column; gap:12px;">
-            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('🚶 步行')">🚶 步行</button>
-            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('🚗 開車')">🚗 開車</button>
-            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('🚇 大眾運輸')">🚇 大眾運輸</button>
+            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('walking')">🚶 步行</button>
+            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('driving')">🚗 開車</button>
+            <button class="btn btn-outline" style="padding:16px; font-size:16px;" onclick="saveTransitMode('transit')">🚇 大眾運輸</button>
         </div>
         <button class="btn btn-small" style="background:#F1F5F9; color:var(--text-muted); margin-top:20px; box-shadow:none; padding:10px 20px;" onclick="closeModal('transit-modal')">取消</button>
     </div>
@@ -413,7 +420,7 @@
             <select id="sheet-popup-day" class="form-control" style="margin:0; flex:1;"></select>
             <input type="time" id="sheet-popup-time" class="form-control" style="margin:0; flex:1;" value="12:00">
         </div>
-        <button class="btn btn-action" style="width:100%; margin-top:16px; padding: 14px; border-radius:14px;" onclick="addFromSheet()">加到行程規劃</button>
+        <button class="btn btn-action" style="width:100%; margin-top:16px; padding: 14px; border-radius:14px;" onclick="addFromSheet()">加到行程</button>
     </div>
     
     <div id="sheet-edit-action" style="display:none;">
@@ -425,8 +432,8 @@
   <div id="add-modal" class="modal-overlay">
     <div class="modal">
       <h2 style="margin-bottom: 24px; font-weight:800; font-size:22px;">✈️ 建立新旅程</h2>
-      <input type="text" id="trip-location" class="form-control" placeholder="目的地 (如: 日本福岡)">
-      <input type="text" id="trip-date-range" class="form-control" placeholder="點擊選擇日期區間" readonly>
+      <input type="text" id="trip-location" class="form-control" placeholder="📍 目的地 (如: 日本福岡)">
+      <input type="text" id="trip-date-range" class="form-control" placeholder="📅 點擊選擇日期區間" readonly>
       <div style="display: flex; gap: 12px; margin-top: 24px;">
         <button class="btn btn-outline" style="flex:1; padding: 14px;" onclick="closeModal('add-modal')">取消</button>
         <button class="btn" style="flex:1; padding: 14px;" onclick="createProject()">建立</button>
@@ -509,7 +516,7 @@
         }
     };
 
-    // 需求6: 獨立防護網渲染函數
+    // 需求6: 獨立防護網渲染函數 (避免單一錯誤導致全版空白)
     function safeRenderAll() {
         try { renderItinerary(); } catch(e){ console.error("Itin Error", e); }
         try { renderBudget(); } catch(e){ console.error("Budget Error", e); }
@@ -635,19 +642,19 @@
 
     function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }
 
-    // --- 🌍 智能距離計算 ---
-    function getDistance(lat1, lon1, lat2, lon2) {
-        if(!lat1 || !lon1 || !lat2 || !lon2) return null;
-        const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    }
-
     function changeDayIndex(idx) {
         activeDayIndex = idx;
         localStorage.setItem('app_lastDayIdx', idx);
         renderItinerary();
         if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
+    }
+
+    // --- 🌍 智能距離計算 ---
+    function getDistance(lat1, lon1, lat2, lon2) {
+        if(!lat1 || !lon1 || !lat2 || !lon2) return null;
+        const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; // 加入道路蜿蜒補償
     }
 
     // --- 📅 行程核心邏輯 (日期獨立標題 + 智能交通A->B) ---
@@ -687,26 +694,24 @@
                  const nextPlan = dayPlans[index + 1];
                  const dist = getDistance(plan.lat, plan.lng, nextPlan.lat, nextPlan.lng);
                  
-                 let displayMode = plan.transitModeObj ? plan.transitModeObj.text : '';
-                 let travelMode = 'driving'; 
+                 let mode = plan.transitMode || 'driving'; 
+                 let timeStr = ""; let travelModeParam = mode;
 
-                 if(!displayMode) {
-                     if (dist !== null) {
-                         if (dist < 1.5) { displayMode = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelMode = 'walking'; }
-                         else { displayMode = `🚗 開車約 ${Math.round((dist / 40) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelMode = 'driving'; }
-                     } else displayMode = `🚶 點擊設定交通`;
+                 if (dist !== null) {
+                     if (mode === 'walking') timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`;
+                     else if (mode === 'transit') timeStr = `🚇 大眾運輸預估 ${Math.round((dist / 20) * 60) + 10} 分鐘`;
+                     else timeStr = `🚗 開車約 ${Math.round((dist / 40) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`;
                  } else {
-                     if(displayMode.includes('大眾')) travelMode = 'transit';
-                     else if(displayMode.includes('步行')) travelMode = 'walking';
+                     timeStr = `📍 點擊設定交通`;
                  }
                  
-                 const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelMode}` : '';
+                 const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
 
                  transitHtml = `
                  <div style="position:relative;">
                     <div class="plan-timeline-line" style="top:-20px; bottom:0;"></div>
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <div class="transit-block" onclick="openTransitModal(${plan.id})">${displayMode}</div>
+                        <div class="transit-block" onclick="openTransitModal(${plan.id})">${timeStr}</div>
                         ${dirUrl ? `<a href="${dirUrl}" target="_blank" class="gmaps-link-btn">🗺️ 在地圖查看導航</a>` : ''}
                     </div>
                  </div>`;
@@ -743,19 +748,9 @@
     }
 
     function openTransitModal(planId) { document.getElementById('transit-plan-id').value = planId; openModal('transit-modal'); }
-    function saveTransitMode(modeName) {
-        const planId = document.getElementById('transit-plan-id').value; const p = getCurProject(); const planIdx = p.plans.findIndex(x => x.id == planId);
-        if(planIdx > -1 && planIdx < p.plans.length - 1) { 
-            const plan = p.plans[planIdx]; const nextPlan = p.plans[planIdx + 1];
-            const dist = getDistance(plan.lat, plan.lng, nextPlan.lat, nextPlan.lng);
-            let timeStr = "";
-            if(dist !== null) {
-                if(modeName.includes('步行')) timeStr = `約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`;
-                else if(modeName.includes('開車')) timeStr = `約 ${Math.round((dist / 40) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`;
-                else if(modeName.includes('大眾運輸')) timeStr = `約 ${Math.round((dist / 20) * 60) + 10} 分鐘`;
-            }
-            plan.transitModeObj = { text: `${modeName} ${timeStr}` }; updateCurProject(p); renderItinerary(); 
-        }
+    function saveTransitMode(modeStr) {
+        const planId = document.getElementById('transit-plan-id').value; const p = getCurProject(); const plan = p.plans.find(x => x.id == planId);
+        if(plan) { plan.transitMode = modeStr; updateCurProject(p); renderItinerary(); }
         closeModal('transit-modal');
     }
 
@@ -832,7 +827,7 @@
         btn.innerHTML = '⏳...'; btn.disabled = true;
         let lat = null, lng = null, placeName = "📍 網址匯入地標";
 
-        // 從網址直接抽名字 (最精準)
+        // 從網址抽名字
         const nameMatch = url.match(/\/place\/([^\/]+)\//);
         if(nameMatch && nameMatch[1]) placeName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
         else { const qMatch = url.match(/[\?&]q=([^&]+)/); if(qMatch && qMatch[1]) placeName = decodeURIComponent(qMatch[1]).replace(/\+/g, ' '); }
@@ -874,7 +869,7 @@
     }
     function closeBottomSheet() { document.getElementById('map-bottom-sheet').classList.remove('active'); setTimeout(() => { document.getElementById('sheet-overlay').style.display = 'none'; }, 300); currentSheetSelection = null; }
 
-    function addFromSheet() { if(!currentSheetSelection) return; const day = parseInt(document.getElementById('sheet-popup-day').value); const time = document.getElementById('sheet-popup-time').value; showAddPlanForm(); addOrUpdatePlan(currentSheetSelection.name, currentSheetSelection.lat, currentSheetSelection.lng, day, time); closeBottomSheet(); }
+    function addFromSheet() { if(!currentSheetSelection) return; const day = parseInt(document.getElementById('sheet-popup-day').value); const time = document.getElementById('sheet-popup-time').value; showAddPlanForm(); addOrUpdatePlan(currentSheetSelection.name, currentSheetSelection.lat, currentSheetSelection.lng, day, time); closeBottomSheet(); switchTab('itinerary'); }
     function updateLocationToForm() { if(!currentSheetSelection) return; document.getElementById('plan-place').value = currentSheetSelection.name; document.getElementById('edit-lat').value = currentSheetSelection.lat; document.getElementById('edit-lng').value = currentSheetSelection.lng; closeBottomSheet(); isEditingLocation = false; switchTab('itinerary'); showSync("📍 地標已帶入，請確認後點擊儲存", 2500); }
 
     function renderMapRoute() {
@@ -952,13 +947,7 @@
         document.getElementById('total-expense').textContent = total.toLocaleString(); 
         
         let balances = {}; allMembers.forEach(m => balances[m] = 0); 
-        p.expenses.forEach(e => { 
-            const cost = Number(e.cost); 
-            if(balances[e.payer] !== undefined) balances[e.payer] += cost; 
-            const excludes = e.excludes || []; const shareMembers = allMembers.filter(m => !excludes.includes(m)); 
-            if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { balances[m] -= costPerPerson; }); } 
-        });
-        // 精準小數點修正
+        p.expenses.forEach(e => { const cost = Number(e.cost); balances[e.payer] += cost; const excludes = e.excludes || []; const shareMembers = allMembers.filter(m => !excludes.includes(m)); if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { balances[m] -= costPerPerson; }); } });
         let debtors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m] * 100)/100 })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
         let creditors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m] * 100)/100 })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
         
