@@ -24,8 +24,6 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SF Pro Display', -apple-system, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: 60px; -webkit-font-smoothing: antialiased;}
-    
-    /* 隱藏滾動條，更像原生 App */
     ::-webkit-scrollbar { display: none; }
     
     .view { display: none; min-height: 100vh; padding: 20px; max-width: 600px; margin: 0 auto; }
@@ -54,7 +52,6 @@
     .tabs { display: inline-flex; background: #eceff1; border-radius: 14px; padding: 4px; }
     .tab { position: relative; padding: 10px 20px; cursor: pointer; border-radius: 10px; font-weight: 600; color: var(--text-muted); font-size: 14px; transition: 0.3s;}
     .tab.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    
     .notification-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; box-shadow: 0 0 0 2px #eceff1; display: none; }
     
     .module-content { display: none; }
@@ -63,10 +60,11 @@
     .list-item:last-child { border-bottom: none; padding-bottom: 0;}
     .del-text { color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 8px; background: #fff0f0;}
     
-    .day-selector { display: flex; gap: 12px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 8px;}
-    .day-btn { position: relative; padding: 10px 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; font-weight: 600; color: var(--text-muted); box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+    /* 🌟 修復破版的 Day 標籤與紅點設計 */
+    .day-selector { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 8px;}
+    .day-btn { display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; font-weight: 600; color: var(--text-muted); box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
     .day-btn.active { background: var(--text-main); color: white; border-color: var(--text-main);}
-    .day-badge { position: absolute; top: -6px; right: -6px; background: var(--danger); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--surface); box-shadow: var(--shadow);}
+    .day-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--danger); color: white; border-radius: 12px; padding: 2px 7px; font-size: 11px; font-weight: bold; margin-left: 6px;}
     
     .time-badge { background: #e8f4fd; color: #0284c7; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 14px; margin-right: 12px; display: inline-block;}
     .plan-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border);}
@@ -99,9 +97,7 @@
 
   <div id="dashboard-view" class="view">
     <div class="app-header">
-      <div>
-        <h3>👋 <span id="display-name"></span></h3>
-      </div>
+      <div><h3>👋 <span id="display-name"></span></h3></div>
       <div style="display: flex; gap: 8px;">
         <button class="btn btn-action btn-small" onclick="openInstallModal()">📱 加到桌面</button>
         <button class="btn btn-outline btn-small" onclick="handleLogout()">登出</button>
@@ -222,15 +218,16 @@
       <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">將系統加到桌面，免開瀏覽器，全螢幕體驗更順暢！</p>
       
       <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left;">
-        <strong style="color: #007AFF;">🍎 iPhone (Safari) 用戶：</strong><br>
-        1. 點擊螢幕下方的 <span style="font-size: 18px;">[⬆️ 分享]</span> 圖示<br>
-        2. 往下滑，選擇 <strong>「加入主畫面」</strong><br>
-        3. 點擊右上角「新增」即可！
+        <strong style="color: #007AFF;">🍎 iPhone 用戶：</strong><br>
+        1. 點螢幕右下方的 <strong>「...」</strong> (或分享圖示)<br>
+        2. 點擊 <strong>「分享」</strong><br>
+        3. 往下拖曳，選擇 <strong>「加入主畫面」</strong><br>
+        4. 點擊右上角「新增」即可！
       </div>
 
       <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: left;">
         <strong style="color: #34A853;">🤖 Android (Chrome) 用戶：</strong><br>
-        1. 點擊螢幕右上角的 <span style="font-size: 18px;">[⋮ 選單]</span><br>
+        1. 點擊螢幕右上角的 <strong>[⋮]</strong><br>
         2. 選擇 <strong>「加到主畫面」</strong><br>
         3. 點擊「新增」即可！
       </div>
@@ -240,7 +237,8 @@
   </div>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzXyfuSTyLZXBTQqcMjHglTu00nH2hua6uYKXNQWUbZB1BneeYGu52T56KFUCgJvR0/exec"; 
+    // 🚨🚨🚨 請在此處貼上你「最新部署」得到的 GAS_URL 🚨🚨🚨
+    const GAS_URL = "填入你新拿到的網址"; 
     
     let currentUser = null; let currentWorkspace = null; let currentProjectId = null; let activeDayIndex = 0;
     let currentUploadedImageBase64 = null;
@@ -259,6 +257,7 @@
 
     function showSync() { document.getElementById('sync-status').style.display = 'block'; setTimeout(()=> document.getElementById('sync-status').style.display = 'none', 1500); }
 
+    // 🌟 全新 Fetch 引擎：防攔截機制 🌟
     function syncFromCloud() {
       if(!GAS_URL || GAS_URL.includes("填入")) return;
       fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}`)
@@ -272,15 +271,19 @@
               }
               showSync();
             }
-        });
+        }).catch(e => console.error("同步讀取失敗", e));
     }
 
     function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
     function saveDB(data) { 
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
       if(GAS_URL && !GAS_URL.includes("填入")) {
-        const fd = new URLSearchParams(); fd.append('action', 'save'); fd.append('workspace', currentWorkspace); fd.append('data', JSON.stringify(data));
-        fetch(GAS_URL, { method: 'POST', body: fd }).then(showSync);
+        // 改用 text/plain 傳輸，徹底解決 Google CORS 與容量問題
+        fetch(GAS_URL, { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'save', workspace: currentWorkspace, data: JSON.stringify(data) }) 
+        }).then(res => res.json()).then(showSync).catch(e => console.error("同步寫入失敗", e));
       }
     }
 
@@ -303,7 +306,6 @@
     }
     function updateCurProject(updatedP) { const db = getDB(); db[db.findIndex(p => p.id === currentProjectId)] = updatedP; saveDB(db); }
 
-    // Modal Controls
     function openModal() { document.getElementById('add-modal').classList.add('active'); }
     function closeModal() { document.getElementById('add-modal').classList.remove('active'); }
     function openInstallModal() { document.getElementById('install-modal').classList.add('active'); }
@@ -350,6 +352,7 @@
       reader.readAsDataURL(file);
     }
 
+    // 🌟 修復紅點標籤 UI
     function renderItinerary() {
       const p = getCurProject(); const totalDays = Math.floor((new Date(p.end) - new Date(p.start)) / (1000 * 60 * 60 * 24)) + 1;
       let daysHtml = ''; let mapSelectHtml = '';
@@ -357,16 +360,19 @@
         let d = new Date(p.start); d.setDate(d.getDate() + i); let ds = `${d.getMonth()+1}/${d.getDate()}`;
         let planCount = p.plans.filter(plan => plan.dayIdx === i).length;
         let badgeHtml = planCount > 0 ? `<div class="day-badge">${planCount}</div>` : '';
+        // 內嵌式不會破版的按鈕
         daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDay(${i})">Day ${i+1} (${ds})${badgeHtml}</button>`;
         mapSelectHtml += `<option value="${i}">Day ${i+1} (${ds})</option>`;
       }
       document.getElementById('day-buttons').innerHTML = daysHtml; document.getElementById('map-add-day').innerHTML = mapSelectHtml;
+      
       const list = document.getElementById('plan-list'); const dayPlans = p.plans.filter(plan => plan.dayIdx === activeDayIndex).sort((a,b) => a.time.localeCompare(b.time));
       if(dayPlans.length === 0) list.innerHTML = `<div style="text-align:center; color:#ccc; padding:20px;">尚無行程</div>`;
       else {
         list.innerHTML = dayPlans.map(plan => `<div class="list-item"><div style="flex: 1; padding-right: 10px;"><div class="flex-row" style="align-items: flex-start;"><span class="time-badge">${plan.time}</span> <span style="font-weight:600; font-size:16px;">${plan.place}</span></div>${plan.image ? `<img src="${plan.image}" class="plan-img">` : ''}<div class="creator-badge" style="margin-left: 75px; margin-top: 8px;">由 ${plan.creator || '提議者'} 新增</div></div><div class="del-text" onclick="delPlan(${plan.id})">刪除</div></div>`).join('');
       }
     }
+    
     function changeDay(idx) { activeDayIndex = idx; renderItinerary(); }
     function addPlan() {
       const time = document.getElementById('plan-time').value; const place = document.getElementById('plan-place').value;
