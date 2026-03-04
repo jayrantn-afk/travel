@@ -25,7 +25,7 @@
     
     .view { display: none; min-height: 100vh; padding: 20px; max-width: 600px; margin: 0 auto; }
     .view.active { display: block; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .btn { padding: 12px 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
     .btn-small { padding: 8px 14px; font-size: 13px; border-radius: 8px; }
@@ -41,17 +41,15 @@
     .tab { padding: 10px 20px; cursor: pointer; border-radius: 10px; font-weight: 600; color: var(--text-muted); font-size: 14px; }
     .tab.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     
+    /* 修正紅點標籤 UI */
     .day-btn { display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; margin-right: 8px; font-weight: 600; color: var(--text-muted); }
     .day-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
     .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 10px; margin-left: 6px; }
     
     .time-badge { background: #e8f4fd; color: #0284c7; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 14px; }
-    .creator-badge { font-size: 11px; background: #f1f5f9; color: var(--text-muted); padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
+    .creator-badge { font-size: 11px; background: #f1f5f9; color: var(--text-muted); padding: 2px 8px; border-radius: 10px; margin-top: 4px; }
     .list-item { padding: 16px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
     .del-text { color: var(--danger); cursor: pointer; font-size: 13px; font-weight: 600; background: #fff0f0; padding: 4px 8px; border-radius: 6px; }
-
-    /* 🌟 首頁卡片刪除按鈕 (你要求的 X) 🌟 */
-    .del-btn-card { position: absolute; top: 12px; right: 12px; background: #fff0f0; color: var(--danger); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 10;}
 
     #sync-status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; display: none; z-index: 9999; }
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
@@ -86,13 +84,12 @@
         <button class="btn btn-outline btn-small" onclick="handleLogout()">登出</button>
       </div>
     </div>
-    
     <div class="projects-container" id="projects-grid" style="margin-top: 20px;"></div>
   </div>
 
   <div id="detail-view" class="view">
     <div class="detail-header">
-      <button class="btn btn-outline btn-small" onclick="switchView('dashboard-view')" style="margin-bottom: 10px;">← 返回列表</button>
+      <button class="btn btn-outline btn-small" onclick="switchView('dashboard-view')" style="margin-bottom: 10px;">← 返回</button>
       <h2 id="project-title-display">載入中...</h2>
     </div>
     
@@ -141,37 +138,6 @@
       <div id="expense-list"></div>
       <div class="card-panel" id="split-bill-advice" style="display: none; border: 2px solid var(--secondary);"></div>
     </div>
-
-    <div id="tab-poll" class="module-content">
-      <div class="card-panel">
-        <input type="text" id="poll-title" class="form-control" placeholder="問題 (例: 晚餐吃什麼？)">
-        <input type="text" id="poll-options" class="form-control" placeholder="選項 (請用逗號 , 分隔)">
-        <button class="btn btn-action" style="width: 100%;" onclick="addPoll()">建立投票</button>
-      </div>
-      <div id="polls-list"></div>
-    </div>
-
-    <div id="tab-notes" class="module-content">
-      <div class="card-panel">
-        <div class="flex-row">
-          <input type="text" id="note-input" class="form-control" placeholder="輸入記事..." style="margin:0;">
-          <button class="btn btn-action" onclick="addNote()">記錄</button>
-        </div>
-      </div>
-      <div id="notes-list"></div>
-    </div>
-  </div>
-
-  <div id="add-modal" class="modal-overlay">
-    <div class="modal">
-      <h2 style="margin-bottom: 20px;">✈️ 新增旅程</h2>
-      <input type="text" id="trip-location" class="form-control" placeholder="如: 日本熊本">
-      <input type="text" id="trip-date-range" class="form-control" placeholder="點擊選擇日期" readonly>
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button class="btn btn-outline" style="flex:1;" onclick="closeModal()">取消</button>
-        <button class="btn" style="flex:1;" onclick="createProject()">建立</button>
-      </div>
-    </div>
   </div>
 
   <div id="install-modal" class="modal-overlay">
@@ -179,7 +145,7 @@
       <h2 style="text-align: center; margin-bottom: 15px;">📱 加到主畫面</h2>
       <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 14px;">
         <strong>🍎 iPhone 用戶：</strong><br>
-        1. 點螢幕下方的「分享圖示」<br>
+        1. 點螢幕下方的「分享圖示」 (正方形箭頭向上)<br>
         2. 往下拖曳，選擇 <strong>「加入主畫面」</strong><br>
         3. 點擊右上角「新增」即可！
       </div>
@@ -188,52 +154,34 @@
   </div>
 
   <script>
-    // 🚨🚨🚨 請務必將你 Google Apps Script 的網址貼在這裡 🚨🚨🚨
-    const GAS_URL = "填入你 Google Apps Script 的網址"; 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzXyfuSTyLZXBTQqcMjHglTu00nH2hua6uYKXNQWUbZB1BneeYGu52T56KFUCgJvR0/exec"; 
     
     let currentUser = null; let currentWorkspace = null; let currentProjectId = null; let activeDayIndex = 0;
     const authRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     const wsMap = { '陳筱雙': 'chen_project' };
 
-    flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
+    function showSync() { document.getElementById('sync-status').style.display = 'block'; setTimeout(()=> document.getElementById('sync-status').style.display = 'none', 1500); }
 
-    function showSync(msg = "☁️ 資料同步中...") { 
-      const syncEl = document.getElementById('sync-status');
-      syncEl.textContent = msg;
-      syncEl.style.display = 'block'; 
-      setTimeout(()=> syncEl.style.display = 'none', 1500); 
-    }
-
-    // 📡 從雲端抓資料
     function syncFromCloud() {
-      if(!GAS_URL || GAS_URL.includes("填入")) return;
       fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}`)
         .then(res => res.json())
         .then(data => {
             if(Array.isArray(data)) {
               localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data));
-              if(currentProjectId) { 
-                renderItinerary(); renderBudget(); renderContacts(); renderPolls(); renderNotes();
-              }
+              if(currentProjectId) { renderItinerary(); renderBudget(); renderContacts(); }
               renderDashboard();
-              showSync("✅ 同步完成");
+              showSync();
             }
-        })
-        .catch(e => console.error("Sync Fetch Error", e));
+        });
     }
 
-    // 📡 存到雲端
     function saveDB(data) { 
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
-      if(!GAS_URL || GAS_URL.includes("填入")) return;
-      
       const fd = new URLSearchParams();
       fd.append('action', 'save');
       fd.append('workspace', currentWorkspace);
       fd.append('data', JSON.stringify(data));
-      
-      fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-        .then(() => showSync("✅ 已儲存至雲端"));
+      fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(showSync);
     }
 
     function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
@@ -246,70 +194,34 @@
         currentUser = u; currentWorkspace = wsMap[u] || 'wei_family';
         document.getElementById('display-name').textContent = currentUser;
         renderDashboard(); switchView('dashboard-view');
-        syncFromCloud(); // 登入立刻抓雲端最新資料
+        syncFromCloud();
       } else alert("密碼錯誤！");
     }
-    
     function handleLogout() { currentUser = null; switchView('login-view'); }
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    function switchTab(tabId) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); document.querySelectorAll('.module-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tabId}`).classList.add('active'); }
-    
-    function openModal() { document.getElementById('add-modal').classList.add('active'); }
-    function closeModal() { document.getElementById('add-modal').classList.remove('active'); document.getElementById('trip-location').value = ''; }
+    function switchTab(tabId) { 
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); event.target.classList.add('active');
+      document.querySelectorAll('.module-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
     function openInstallModal() { document.getElementById('install-modal').classList.add('active'); }
     function closeInstallModal() { document.getElementById('install-modal').classList.remove('active'); }
 
-    function createProject() {
-      const loc = document.getElementById('trip-location').value; 
-      const rawDate = document.getElementById('trip-date-range').value;
-      const dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
-      if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期");
-      
-      const db = getDB(); 
-      db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], plans: [], expenses: [], notes: [], polls: [], contacts: [] });
-      saveDB(db); closeModal(); renderDashboard();
-    }
-
-    // 🌟 首頁卡片渲染 (把 X 按鈕加回來了！) 🌟
     function renderDashboard() {
       const grid = document.getElementById('projects-grid'); const db = getDB();
-      
-      // 第一個是「建立新旅程」的虛線框
-      let html = `<div class="project-card" style="text-align:center; border: 2px dashed var(--border); box-shadow:none; display:flex; flex-direction:column; justify-content:center;" onclick="openModal()">
-        <div style="font-size:32px; color:var(--primary); margin-bottom:8px;">+</div>
-        <div style="font-weight:600; color:var(--text-muted);">建立新旅程</div>
-      </div>`;
-      
-      // 接下來是專案卡片，加入 del-btn-card 按鈕
-      db.slice().reverse().forEach(p => {
-        html += `
-          <div class="project-card" onclick="openProject(${p.id})">
-            <button class="del-btn-card" onclick="delProject(${p.id}, event)">×</button>
-            <h3 style="margin-bottom: 8px; padding-right: 25px;">📍 ${p.location}</h3>
-            <p style="font-size: 14px; color: var(--text-muted);">📅 ${p.start} ~ ${p.end}</p>
-          </div>
-        `;
-      });
-      grid.innerHTML = html;
-    }
-
-    // 首頁刪除專案防呆
-    function delProject(id, e) {
-      e.stopPropagation(); // 阻止點擊卡片觸發進入專案
-      if(confirm("⚠️ 確定要刪除整個旅程嗎？此動作無法復原！")) {
-        const db = getDB().filter(p => p.id !== id);
-        saveDB(db);
-        renderDashboard();
-      }
+      grid.innerHTML = db.slice().reverse().map(p => `
+        <div class="project-card" onclick="openProject(${p.id})">
+          <h3>📍 ${p.location}</h3>
+          <p style="font-size: 14px; color: var(--text-muted);">${p.start} ~ ${p.end}</p>
+        </div>
+      `).join('');
     }
 
     function openProject(id) {
       currentProjectId = id; activeDayIndex = 0; const p = getCurProject();
       document.getElementById('project-title-display').textContent = `📍 ${p.location}`;
       const familyMembers = Object.keys(authRules).filter(k => (wsMap[k] || 'wei_family') === currentWorkspace);
-      document.getElementById('exp-payer').innerHTML = familyMembers.map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
-      renderItinerary(); renderBudget(); renderContacts(); renderPolls(); renderNotes();
-      switchView('detail-view');
+      document.getElementById('exp-payer').innerHTML = familyMembers.map(m => `<option value="${m}">${m}</option>`).join('');
+      renderItinerary(); renderBudget(); renderContacts(); switchView('detail-view');
     }
 
     function renderItinerary() {
@@ -324,84 +236,65 @@
         </div>`;
       }
       document.getElementById('day-buttons').innerHTML = daysHtml;
-      
       const list = document.getElementById('plan-list');
       const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
-      if(dayPlans.length === 0) {
-          list.innerHTML = `<div style="text-align:center; color:#ccc; padding:20px;">尚無行程</div>`;
-      } else {
-          list.innerHTML = dayPlans.map(plan => `
-            <div class="card-panel" style="padding:15px; margin-bottom:10px;">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div><span class="time-badge">${plan.time}</span> <strong style="font-size:16px;">${plan.place}</strong></div>
-                <span class="del-text" onclick="delPlan(${plan.id})">刪除</span>
-              </div>
-              <div class="creator-badge">由 ${plan.creator || '提議者'} 新增</div>
-            </div>
-          `).join('');
-      }
+      list.innerHTML = dayPlans.map(plan => `
+        <div class="card-panel" style="padding:15px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between;">
+            <div><span class="time-badge">${plan.time}</span> <strong>${plan.place}</strong></div>
+            <span class="del-text" onclick="delPlan(${plan.id})">刪除</span>
+          </div>
+          <div class="creator-badge">由 ${plan.creator || '提議者'} 新增</div>
+        </div>
+      `).join('');
     }
 
     function addPlan() {
       const time = document.getElementById('plan-time').value; const place = document.getElementById('plan-place').value;
-      if(!place || !time) return alert("請輸入時間與景點名稱"); 
-      const p = getCurProject(); if(!p.plans) p.plans = [];
+      if(!place) return; const p = getCurProject();
+      if(!p.plans) p.plans = [];
       p.plans.push({ id: Date.now(), dayIdx: activeDayIndex, time, place, creator: currentUser });
-      updateCurProject(p); document.getElementById('plan-place').value = ''; renderItinerary();
+      updateCurProject(p); renderItinerary();
     }
-    function delPlan(id) { if(confirm("確定刪除此行程？")) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); } }
+    function delPlan(id) { if(confirm("確定刪除？")) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); } }
 
     function addContact() {
       const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value;
-      if(!name || !phone) return; const p = getCurProject(); if(!p.contacts) p.contacts = [];
+      if(!name || !phone) return; const p = getCurProject();
+      if(!p.contacts) p.contacts = [];
       p.contacts.push({ id: Date.now(), name, phone, creator: currentUser });
-      updateCurProject(p); document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; renderContacts();
+      updateCurProject(p); renderContacts();
     }
     function renderContacts() {
       const p = getCurProject(); const list = document.getElementById('contacts-list');
-      if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc;">無紀錄</div>`; return; }
-      list.innerHTML = p.contacts.map(c => `
-        <div class="card-panel flex-row" style="justify-content:space-between; padding:15px;">
-          <div><strong>${c.name}</strong><br><a href="tel:${c.phone}" style="color:var(--primary); text-decoration:none; font-weight:bold;">${c.phone}</a></div>
+      list.innerHTML = (p.contacts || []).map(c => `
+        <div class="card-panel flex-row" style="justify-content:space-between;">
+          <div><strong>${c.name}</strong><br><a href="tel:${c.phone}" style="color:var(--primary);">${c.phone}</a></div>
           <span class="del-text" onclick="delContact(${c.id})">移除</span>
         </div>
       `).join('');
     }
-    function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
+    function delContact(id) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); }
 
     function renderBudget() {
-      const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0;
-      if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc;">無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return;} 
-      
-      list.innerHTML = p.expenses.map(e => { total += Number(e.cost); return `
-        <div class="card-panel flex-row" style="justify-content:space-between; padding:15px; margin-bottom:10px;">
-          <div><div style="font-weight:600;">${e.item}</div><div class="creator-badge">${e.payer} 先代墊</div></div>
-          <div class="flex-row"><span style="font-weight:800; color:var(--text-main);">$${e.cost}</span> <span class="del-text" onclick="delExpense(${e.id})">×</span></div>
-        </div>`; 
-      }).join('');
-      
+      const p = getCurProject(); const list = document.getElementById('expense-list'); let total = 0;
+      (p.expenses || []).forEach(e => total += Number(e.cost));
       document.getElementById('total-expense').textContent = total.toLocaleString();
-
-      const familyMembers = Object.keys(authRules).filter(k => (wsMap[k] || 'wei_family') === currentWorkspace); let paid = {}; familyMembers.forEach(m => paid[m] = 0);
-      p.expenses.forEach(e => { if(paid[e.payer] !== undefined) paid[e.payer] += Number(e.cost); });
-      const perPerson = total / familyMembers.length; let balances = familyMembers.map(m => ({ name: m, balance: paid[m] - perPerson }));
-      let debtors = balances.filter(b => b.balance < -0.01).sort((a,b) => a.balance - b.balance); let creditors = balances.filter(b => b.balance > 0.01).sort((a,b) => b.balance - a.balance);
-      let transfers = []; let i=0, j=0;
-      while(i < debtors.length && j < creditors.length) { let amt = Math.min(-debtors[i].balance, creditors[j].balance); transfers.push({ from: debtors[i].name, to: creditors[j].name, amt: amt }); debtors[i].balance += amt; creditors[j].balance -= amt; if(Math.abs(debtors[i].balance) < 0.01) i++; if(Math.abs(creditors[j].balance) < 0.01) j++; }
-      if(transfers.length === 0) adviceBox.innerHTML = `<div style="text-align:center; font-weight:bold; color:var(--secondary);">🎉 帳目已結清！</div>`;
-      else { let html = `<h4 style="margin-bottom:12px; color:var(--secondary);">💡 分帳結算 (每人均攤 $${Math.round(perPerson)})</h4>`; transfers.forEach(t => html += `<div class="flex-row" style="justify-content:space-between; background:#f0fdf4; padding:10px 15px; border-radius:8px; margin-bottom:8px;"><span><strong style="color:var(--danger);">${t.from}</strong> 應轉給 <strong>${t.to}</strong></span><span style="font-weight:bold; color:var(--secondary); font-size:16px;">$${Math.round(t.amt)}</span></div>`); adviceBox.innerHTML = html; }
-      adviceBox.style.display = 'block';
+      list.innerHTML = (p.expenses || []).map(e => `
+        <div class="list-item">
+          <div><strong>${e.item}</strong><br><span class="creator-badge">${e.payer} 代墊</span></div>
+          <div><strong>$${e.cost}</strong> <span class="del-text" style="margin-left:10px;" onclick="delExpense(${e.id})">×</span></div>
+        </div>
+      `).join('');
     }
-    function addExpense() { const item = document.getElementById('exp-item').value; const cost = document.getElementById('exp-cost').value; const payer = document.getElementById('exp-payer').value; if(!item || !cost) return; const p = getCurProject(); if(!p.expenses) p.expenses = []; p.expenses.push({ id: Date.now(), item, cost, payer }); updateCurProject(p); document.getElementById('exp-item').value = ''; document.getElementById('exp-cost').value = ''; renderBudget(); }
-    function delExpense(id) { if(confirm("確定刪除這筆花費？")) { const p = getCurProject(); p.expenses = p.expenses.filter(x => x.id !== id); updateCurProject(p); renderBudget(); } }
-
-    function renderPolls() { const p = getCurProject(); const list = document.getElementById('polls-list'); if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc;">無紀錄</div>`; return; } list.innerHTML = p.polls.map(poll => `<div class="card-panel"><div class="flex-row" style="justify-content:space-between; margin-bottom:10px;"><h4 style="margin:0;">Q: ${poll.title}</h4><div class="creator-badge" style="margin:0;">發起人: ${poll.creator || '提議者'}</div></div>${poll.options.map((opt, i) => `<div style="display:flex; justify-content:space-between; padding:10px; background:#f8f9fa; margin-top:8px; border-radius:8px; cursor:pointer;" onclick="vote(${poll.id}, ${i})"><span>${opt.name}</span><span style="background:var(--primary); color:white; padding:2px 8px; border-radius:12px; font-size:12px;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:11px; color:#aaa; margin-left:15px;">已投: ${opt.voters.join(', ')}</div>` : ''}`).join('')}</div>`).join(''); }
-    function addPoll() { const title = document.getElementById('poll-title').value; const optsRaw = document.getElementById('poll-options').value; if(!title || !optsRaw) return; const options = optsRaw.split(',').map(o => ({ name: o.trim(), voters: [] })); const p = getCurProject(); if(!p.polls) p.polls=[]; p.polls.push({ id: Date.now(), title, creator: currentUser, options }); updateCurProject(p); document.getElementById('poll-title').value = ''; document.getElementById('poll-options').value = ''; renderPolls(); }
-    function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
-
-    function renderNotes() { const p = getCurProject(); const list = document.getElementById('notes-list'); if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc;">無紀錄</div>`; return;} list.innerHTML = p.notes.map(n => `<div class="card-panel flex-row" style="justify-content:space-between; padding:15px; margin-bottom:10px;"><div><div style="font-weight:600;">${n.text}</div><div class="creator-badge">${n.creator || '提議者'} 提議</div></div><div class="del-text" onclick="delNote(${n.id})">移除</div></div>`).join(''); }
-    function addNote() { const text = document.getElementById('note-input').value; if(!text) return; const p = getCurProject(); if(!p.notes) p.notes=[]; p.notes.push({ id: Date.now(), text, creator: currentUser }); updateCurProject(p); document.getElementById('note-input').value = ''; renderNotes(); }
-    function delNote(id) { if(confirm("確定刪除此記事？")) { const p = getCurProject(); p.notes = p.notes.filter(x => x.id !== id); updateCurProject(p); renderNotes(); } }
+    function addExpense() {
+      const item = document.getElementById('exp-item').value; const cost = document.getElementById('exp-cost').value; const payer = document.getElementById('exp-payer').value;
+      if(!item || !cost) return; const p = getCurProject();
+      if(!p.expenses) p.expenses = [];
+      p.expenses.push({ id: Date.now(), item, cost, payer });
+      updateCurProject(p); renderBudget();
+    }
+    function delExpense(id) { const p = getCurProject(); p.expenses = p.expenses.filter(x => x.id !== id); updateCurProject(p); renderBudget(); }
   </script>
 </body>
 </html>
