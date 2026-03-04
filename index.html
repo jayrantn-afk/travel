@@ -18,7 +18,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    /* 回歸乾淨高質感配色 */
+    /* 乾淨高質感配色 */
     :root {
       --primary: #FF5A5F; 
       --primary-hover: #E35156; 
@@ -58,7 +58,6 @@
     .create-project-card { border: 2px dashed #CBD5E1; background: transparent; padding: 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
     .create-project-card:hover { border-color: var(--primary); color: var(--primary); background: rgba(255,90,95,0.02); }
     
-    /* 需求5: 列表卡片回歸純白 */
     .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); }
     .project-card:hover { border-color: var(--primary); transform: translateY(-2px); }
     
@@ -120,10 +119,10 @@
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
     /* 標籤與文字 */
-    .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; margin-top: 8px; display: inline-block; font-weight: 600; }
+    .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; margin-top: 12px; display: inline-block; font-weight: 600; }
     .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
     .action-text:hover { filter: brightness(0.95); background: #E2E8F0; }
-    .edit-text { color: var(--secondary); }
+    .edit-text { color: var(--secondary); margin-right: 6px; }
     .del-text { color: var(--danger); background: #FFF0F0;}
     .del-text:hover { background: #FFE0E0; }
     
@@ -141,11 +140,9 @@
     .pin-blue { background: var(--secondary); }
     .day-tooltip { background: var(--surface); color: var(--text-main); border: none; border-radius: 12px; font-weight: bold; padding: 6px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 13px; }
 
-    /* 需求6: 照片縮圖變正方形小圖 */
+    /* 照片預覽 */
     .plan-img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; display: none; border: 1px solid var(--border); margin-top: 12px; }
     .plan-img-display { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid #E4E8ED; flex-shrink: 0; }
-    
-    /* 照片上傳按鈕 (灰色虛線) */
     .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
     .file-upload-label:hover { background: #F1F5F9; border-color: var(--secondary); color: var(--secondary); }
     
@@ -177,9 +174,11 @@
     .tool-btn-wrap { display: flex; gap: 10px; margin-top: 16px; }
     .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; display: inline-block; cursor: pointer; transition: 0.2s; box-shadow: none;}
     .tool-btn:hover { background: #E2E8F0; }
+    .tool-btn:active { transform: scale(0.96); }
     .tool-btn.call { background: #E8F4FD; color: #0284C7; }
 
     /* 行李清單 */
+    .more-section { display: none; }
     .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor:pointer;}
     .checklist-item:hover { background: #FAFBFC; }
     .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; font-size: 12px;}
@@ -271,7 +270,7 @@
       
       <div class="itinerary-date-header">
           <span id="itinerary-date-header-text"></span>
-          <button class="btn" style="padding:8px 14px; border-radius:12px; font-size:14px; box-shadow: 0 4px 12px rgba(255,90,95,0.3);" onclick="showAddPlanForm()">➕ 新增</button>
+          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()">➕ 新增</button>
       </div>
       
       <div id="plan-form-card" class="card-panel" style="padding: 20px; display: none; border: 2px solid var(--border);">
@@ -299,7 +298,7 @@
       <div class="timeline-container" id="plan-list"></div>
       
       <div style="display: flex; justify-content: center; margin-top: 20px;">
-        <button class="btn-small btn-outline" style="border:none; color:var(--secondary); font-weight:bold; background:transparent;" onclick="exportItinerary()">📋 複製本日行程分享</button>
+        <button class="btn-small btn-outline" style="border:none; color:var(--secondary); font-weight:bold; background:transparent;" onclick="exportItinerary()">📋 複製本日行程</button>
       </div>
     </div>
 
@@ -449,6 +448,8 @@
     </div>
     <input type="text" id="sheet-place-address-input" class="sheet-input-desc" placeholder="地址或備註">
     
+    <img id="sheet-auto-image" style="width:100%; height:120px; object-fit:cover; border-radius:12px; margin-bottom:16px; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+    
     <div id="sheet-normal-action">
         <div class="flex-row">
             <select id="sheet-popup-day" class="form-control" style="margin:0; flex:1;"></select>
@@ -506,7 +507,6 @@
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
 
-    // 修復了魏敏軒錯字
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     let customUsers = JSON.parse(localStorage.getItem(`app_users_${currentWorkspace}`) || '{}');
     let authRules = { ...baseAuthRules, ...customUsers };
@@ -519,7 +519,7 @@
         return L.divIcon({ className: 'custom-leaflet-icon', html: `<div class="custom-map-pin ${isBlue ? 'pin-blue' : ''}"><div class="custom-map-pin-inner">${number}</div></div>`, iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -35] });
     };
 
-    // --- 需求2: 重新整理記住狀態防呆 (徹底修復) ---
+    // --- 防呆：重新整理記住狀態 (解決迷路問題) ---
     window.onload = () => { 
         renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
         const savedUser = localStorage.getItem('app_savedUser');
@@ -530,20 +530,24 @@
             const savedProjectId = localStorage.getItem('app_lastProj'); 
             const savedTabId = localStorage.getItem('app_lastTab') || 'itinerary';
             const savedDayIdx = localStorage.getItem('app_lastDayIdx');
-            if(savedDayIdx !== null) activeDayIndex = parseInt(savedDayIdx);
+            if(savedDayIdx !== null && !isNaN(savedDayIdx)) activeDayIndex = parseInt(savedDayIdx);
             
             if(getDB().length > 0) {
                 if(savedProjectId && getDB().find(p => p.id == savedProjectId)) { 
+                    switchView('detail-view');
                     openProject(parseInt(savedProjectId), true); 
                     setTimeout(() => switchTab(savedTabId), 50); 
                 } else {
                     renderDashboard(); switchView('dashboard-view');
                 }
                 document.getElementById('global-loader').classList.remove('active');
+            } else {
+                switchView('dashboard-view'); document.getElementById('global-loader').classList.remove('active');
             }
 
             syncFromCloud(false, true).then(() => {
                 if(currentProjectId) { safeRenderAll(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
+                else { renderDashboard(); }
                 document.getElementById('global-loader').classList.remove('active');
             });
             startAutoSync();
@@ -552,7 +556,7 @@
         }
     };
 
-    // 需求6: 獨立防護網渲染函數 (確保資料絕對顯示)
+    // 獨立防護網渲染函數 (解決資料消失 Bug)
     function safeRenderAll() {
         try { renderItinerary(); } catch(e){ console.error("Itinerary Error", e); }
         try { renderBudget(); } catch(e){ console.error("Budget Error", e); }
@@ -699,7 +703,7 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; 
     }
 
-    // --- 📅 行程核心邏輯 (日期獨立標題 + 智能交通A->B) ---
+    // --- 📅 行程核心邏輯 ---
     function renderItinerary() {
       const p = getCurProject(); if(!p.start) return; 
       const start = new Date(p.start); const end = new Date(p.end);
@@ -728,25 +732,27 @@
       else {
           let html = '';
           dayPlans.forEach((plan, index) => {
-             let finalGmapsUrl = plan.lat ? `https://www.google.com/maps/search/?api=1&query=${plan.lat},${plan.lng}` : ''; 
-
+             // 智能交通
              let transitHtml = '';
+             let finalGmapsUrl = plan.lat ? `https://www.google.com/maps/search/?api=1&query=$${plan.lat},${plan.lng}` : ''; // 修復單點 Google Maps 網址
+
              if (index < dayPlans.length - 1) {
                  const nextPlan = dayPlans[index + 1];
                  const dist = getDistance(plan.lat, plan.lng, nextPlan.lat, nextPlan.lng);
                  
-                 let mode = plan.transitMode || 'driving'; 
-                 let timeStr = ""; let travelModeParam = mode;
+                 let modeStr = plan.transitMode || 'driving'; 
+                 let timeStr = ""; let travelModeParam = modeStr;
 
                  if (dist !== null) {
-                     if (mode === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 3) * 60))} 分鐘`; travelModeParam = 'walking'; }
-                     else if (mode === 'transit') { timeStr = `🚇 大眾運輸約 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
-                     else { timeStr = `🚗 開車約 ${Math.round((dist / 30) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
+                     if (modeStr === 'walking') timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 3) * 60))} 分鐘`;
+                     else if (modeStr === 'transit') timeStr = `🚇 大眾運輸約 ${Math.round((dist / 15) * 60) + 10} 分鐘`;
+                     else timeStr = `🚗 開車約 ${Math.round((dist / 30) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`;
                  } else {
-                     timeStr = `📍 點擊估算交通`;
+                     timeStr = `📍 點擊設定交通`;
                  }
                  
-                 const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
+                 // 正確的 Google Maps API 導航網址
+                 const dirUrl = (plan.lat && nextPlan.lat) ? `http://googleusercontent.com/maps.google.com/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
 
                  transitHtml = `
                  <div style="position:relative;">
@@ -769,14 +775,14 @@
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
                             <div style="flex:1;">
                                 <strong style="font-size:18px;">${plan.place}</strong>
-                                ${finalGmapsUrl && index === dayPlans.length - 1 ? `<a href="${finalGmapsUrl}" target="_blank" style="display:block; margin-top:6px; font-size:13px; color:var(--secondary); text-decoration:none; font-weight:800;">📍 Google Maps 單點</a>` : ''}
+                                ${finalGmapsUrl && index === dayPlans.length - 1 ? `<a href="${finalGmapsUrl}" target="_blank" style="display:block; margin-top:6px; font-size:13px; color:var(--secondary); text-decoration:none; font-weight:800;">📍 Google Maps 資訊</a>` : ''}
                                 <div class="creator-badge">由 ${plan.creator || '提議者'} 新增</div>
                             </div>
                             ${plan.image ? `<img src="${plan.image}" class="plan-img-display">` : ''}
                         </div>
                         <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:12px;">
-                            <span class="action-text edit-text" onclick="editPlan(${plan.id})">✏️</span>
-                            <span class="action-text del-text" onclick="delPlan(${plan.id})">✕</span>
+                            <span class="action-text edit-text" onclick="editPlan(${plan.id})">✏️ 編輯</span>
+                            <span class="action-text del-text" onclick="delPlan(${plan.id})">✕ 刪除</span>
                         </div>
                     </div>
                 </div>
@@ -817,7 +823,7 @@
       else { p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, lat: finalLat, lng: finalLng, image: currentCompressedImage, creator: currentUser }); showSync("✅ 已加入行程", 1500); }
       
       updateCurProject(p); document.getElementById('plan-place').value = ''; currentCompressedImage = null; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-img-preview').style.display = 'none'; document.getElementById('plan-image-input').value = ''; document.getElementById('plan-form-card').style.display = 'none';
-      renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) { activeDayIndex = targetDay; switchTab('itinerary'); }
+      renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) { switchTab('itinerary'); }
     }
     function editPlan(id) {
         const p = getCurProject(); const plan = p.plans.find(x => x.id === id); if(!plan) return;
@@ -1032,7 +1038,7 @@
     function toggleExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); updateCurProject(p); renderBudget(); }
 
     // --- 📝 筆記 ---
-    function renderNotes() { const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count'); if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無任何記事</div>`; if(countBadge) countBadge.style.display = 'none'; return; } if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); }
+    function renderNotes() { const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count'); if(!list) return; if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無任何記事</div>`; if(countBadge) countBadge.style.display = 'none'; return; } if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); }
     function addOrUpdateNote() { const text = document.getElementById('note-text').value; const editId = document.getElementById('edit-note-id').value; if(!text) return; const p = getCurProject(); if(!p.notes) p.notes = []; if(editId) { const idx = p.notes.findIndex(x => x.id == editId); if(idx > -1) p.notes[idx].text = text; cancelEditNote(); } else p.notes.push({ id: Date.now(), text: text, creator: currentUser }); updateCurProject(p); renderNotes(); }
     function editNote(id) { const p = getCurProject(); const note = p.notes.find(x => x.id === id); if(!note) return; document.getElementById('note-text').value = note.text; document.getElementById('edit-note-id').value = note.id; document.getElementById('note-form-title').innerHTML = "✏️ 編輯記事"; document.getElementById('save-note-btn').innerHTML = "更新"; document.getElementById('cancel-note-btn').style.display = "block"; document.getElementById('note-form-card').classList.add('edit-mode-active'); }
     function cancelEditNote() { document.getElementById('note-text').value = ''; document.getElementById('edit-note-id').value = ''; document.getElementById('note-form-title').innerHTML = "新增記事"; document.getElementById('save-note-btn').innerHTML = "儲存"; document.getElementById('cancel-note-btn').style.display = "none"; document.getElementById('note-form-card').classList.remove('edit-mode-active'); }
@@ -1040,7 +1046,7 @@
 
     // --- 📞 工具與投票 ---
     function copyPhone(phone) { navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500)); }
-    function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
+    function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!list) return; if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
     function addOrUpdateContact() { const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; const editId = document.getElementById('edit-contact-id').value; if(!name || !phone) return; const p = getCurProject(); if(!p.contacts) p.contacts = []; if(editId) { const idx = p.contacts.findIndex(x => x.id == editId); if(idx>-1) {p.contacts[idx].name=name; p.contacts[idx].phone=phone;} cancelEditContact(); } else p.contacts.push({ id: Date.now(), name, phone, creator: currentUser }); updateCurProject(p); renderContacts(); }
     function editContact(id) { const p = getCurProject(); const contact = p.contacts.find(x => x.id === id); if(!contact) return; document.getElementById('contact-name').value = contact.name; document.getElementById('contact-phone').value = contact.phone; document.getElementById('edit-contact-id').value = contact.id; document.getElementById('contact-form-title').innerHTML = "✏️ 編輯聯絡人"; document.getElementById('save-contact-btn').innerHTML = "更新"; document.getElementById('cancel-contact-btn').style.display = "block"; document.getElementById('contact-form-card').classList.add('edit-mode-active'); }
     function cancelEditContact() { document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; document.getElementById('edit-contact-id').value=''; document.getElementById('contact-form-title').innerHTML = "新增聯絡人"; document.getElementById('save-contact-btn').innerHTML = "儲存"; document.getElementById('cancel-contact-btn').style.display = "none"; document.getElementById('contact-form-card').classList.remove('edit-mode-active'); }
@@ -1054,7 +1060,7 @@
         if(dot) dot.style.display = hasUnvoted ? 'block' : 'none'; if(innerDot) innerDot.style.display = hasUnvoted ? 'block' : 'none'; 
     }
     function renderPolls() { 
-        const p = getCurProject(); const list = document.getElementById('polls-list'); checkPollNotification(); 
+        const p = getCurProject(); const list = document.getElementById('polls-list'); if(!list) return; checkPollNotification(); 
         if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無投票</div>`; return; } 
         list.innerHTML = p.polls.map(poll => {
             const dateStr = poll.date ? `<div style="font-size:12px; color:var(--text-muted); font-weight:bold; margin-bottom:8px;">📅 期限: ${poll.date}</div>` : '';
@@ -1078,6 +1084,7 @@
     // --- 🎒 行李清單 (新功能) ---
     function renderChecklist() {
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
+        if(!list) return;
         if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:20px 0; font-weight:bold;">尚無待辦事項</div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
         const doneCount = p.checklist.filter(c => c.done).length;
         progText.textContent = `${doneCount} / ${p.checklist.length}`;
