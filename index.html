@@ -64,7 +64,7 @@
     /* 底部導航 (Bottom Navigation) - App 靈魂 */
     .bottom-nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; height: var(--nav-height); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); border-top: 1px solid var(--border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; color: var(--text-muted); cursor: pointer; transition: 0.2s; position: relative; }
-    .nav-icon { font-size: 22px; margin-bottom: 4px; transition: 0.2s; filter: grayscale(100%) opacity(0.5); }
+    .nav-icon { font-size: 22px; margin-bottom: 4px; transition: 0.2s; filter: grayscale(100%) opacity(0.5); position: relative;}
     .nav-text { font-size: 11px; font-weight: 700; }
     .nav-item.active { color: var(--secondary); }
     .nav-item.active .nav-icon { filter: none; transform: translateY(-2px); }
@@ -205,10 +205,11 @@
             <div class="nav-icon">💰</div><div class="nav-text">分帳</div>
         </div>
         <div class="nav-item" onclick="switchTab('notes')">
-            <div class="nav-icon">📝</div><div class="nav-text">記事</div>
+            <div class="nav-icon">📝<span id="note-count" style="display:none; position:absolute; top:-4px; right:-10px; background:var(--danger); color:white; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:10px; border:2px solid white; line-height:1;"></span></div>
+            <div class="nav-text">記事</div>
         </div>
         <div class="nav-item" onclick="switchTab('more')">
-            <div class="nav-icon">⚙️</div><div class="nav-text">更多<span id="poll-dot" class="notification-dot"></span></div>
+            <div class="nav-icon">⚙️<span id="poll-dot" class="notification-dot"></span></div><div class="nav-text">更多</div>
         </div>
     </div>
 
@@ -344,7 +345,6 @@
           <div id="polls-list"></div>
         </div>
     </div>
-
   </div>
 
   <div id="map-bottom-sheet" class="bottom-sheet">
@@ -420,7 +420,7 @@
     let activeClickMarker = null; 
     let currentCompressedImage = null; 
     let currentSheetSelection = null; 
-    let isEditingLocation = false; // 追蹤是否正在為編輯模式選地標
+    let isEditingLocation = false; 
 
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     let customUsers = JSON.parse(localStorage.getItem(`app_users_${currentWorkspace}`) || '{}');
@@ -429,7 +429,6 @@
 
     flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
 
-    // Leaflet 客製化地標 (需求2: 行程為淡藍色)
     const lightBlueIcon = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-lightblue.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -483,6 +482,7 @@
         }
     }
 
+    // 加入 Try-Catch 防護網，就算讀取部分資料出錯，也不會全部卡死
     function checkAutoLogin() {
         const savedUser = localStorage.getItem('app_savedUser');
         if(savedUser && authRules[savedUser]) {
@@ -491,16 +491,24 @@
             const savedProjectId = localStorage.getItem('app_lastProj');
             const savedTabId = localStorage.getItem('app_lastTab') || 'itinerary';
             
-            if(savedProjectId && getDB().find(p => p.id == savedProjectId)) {
-                openProject(parseInt(savedProjectId), true); 
-                switchTab(savedTabId);
-            } else {
+            try {
+                if(savedProjectId && getDB().find(p => p.id == savedProjectId)) {
+                    openProject(parseInt(savedProjectId), true); 
+                    switchTab(savedTabId);
+                } else {
+                    renderDashboard(); switchView('dashboard-view');
+                }
+            } catch (error) {
+                console.error("Auto Login UI Error:", error);
                 renderDashboard(); switchView('dashboard-view');
             }
+            
             syncFromCloud(false, true).then(() => {
                 if(currentProjectId) {
-                    renderItinerary(); renderBudget(); renderContacts(); renderPolls(); renderNotes();
-                    if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
+                    try {
+                        renderItinerary(); renderBudget(); renderContacts(); renderPolls(); renderNotes();
+                        if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
+                    } catch (e) { console.error("Sync Render Error:", e); }
                 }
             });
             startAutoSync();
@@ -531,8 +539,10 @@
                   const p = getCurProject();
                   if(!p || !p.id) goBackToDashboard(); 
                   else { 
-                    renderItinerary(); renderBudget(); renderContacts(); renderPolls(); renderNotes(); updateOnlineUsers();
-                    if (document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
+                    try {
+                        renderItinerary(); renderBudget(); renderContacts(); renderPolls(); renderNotes(); updateOnlineUsers();
+                        if (document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
+                    } catch (e) { console.error("Cloud Render Error:", e); }
                   }
                 }
                 renderDashboard();
@@ -598,13 +608,14 @@
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     
     function switchTab(tabId) { 
-      // 處理底部導航樣式
       document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active')); 
-      const targetNav = Array.from(document.querySelectorAll('.nav-item')).find(t => t.getAttribute('onclick').includes(tabId));
+      const targetNav = Array.from(document.querySelectorAll('.nav-item')).find(t => t.getAttribute('onclick') && t.getAttribute('onclick').includes(tabId));
       if(targetNav) targetNav.classList.add('active');
       
       document.querySelectorAll('.module-content').forEach(c => c.classList.remove('active')); 
-      document.getElementById(`tab-${tabId}`).classList.add('active'); 
+      const targetContent = document.getElementById(`tab-${tabId}`);
+      if(targetContent) targetContent.classList.add('active'); 
+      
       localStorage.setItem('app_lastTab', tabId); 
 
       if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
@@ -637,13 +648,21 @@
       if(confirm("⚠️ 確定要刪除整個旅程嗎？此動作將同步刪除所有人的資料！")) { const db = getDB().filter(p => p.id !== id); saveDB(db); renderDashboard(); }
     }
 
+    // 加入強固防護網，確保單一功能錯誤不會中斷載入
     function openProject(id, silent = false) {
       currentProjectId = id; activeDayIndex = 0; const p = getCurProject(); if(!p || !p.location) return;
       localStorage.setItem('app_lastProj', id); 
       
       document.getElementById('project-title-display').textContent = `📍 ${p.location}`;
       document.getElementById('exp-payer').innerHTML = allMembers.map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
-      renderItinerary(); renderBudget(); renderContacts(); renderPolls(); renderNotes(); updateOnlineUsers();
+      
+      try { renderItinerary(); } catch(e){ console.error(e); }
+      try { renderBudget(); } catch(e){ console.error(e); }
+      try { renderContacts(); } catch(e){ console.error(e); }
+      try { renderPolls(); } catch(e){ console.error(e); }
+      try { renderNotes(); } catch(e){ console.error(e); }
+      
+      updateOnlineUsers();
       p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
       
       if(!silent) { switchView('detail-view'); switchTab('itinerary'); }
@@ -728,7 +747,7 @@
         }; reader.readAsDataURL(file);
     }
 
-    // 新增或更新行程 (整合 hidden lat/lng 欄位)
+    // 新增或更新行程 
     function addOrUpdatePlan(placeName = null, lat = null, lng = null, overrideDay = null, overrideTime = null) {
       const time = overrideTime || document.getElementById('plan-time').value; 
       const place = placeName || document.getElementById('plan-place').value;
@@ -802,7 +821,7 @@
         navigator.clipboard.writeText(text).then(() => showSync("📋 行程已複製，可直接貼上分享", 2000));
     }
 
-    // --- 🗺️ 地圖核心 (需求2: 淡藍色圖釘與字卡) ---
+    // --- 🗺️ 地圖核心 ---
     function initMap() {
       if (!map) {
         map = L.map('map-container', {zoomControl: false}).setView([23.6978, 120.9605], 7); 
@@ -873,7 +892,6 @@
         }).catch(() => alert("搜尋失敗，請檢查網路"));
     }
 
-    // --- 需求4: 雙向編輯地圖邏輯 ---
     function openMapForEdit() {
         isEditingLocation = true;
         switchTab('map');
@@ -885,7 +903,6 @@
         document.getElementById('sheet-place-name').textContent = name;
         document.getElementById('sheet-place-address').textContent = address || `經緯度: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
         
-        // 判斷是否為「編輯模式中的選點」
         if(isEditingLocation) {
             document.getElementById('sheet-normal-action').style.display = 'none';
             document.getElementById('sheet-edit-action').style.display = 'block';
@@ -916,7 +933,6 @@
         closeBottomSheet();
     }
     
-    // 更新地點回編輯表單
     function updateLocationToForm() {
         if(!currentSheetSelection) return;
         document.getElementById('plan-place').value = currentSheetSelection.name;
@@ -941,7 +957,6 @@
       const latlngs = [];
       dayPlans.forEach((plan, index) => {
         const pt = [plan.lat, plan.lng]; latlngs.push(pt);
-        // 需求2: 使用淡藍色地標，並加上 Day X 字卡
         const marker = L.marker(pt, {icon: lightBlueIcon}).addTo(map);
         marker.bindTooltip(`Day ${activeDayIndex + 1} 行程`, {permanent: true, direction: "top", offset: [0, -35], className: "day-tooltip"});
         marker.bindPopup(`<b>${index+1}. ${plan.place}</b><br>時間: ${plan.time}`);
@@ -951,7 +966,7 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // --- 💰 分帳邏輯 (需求1: 支援編輯) ---
+    // --- 💰 分帳邏輯 ---
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); 
         let total = 0; 
@@ -979,7 +994,6 @@
         }).join(''); 
         document.getElementById('total-expense').textContent = total.toLocaleString(); 
         
-        // 結算建議邏輯不變
         let balances = {}; allMembers.forEach(m => balances[m] = 0); 
         p.expenses.forEach(e => {
             const cost = Number(e.cost); balances[e.payer] += cost; 
@@ -1057,11 +1071,21 @@
     }
     function toggleExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); updateCurProject(p); renderBudget(); }
 
-    // --- 📝 記事本 (可編輯) ---
+    // --- 📝 記事本 ---
     function renderNotes() {
         const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count');
-        if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:40px 0; font-weight:700;">尚無任何記事</div>`; countBadge.style.display = 'none'; return; }
-        countBadge.textContent = p.notes.length; countBadge.style.display = 'inline-block';
+        
+        if(!p.notes || p.notes.length === 0) { 
+            list.innerHTML = `<div style="text-align:center; color:#ccc; padding:40px 0; font-weight:700;">尚無任何記事</div>`; 
+            if(countBadge) countBadge.style.display = 'none'; 
+            return; 
+        }
+        
+        if(countBadge) {
+            countBadge.textContent = p.notes.length; 
+            countBadge.style.display = 'inline-block';
+        }
+        
         list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--primary);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255,201,20,0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join('');
     }
     function addOrUpdateNote() { 
@@ -1082,7 +1106,7 @@
     function cancelEditNote() { document.getElementById('note-text').value = ''; document.getElementById('edit-note-id').value = ''; document.getElementById('note-form-title').innerHTML = "新增記事"; document.getElementById('save-note-btn').innerHTML = "儲存記事"; document.getElementById('cancel-note-btn').style.display = "none"; document.getElementById('note-form-card').classList.remove('edit-mode-active'); }
     function delNote(id) { if(confirm("確定刪除此記事？")) { const p = getCurProject(); p.notes = p.notes.filter(x => x.id !== id); updateCurProject(p); renderNotes(); } }
 
-    // --- 📞 聯絡人 (可編輯) ---
+    // --- 📞 聯絡人 ---
     function copyPhone(phone) { navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500)); }
     function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:30px 0; font-weight:700;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:700; margin: 8px 0;">${c.phone}</div><div style="display:flex; gap:10px; margin-top:16px;"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
     function addOrUpdateContact() { 
@@ -1101,7 +1125,7 @@
     function cancelEditContact() { document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; document.getElementById('edit-contact-id').value=''; document.getElementById('contact-form-title').innerHTML = "新增聯絡人"; document.getElementById('save-contact-btn').innerHTML = "儲存"; document.getElementById('cancel-contact-btn').style.display = "none"; document.getElementById('contact-form-card').classList.remove('edit-mode-active'); }
     function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
 
-    // --- 🗳️ 投票 (需求3: 可編輯與顯示建立者) ---
+    // --- 🗳️ 投票 ---
     function addPollOptionField(val = "") {
         const container = document.getElementById('poll-options-container');
         const count = container.querySelectorAll('.poll-opt-row').length + 1;
@@ -1110,7 +1134,14 @@
         container.appendChild(div);
     }
     
-    function checkPollNotification() { const p = getCurProject(); const dot = document.getElementById('poll-dot'); if(!p || !p.polls || p.polls.length === 0) { dot.style.display = 'none'; return; } const hasUnvoted = p.polls.some(poll => !poll.options.some(opt => opt.voters.includes(currentUser))); dot.style.display = hasUnvoted ? 'block' : 'none'; }
+    function checkPollNotification() { 
+        const p = getCurProject(); const dot = document.getElementById('poll-dot'); 
+        if(!dot) return;
+        if(!p || !p.polls || p.polls.length === 0) { dot.style.display = 'none'; return; } 
+        const hasUnvoted = p.polls.some(poll => !poll.options.some(opt => opt.voters.includes(currentUser))); 
+        dot.style.display = hasUnvoted ? 'block' : 'none'; 
+    }
+    
     function renderPolls() { 
         const p = getCurProject(); const list = document.getElementById('polls-list'); checkPollNotification(); 
         if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#ccc; padding:40px 0; font-weight:700;">尚無投票</div>`; return; } 
@@ -1128,7 +1159,6 @@
         if(editId) {
             const idx = p.polls.findIndex(x => x.id == editId);
             if(idx > -1) { 
-                // 嘗試保留原有的投票紀錄
                 const oldOptions = p.polls[idx].options;
                 options.forEach(newOpt => {
                     const matchedOld = oldOptions.find(o => o.name === newOpt.name);
