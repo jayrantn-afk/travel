@@ -4,10 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Travel Planner | 旅遊規劃秘書</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/zh-tw.js"></script>
+
   <style>
     :root {
       --primary: #0ea5e9;
       --primary-hover: #0284c7;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
       --bg-color: #f8fafc;
       --surface: #ffffff;
       --text-main: #0f172a;
@@ -18,7 +26,6 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    
     body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; }
 
     /* Layout & Views */
@@ -26,45 +33,64 @@
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Login Screen */
+    /* 共用元件 */
+    .btn { padding: 12px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: center; }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+    .form-control { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; transition: 0.2s; }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+
+    /* 登入畫面 */
     .login-container { max-width: 400px; margin: 10vh auto; background: var(--surface); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); }
     .login-header { text-align: center; margin-bottom: 30px; }
     .login-header h1 { color: var(--primary); font-size: 24px; }
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
-    .form-control { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; transition: border-color 0.2s; }
-    .form-control:focus { outline: none; border-color: var(--primary); }
-    .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .btn:hover { background: var(--primary-hover); }
-    .error-msg { color: #ef4444; font-size: 14px; margin-top: -10px; margin-bottom: 15px; display: none; }
+    .error-msg { color: var(--danger); font-size: 14px; margin-top: -10px; margin-bottom: 15px; display: none; }
 
-    /* Dashboard Header */
+    /* 儀表板 Header */
     .app-header { max-width: 800px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-    .user-info { font-weight: 600; font-size: 18px; }
-    .logout-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-
-    /* Projects Grid */
-    .projects-container { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     
-    /* Project Card */
-    .project-card { background: var(--surface); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+    /* 專案卡片網格 */
+    .projects-container { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .project-card { position: relative; background: var(--surface); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
     .project-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-    .project-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; }
-    .project-dates { color: var(--text-muted); font-size: 14px; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
+    .project-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; padding-right: 24px; }
+    .project-dates { color: var(--text-muted); font-size: 14px; margin-bottom: 15px; }
     .project-creator { font-size: 12px; background: var(--bg-color); padding: 4px 8px; border-radius: 4px; display: inline-block; color: var(--primary); font-weight: 500;}
+    
+    /* 刪除按鈕 */
+    .delete-btn { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 20px; color: var(--border); cursor: pointer; transition: 0.2s; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .delete-btn:hover { color: var(--danger); background: #fee2e2; }
 
-    /* Add Project Button (The big +) */
+    /* 新增按鈕卡片 */
     .add-project-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; border: 2px dashed var(--border); color: var(--text-muted); min-height: 140px; }
     .add-project-card:hover { border-color: var(--primary); color: var(--primary); background: #f0f9ff; }
     .add-icon { font-size: 40px; font-weight: 300; margin-bottom: 10px; }
 
-    /* Modal */
+    /* Modal (彈出視窗) */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
     .modal-overlay.active { display: flex; }
     .modal { background: var(--surface); width: 90%; max-width: 400px; padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); }
     .modal h2 { margin-bottom: 20px; font-size: 20px; }
     .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
-    .btn-secondary { background: var(--bg-color); color: var(--text-main); }
+    .modal-actions button { flex: 1; }
+
+    /* 專案詳情頁 (Project Detail) */
+    .detail-header { max-width: 800px; margin: 0 auto 20px auto; display: flex; align-items: center; gap: 15px; }
+    .back-btn { background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .detail-title { flex: 1; font-size: 20px; font-weight: bold; }
+    
+    /* 導覽 Tabs */
+    .tabs { max-width: 800px; margin: 0 auto 20px auto; display: flex; background: var(--surface); border-radius: var(--radius); padding: 5px; box-shadow: var(--shadow); overflow-x: auto;}
+    .tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; border-radius: 8px; font-weight: 600; color: var(--text-muted); transition: 0.2s; white-space: nowrap; min-width: 80px;}
+    .tab.active { background: var(--primary); color: white; }
+    
+    /* 模組內容佔位符 */
+    .module-content { max-width: 800px; margin: 0 auto; background: var(--surface); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--border);}
+    .module-content h3 { color: var(--text-muted); margin-bottom: 10px; }
+    .module-content p { color: #94a3b8; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -75,7 +101,6 @@
         <h1>✈️ 旅遊規劃秘書</h1>
         <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">請選擇帳號並輸入密碼</p>
       </div>
-      
       <div class="form-group">
         <label>使用者帳號</label>
         <select id="user-select" class="form-control">
@@ -90,26 +115,41 @@
           </optgroup>
         </select>
       </div>
-      
       <div class="form-group">
         <label>密碼</label>
         <input type="password" id="password-input" class="form-control" placeholder="請輸入專屬密碼">
       </div>
-      
       <div id="login-error" class="error-msg">密碼錯誤，請重新輸入。</div>
-      
-      <button class="btn" onclick="handleLogin()">登入</button>
+      <button class="btn" onclick="handleLogin()" style="width: 100%;">登入</button>
     </div>
   </div>
 
   <div id="dashboard-view" class="view">
     <div class="app-header">
-      <div class="user-info">👋 歡迎，<span id="display-name"></span></div>
-      <button class="logout-btn" onclick="handleLogout()">登出</button>
+      <div style="font-weight: 600; font-size: 18px;">👋 歡迎，<span id="display-name"></span></div>
+      <button class="btn-secondary" style="padding: 6px 12px; border-radius: 6px;" onclick="handleLogout()">登出</button>
     </div>
-    
     <div class="projects-container" id="projects-grid">
       </div>
+  </div>
+
+  <div id="detail-view" class="view">
+    <div class="detail-header">
+      <button class="back-btn" onclick="switchView('dashboard-view')">← 返回</button>
+      <div class="detail-title" id="current-project-title">載入中...</div>
+    </div>
+    
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('itinerary', this)">📅 行程規劃</div>
+      <div class="tab" onclick="switchTab('map', this)">🗺️ 地圖探索</div>
+      <div class="tab" onclick="switchTab('accommodation', this)">🏨 住宿資訊</div>
+      <div class="tab" onclick="switchTab('budget', this)">💰 預算記帳</div>
+    </div>
+
+    <div class="module-content" id="module-display">
+      <h3>📅 行程規劃區塊 (待開發)</h3>
+      <p>這裡未來將實作：按天數分類的拖曳式行程表、景點停留時間設定。</p>
+    </div>
   </div>
 
   <div id="add-modal" class="modal-overlay">
@@ -120,12 +160,8 @@
         <input type="text" id="trip-location" class="form-control" placeholder="例如：日本京都、台南輕旅行">
       </div>
       <div class="form-group">
-        <label>出發日期</label>
-        <input type="date" id="trip-start" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>結束日期</label>
-        <input type="date" id="trip-end" class="form-control">
+        <label>選擇日期區間 (點擊拖曳)</label>
+        <input type="text" id="trip-date-range" class="form-control" placeholder="請選擇出發與回程日期" readonly>
       </div>
       <div class="modal-actions">
         <button class="btn btn-secondary" onclick="closeModal()">取消</button>
@@ -135,11 +171,9 @@
   </div>
 
   <script>
-    // 狀態管理
     let currentUser = null;
-    let currentWorkspace = null; // 'wei_family' 或 'chen_project'
+    let currentWorkspace = null;
 
-    // 密碼設定
     const authRules = {
       '魏嘉宏': { pwd: '35195', workspace: 'wei_family' },
       '魏卉姍': { pwd: '35195', workspace: 'wei_family' },
@@ -148,52 +182,49 @@
       '陳筱雙': { pwd: '1206', workspace: 'chen_project' }
     };
 
-    // 頁面切換邏輯
+    // 初始化 Flatpickr (飯店式區間日期選擇器)
+    const datePicker = flatpickr("#trip-date-range", {
+      mode: "range",
+      minDate: "today",
+      dateFormat: "Y-m-d",
+      locale: "zh_tw",
+      showMonths: window.innerWidth > 768 ? 2 : 1 // 電腦版顯示雙月，手機版單月
+    });
+
     function switchView(viewId) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
     }
 
-    // 登入邏輯
     function handleLogin() {
       const selectedUser = document.getElementById('user-select').value;
       const pwdInput = document.getElementById('password-input').value;
-      const errorMsg = document.getElementById('login-error');
-
       if (authRules[selectedUser].pwd === pwdInput) {
-        // 登入成功
         currentUser = selectedUser;
         currentWorkspace = authRules[selectedUser].workspace;
-        errorMsg.style.display = 'none';
-        document.getElementById('password-input').value = ''; // 清空密碼
-        
+        document.getElementById('login-error').style.display = 'none';
+        document.getElementById('password-input').value = ''; 
         document.getElementById('display-name').textContent = currentUser;
         renderProjects();
         switchView('dashboard-view');
       } else {
-        // 登入失敗
-        errorMsg.style.display = 'block';
+        document.getElementById('login-error').style.display = 'block';
       }
     }
 
-    // 登出邏輯
     function handleLogout() {
       currentUser = null;
       currentWorkspace = null;
       switchView('login-view');
     }
 
-    // Modal 控制
     function openModal() { document.getElementById('add-modal').classList.add('active'); }
     function closeModal() { 
       document.getElementById('add-modal').classList.remove('active');
-      // 清空表單
       document.getElementById('trip-location').value = '';
-      document.getElementById('trip-start').value = '';
-      document.getElementById('trip-end').value = '';
+      datePicker.clear(); // 清空日期選擇器
     }
 
-    // 讀取/寫入 LocalStorage (模擬資料庫)
     function getProjects() {
       const data = localStorage.getItem(`travel_app_${currentWorkspace}`);
       return data ? JSON.parse(data) : [];
@@ -201,36 +232,51 @@
 
     function saveProject() {
       const location = document.getElementById('trip-location').value;
-      const start = document.getElementById('trip-start').value;
-      const end = document.getElementById('trip-end').value;
+      const dateRange = document.getElementById('trip-date-range').value; // 格式: "2026-03-01 to 2026-03-05"
 
-      if(!location || !start || !end) {
-        alert("請填寫完整資訊！");
+      if(!location || !dateRange.includes('to')) {
+        alert("請填寫地點並選擇完整的日期區間（包含出發與結束）！");
         return;
       }
 
+      const dates = dateRange.split(' to ');
       const projects = getProjects();
-      const newProject = {
+      projects.push({
         id: Date.now(),
         location: location,
-        startDate: start,
-        endDate: end,
-        creator: currentUser // 紀錄是誰提議的
-      };
+        startDate: dates[0],
+        endDate: dates[1],
+        creator: currentUser
+      });
 
-      projects.push(newProject);
       localStorage.setItem(`travel_app_${currentWorkspace}`, JSON.stringify(projects));
-      
       closeModal();
       renderProjects();
     }
 
-    // 渲染專案卡片
+    // 刪除專案 (含防呆)
+    function deleteProject(id, event) {
+      event.stopPropagation(); // 阻止點擊事件傳遞到卡片本身，避免切換畫面
+      if(confirm("⚠️ 確定要刪除這個旅遊計畫嗎？此動作無法復原。")) {
+        let projects = getProjects();
+        projects = projects.filter(p => p.id !== id);
+        localStorage.setItem(`travel_app_${currentWorkspace}`, JSON.stringify(projects));
+        renderProjects();
+      }
+    }
+
+    // 進入專案詳情
+    function openProjectDetail(location, startDate, endDate) {
+      document.getElementById('current-project-title').textContent = `📍 ${location} (${startDate} ~ ${endDate})`;
+      // 預設切換到行程 Tab
+      switchTab('itinerary', document.querySelector('.tab')); 
+      switchView('detail-view');
+    }
+
     function renderProjects() {
       const grid = document.getElementById('projects-grid');
       const projects = getProjects();
       
-      // 清空現有內容，並加入「新增按鈕」卡片
       grid.innerHTML = `
         <div class="project-card add-project-card" onclick="openModal()">
           <div class="add-icon">+</div>
@@ -238,15 +284,14 @@
         </div>
       `;
 
-      // 反向迴圈讓最新建立的在前面
       for (let i = projects.length - 1; i >= 0; i--) {
         const p = projects[i];
         const card = document.createElement('div');
         card.className = 'project-card';
-        // 這裡預留點擊進入專案詳情的事件
-        card.onclick = () => alert(`進入專案：${p.location}\n(即將開發：地圖區、行程區、住宿區)`);
+        card.onclick = () => openProjectDetail(p.location, p.startDate, p.endDate);
         
         card.innerHTML = `
+          <button class="delete-btn" title="刪除專案" onclick="deleteProject(${p.id}, event)">×</button>
           <div class="project-title">📍 ${p.location}</div>
           <div class="project-dates">📅 ${p.startDate} ~ ${p.endDate}</div>
           <div class="project-creator">👤 提議者：${p.creator}</div>
@@ -255,7 +300,27 @@
       }
     }
 
-    // 支援 Enter 鍵登入
+    // Tab 切換邏輯 (純視覺展示用)
+    function switchTab(module, element) {
+      // 移除所有 Tab 的 active 狀態
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      // 加上當前 Tab 的 active 狀態
+      element.classList.add('active');
+
+      const content = document.getElementById('module-display');
+      const moduleData = {
+        'itinerary': { title: '📅 行程規劃區塊', desc: '這裡未來將實作：按天數分類的拖曳式行程表、景點停留時間設定。' },
+        'map': { title: '🗺️ 地圖探索區塊', desc: '這裡未來將串接 Google Maps API，讓你能在地圖上直接搜尋景點並加入行程。' },
+        'accommodation': { title: '🏨 住宿資訊區塊', desc: '這裡未來可記錄訂房代號、地址、Check-in 時間，並直接導航。' },
+        'budget': { title: '💰 預算記帳區塊', desc: '支援公積金與個人代墊計算，自動分帳清單一目了然。' }
+      };
+
+      content.innerHTML = `
+        <h3>${moduleData[module].title}</h3>
+        <p>${moduleData[module].desc}</p>
+      `;
+    }
+
     document.getElementById('password-input').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') handleLogin();
     });
