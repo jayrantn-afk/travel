@@ -40,7 +40,7 @@
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* 按鈕與表單 (修復圖一深色配黑字 Bug) */
+    /* 按鈕與表單 */
     .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
     .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
     .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
@@ -107,21 +107,20 @@
     .plan-timeline-line { position: absolute; left: 54px; top: 38px; bottom: -38px; width: 2px; background: #E4E8ED; z-index: 1; }
     .plan-row:last-child .plan-timeline-line { display: none; }
     .plan-dot { position: absolute; left: 49px; top: 22px; width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 2; border: 3px solid var(--secondary); }
-    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px;}
-    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s;}
+    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column;}
+    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
     /* 交通方式選擇區塊 */
-    .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
-    .transit-container::before { content: ''; position: absolute; left: 0; top: -20px; bottom: 0; width: 2px; background: #E4E8ED; }
+    .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
     .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; transition: 0.2s;}
     .transit-block:hover { background: #E2E8F0; }
     .transit-block:active { transform: scale(0.95); }
     .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center;}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
-    /* 標籤與文字 (固定位置) */
+    /* 標籤與文字 */
     .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
     .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
     .action-text:hover { filter: brightness(0.95); background: #E2E8F0; }
@@ -239,7 +238,7 @@
     </div>
     
     <div class="create-project-card" onclick="openCreateTripModal()">
-        <div class="create-icon"><span style="font-size:28px; line-height:1;">+</span></div>
+        <div style="font-size:28px; line-height:1; color:var(--primary); font-weight:bold; margin-bottom:8px;">+</div>
         <div style="font-weight: bold; color: var(--text-muted); font-size: 15px;">建立新旅程</div>
     </div>
     
@@ -314,7 +313,7 @@
     <div id="tab-map" class="module-content">
       <div style="display:flex; gap:8px; margin-bottom: 12px;">
           <input type="text" id="map-url-input" class="form-control" style="margin-bottom:0; flex:1; border-color:var(--secondary);" placeholder="🔗 貼上 Google Maps 網址自動解析">
-          <button id="map-parse-btn" class="btn btn-action" style="border-radius:14px; white-space:nowrap; padding: 14px 20px;" onclick="parseGoogleMapUrl()">解析</button>
+          <button id="map-parse-btn" class="btn btn-action" style="border-radius:14px; white-space:nowrap; padding: 14px 20px; color:white !important;" onclick="parseGoogleMapUrl()">解析</button>
       </div>
       
       <div class="map-search-bar" style="position:relative;">
@@ -346,7 +345,7 @@
         <input type="text" id="exp-item" class="form-control" placeholder="花費項目 (如: 晚餐)">
         <input type="number" id="exp-cost" class="form-control" placeholder="總金額">
         <select id="exp-payer" class="form-control"></select>
-        <button id="save-exp-btn" class="btn btn-action" style="width: 100%; margin-top:8px;" onclick="addExpenseFromTop()">儲存帳目</button>
+        <button id="save-exp-btn" class="btn btn-action" style="width: 100%; margin-top:8px; color:white !important;" onclick="addExpenseFromTop()">儲存帳目</button>
       </div>
       
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
@@ -354,7 +353,7 @@
           <div style="display:flex; gap:8px;">
               <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openBankInfoModal()">🏦 帳號</button>
               <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
-              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('split-exclusion-modal')">⚙️ 排除</button>
+              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
           </div>
       </div>
       <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4;"></div>
@@ -369,7 +368,7 @@
         <textarea id="note-text" class="form-control" placeholder="記錄重要事項、購物清單或備忘錄..." rows="4" style="resize: vertical;"></textarea>
         <div style="display: flex; gap: 12px;">
             <button id="cancel-note-btn" class="btn-outline" style="display: none; flex: 1; padding:14px; border-radius:16px; font-weight:bold;" onclick="cancelEditNote()">取消</button>
-            <button id="save-note-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdateNote()">儲存</button>
+            <button id="save-note-btn" class="btn btn-action" style="flex: 2; color:white !important;" onclick="addOrUpdateNote()">儲存</button>
         </div>
       </div>
       <div id="notes-list"></div>
@@ -384,20 +383,20 @@
 
         <div id="more-contact" class="more-section" style="display:block;">
           <div id="contact-form-card" class="card-panel">
-            <h4 id="contact-form-title" style="margin-bottom: 12px; font-size: 16px;">新增聯絡人</h4>
+            <h4 id="contact-form-title" style="margin-bottom: 16px; font-size: 16px;">新增聯絡人</h4>
             <input type="hidden" id="edit-contact-id" value="">
             <input type="text" id="contact-name" class="form-control" placeholder="名稱 (如: 租車公司)">
             <input type="tel" id="contact-phone" class="form-control" placeholder="電話號碼">
             <div style="display: flex; gap: 12px;">
                 <button id="cancel-contact-btn" class="btn-outline" style="display: none; flex: 1; padding:14px; border-radius:16px; font-weight:bold;" onclick="cancelEditContact()">取消</button>
-                <button id="save-contact-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdateContact()">儲存</button>
+                <button id="save-contact-btn" class="btn btn-action" style="flex: 2; color:white !important;" onclick="addOrUpdateContact()">儲存</button>
             </div>
           </div>
           <div id="contacts-list"></div>
         </div>
 
         <div id="more-poll" class="more-section" style="display:none;">
-          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
+          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px; color:white !important;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
           
           <div id="poll-form-card" class="card-panel" style="display:none;">
             <h4 id="poll-form-title" style="margin-bottom: 12px; font-size:16px;">建立投票</h4>
@@ -414,7 +413,7 @@
             <button class="btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; border-color:#CBD5E1; font-weight:bold; padding:14px; border-radius:16px;" onclick="addPollOptionField()"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 新增選項</button>
             <div style="display: flex; gap: 12px;">
                 <button id="cancel-poll-btn" class="btn-outline" style="flex: 1; padding:14px; border-radius:16px; font-weight:bold;" onclick="cancelEditPoll()">取消</button>
-                <button id="save-poll-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdatePoll()">發布</button>
+                <button id="save-poll-btn" class="btn btn-action" style="flex: 2; color:white !important;" onclick="addOrUpdatePoll()">發布</button>
             </div>
           </div>
           <div id="polls-list"></div>
@@ -424,7 +423,7 @@
             <div class="card-panel" style="padding:16px;">
                 <div style="display:flex; gap:8px;">
                     <input type="text" id="checklist-input" class="form-control" style="margin:0;" placeholder="新增待辦或行李...">
-                    <button class="btn btn-action" onclick="addChecklistItem()">新增</button>
+                    <button class="btn btn-action" style="color:white !important;" onclick="addChecklistItem()">新增</button>
                 </div>
             </div>
             <div class="card-panel" style="padding:12px 20px;">
@@ -445,15 +444,15 @@
         <h3 style="margin-bottom:20px; font-weight:800;">設定交通方式</h3>
         <input type="hidden" id="transit-plan-id">
         <div style="display:flex; flex-direction:column; gap:12px;">
-            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('walking', '🚶 步行')">🚶 步行 (自動計算)</button>
-            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('driving', '🚗 開車')">🚗 開車 (自動計算)</button>
-            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('transit', '🚇 大眾運輸')">🚇 大眾運輸 (自動計算)</button>
+            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('walking')">🚶 步行 (自動計算)</button>
+            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('driving')">🚗 開車 (自動計算)</button>
+            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('transit')">🚇 大眾運輸 (自動計算)</button>
             
             <div style="padding:16px; background:#F8F9FA; border-radius:16px; border:1px solid #E4E8ED; text-align:left; margin-top:8px;">
                 <div style="font-weight:bold; margin-bottom:8px; color:var(--secondary);">✨ 自訂其他交通</div>
                 <input type="text" id="custom-transit-type" class="form-control" placeholder="例: 捷運銀座線 / 新幹線" style="margin-bottom:8px; padding:10px;">
                 <input type="number" id="custom-transit-time" class="form-control" placeholder="預估幾分鐘" style="margin-bottom:12px; padding:10px;">
-                <button class="btn btn-action" style="width:100%; color:#ffffff !important;" onclick="saveTransitMode('custom')">確定儲存</button>
+                <button class="btn btn-action" style="width:100%; color:white !important;" onclick="saveTransitMode('custom')">確定儲存</button>
             </div>
         </div>
         <button class="btn-small" style="background:#F1F5F9; font-weight:bold; color:var(--text-muted); margin-top:20px; box-shadow:none; padding:10px 20px; border:none; border-radius:10px; cursor:pointer;" onclick="closeModal('transit-modal')">取消</button>
@@ -475,7 +474,7 @@
             <select id="sheet-popup-day" class="form-control" style="margin:0; flex:1;"></select>
             <input type="time" id="sheet-popup-time" class="form-control" style="margin:0; flex:1;" value="12:00">
         </div>
-        <button class="btn btn-action" style="width:100%; margin-top:16px; padding: 14px; border-radius:14px; color:#ffffff !important;" onclick="addFromSheet()">加到行程規劃</button>
+        <button class="btn btn-action" style="width:100%; margin-top:16px; padding: 14px; border-radius:14px; color:white !important;" onclick="addFromSheet()">加到行程規劃</button>
     </div>
     
     <div id="sheet-edit-action" style="display:none;">
@@ -491,7 +490,7 @@
       <div id="bank-info-container" style="max-height: 50vh; overflow-y: auto; padding-right:8px;"></div>
       <div style="display: flex; gap: 12px; margin-top: 24px;">
         <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('bank-info-modal')">取消</button>
-        <button class="btn btn-action" style="flex:1; padding: 14px; color:#ffffff !important;" onclick="saveBankInfo()">更新儲存</button>
+        <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="saveBankInfo()">更新儲存</button>
       </div>
     </div>
   </div>
@@ -533,7 +532,7 @@
       <input type="text" id="trip-location" class="form-control" placeholder="📍 目的地 (如: 日本福岡)">
       <input type="text" id="trip-date-range" class="form-control" placeholder="📅 點擊選擇日期區間" readonly>
       
-      <label style="font-size:12px; font-weight:bold; color:var(--text-muted); display:block; margin-top:16px;">👥 邀請成員 (建立後也可在專案內修改)</label>
+      <label style="font-size:12px; font-weight:bold; color:var(--text-muted); display:block; margin-top:16px;">👥 邀請成員 (建立後也可修改)</label>
       <div id="create-trip-invite-list" style="max-height: 120px; overflow-y: auto; background:#F8F9FA; padding:8px; border-radius:12px; border:1px solid var(--border); margin-top:8px; margin-bottom: 12px;"></div>
       
       <div style="display: flex; gap: 12px; margin-top: 12px;">
@@ -570,7 +569,7 @@
       <input type="password" id="admin-pwd-input" class="form-control" placeholder="請輸入密碼">
       <div style="display: flex; gap: 12px; margin-top: 12px;">
         <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('admin-login-modal')">取消</button>
-        <button class="btn btn-action" style="flex:1; padding: 14px; color:#ffffff !important;" onclick="verifyAdmin()">驗證</button>
+        <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="verifyAdmin()">驗證</button>
       </div>
     </div>
   </div>
@@ -610,7 +609,6 @@
         customUsers = { ...baseAuthRules };
         localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
     } else {
-        // 確保基本成員都在
         Object.keys(baseAuthRules).forEach(k => { if(customUsers[k] === undefined) customUsers[k] = baseAuthRules[k]; });
         localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
     }
@@ -624,13 +622,9 @@
         return L.divIcon({ className: 'custom-leaflet-icon', html: `<div class="custom-map-pin ${isBlue ? 'pin-blue' : ''}"><div class="custom-map-pin-inner">${number}</div></div>`, iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -35] });
     };
 
-    // 取得當前專案成員
-    function getTripMembers() {
-        const p = getCurProject();
-        return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙'];
-    }
+    function getTripMembers() { const p = getCurProject(); return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
 
-    // 自動校正與專案成員相容性腳本
+    // 自動校正簡體字與成員名單
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
         if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
@@ -670,7 +664,7 @@
                     <input type="text" id="admin-pwd-${m}" value="${pwd}" class="form-control" style="margin:0; padding:10px; font-size:14px;" placeholder="密碼">
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:8px;">
-                    <button class="btn-small btn-action" style="color:#ffffff !important;" onclick="adminSaveUser('${m}')">更新儲存</button>
+                    <button class="btn-small btn-action" style="color:white !important;" onclick="adminSaveUser('${m}')">更新儲存</button>
                     <button class="btn-small" style="background:#FFF0F0; color:var(--danger); border:none; font-weight:bold; cursor:pointer;" onclick="adminDelUser('${m}')">刪除帳號</button>
                 </div>
             </div>`;
@@ -726,7 +720,6 @@
         }
     }
 
-    // --- 重新整理防呆 ---
     window.onload = () => { 
         renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
         const savedUser = localStorage.getItem('app_savedUser');
@@ -759,12 +752,12 @@
     };
 
     function safeRenderAll() {
-        try { renderItinerary(); } catch(e){ console.error("Itinerary Error", e); }
-        try { renderBudget(); } catch(e){ console.error("Budget Error", e); }
-        try { renderContacts(); } catch(e){ console.error("Contact Error", e); }
-        try { renderPolls(); } catch(e){ console.error("Poll Error", e); }
-        try { renderNotes(); } catch(e){ console.error("Note Error", e); }
-        try { renderChecklist(); } catch(e){ console.error("Checklist Error", e); }
+        try { renderItinerary(); } catch(e){ console.error(e); }
+        try { renderBudget(); } catch(e){ console.error(e); }
+        try { renderContacts(); } catch(e){ console.error(e); }
+        try { renderPolls(); } catch(e){ console.error(e); }
+        try { renderNotes(); } catch(e){ console.error(e); }
+        try { renderChecklist(); } catch(e){ console.error(e); }
     }
 
     function renderUserSelect() { const select = document.getElementById('user-select'); select.innerHTML = allMembers.map(m => `<option value="${m}">👤 ${m}</option>`).join(''); }
@@ -816,6 +809,7 @@
       fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
     }
 
+    function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
     function getCurProject() { return getDB().find(p => p.id === currentProjectId) || {}; }
     function updateCurProject(updatedP) { const db = getDB(); db[db.findIndex(p => p.id === currentProjectId)] = updatedP; saveDB(db); updateOnlineUsers(); }
 
@@ -854,15 +848,12 @@
         if(targetBtn) targetBtn.classList.add('active');
     }
 
-    // --- 專案與成員隔離管理 ---
     function openCreateTripModal() {
-        document.getElementById('trip-location').value = '';
-        document.getElementById('trip-date-range').value = '';
+        document.getElementById('trip-location').value = ''; document.getElementById('trip-date-range').value = '';
         const list = document.getElementById('create-trip-invite-list');
         list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => `
             <label class="checkbox-item" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
-                <span style="font-weight:bold; font-size:14px;">${m}</span>
-                <input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);">
+                <span style="font-weight:bold; font-size:14px;">${m}</span><input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);">
             </label>
         `).join('');
         openModal('add-modal');
@@ -871,10 +862,7 @@
     function createProject() {
       const loc = document.getElementById('trip-location').value; const rawDate = document.getElementById('trip-date-range').value; const dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
       if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期區間");
-      
-      const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value);
-      selectedMembers.push(currentUser); // 建立者必含
-      
+      const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value); selectedMembers.push(currentUser); 
       const db = getDB(); db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
       saveDB(db); closeModal('add-modal'); renderDashboard();
     }
@@ -900,15 +888,12 @@
       localStorage.setItem('app_lastProj', id); 
       
       refreshMemberDependentUIs();
-      
-      safeRenderAll();
-      updateOnlineUsers(); p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
+      safeRenderAll(); updateOnlineUsers(); p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
       if(!silent) { switchView('detail-view'); switchTab('itinerary'); }
     }
     
     function refreshMemberDependentUIs() {
-        const p = getCurProject();
-        const formatD = (dStr) => { const d = new Date(dStr); return `${d.getMonth()+1}/${d.getDate()}`; };
+        const p = getCurProject(); const formatD = (dStr) => { const d = new Date(dStr); return `${d.getMonth()+1}/${d.getDate()}`; };
         document.getElementById('project-title-display').innerHTML = `${p.location} <span style="font-size:15px; color:var(--text-muted); font-weight:700; margin-left:8px;">(${formatD(p.start)} - ${formatD(p.end)})</span>`;
         document.getElementById('exp-payer').innerHTML = getTripMembers().map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
         document.getElementById('exclusion-user-select').innerHTML = `<option value="">-- 選擇人員 --</option>` + getTripMembers().map(m => `<option value="${m}">${m}</option>`).join('');
@@ -916,89 +901,59 @@
 
     function openManageMembersModal() { renderManageMembers(); openModal('manage-members-modal'); }
     function renderManageMembers() {
-        const p = getCurProject(); if(!p) return;
-        const list = document.getElementById('manage-members-list');
+        const p = getCurProject(); if(!p) return; const list = document.getElementById('manage-members-list');
         let html = '<h4 style="font-size:14px; color:var(--secondary); margin-bottom:8px;">目前成員</h4>';
-        p.members.forEach(m => {
-            html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #E4E8ED;"><span style="font-weight:bold;">${m}</span>${m !== currentUser ? `<button class="btn-small" style="background:#FFF0F0; color:var(--danger); border:none; cursor:pointer;" onclick="removeTripMember('${m}')">踢除</button>` : '<span style="font-size:12px; color:#aaa;">(你)</span>'}</div>`;
-        });
+        p.members.forEach(m => { html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #E4E8ED;"><span style="font-weight:bold;">${m}</span>${m !== currentUser ? `<button class="btn-small" style="background:#FFF0F0; color:var(--danger); border:none; cursor:pointer;" onclick="removeTripMember('${m}')">踢除</button>` : '<span style="font-size:12px; color:#aaa;">(你)</span>'}</div>`; });
         const nonMembers = allMembers.filter(m => !p.members.includes(m));
         if (nonMembers.length > 0) {
             html += '<h4 style="font-size:14px; color:var(--text-muted); margin-top:20px; margin-bottom:8px;">邀請其他朋友</h4>';
-            nonMembers.forEach(m => { html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #E4E8ED;"><span style="font-weight:bold;">${m}</span><button class="btn-small btn-action" style="color:#ffffff !important;" onclick="addTripMember('${m}')">加入</button></div>`; });
+            nonMembers.forEach(m => { html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #E4E8ED;"><span style="font-weight:bold;">${m}</span><button class="btn-small btn-action" style="color:white !important;" onclick="addTripMember('${m}')">加入</button></div>`; });
         }
         list.innerHTML = html;
     }
     function addTripMember(m) { const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); }
     function removeTripMember(m) { if(!confirm(`確定要將 ${m} 移出此旅程嗎？`)) return; const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); }
 
-    function updateOnlineUsers() {
-        const p = getCurProject(); if(!p || !p.activeUsers) return;
-        const now = Date.now(); const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000);
-        document.getElementById('online-users-text').textContent = activeNames.length > 0 ? `${activeNames.join('、')} 正在協作` : `目前僅你一人在線`;
-    }
-
+    function updateOnlineUsers() { const p = getCurProject(); if(!p || !p.activeUsers) return; const now = Date.now(); const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000); document.getElementById('online-users-text').textContent = activeNames.length > 0 ? `${activeNames.join('、')} 正在協作` : `目前僅你一人在線`; }
     function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }
-
     function changeDayIndex(idx) { activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx); renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
+    function getDistance(lat1, lon1, lat2, lon2) { if(!lat1 || !lon1 || !lat2 || !lon2) return null; const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; }
 
-    // --- 🌍 智能距離計算 ---
-    function getDistance(lat1, lon1, lat2, lon2) {
-        if(!lat1 || !lon1 || !lat2 || !lon2) return null;
-        const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; 
-    }
-
-    // --- 📅 行程核心邏輯 ---
+    // --- 📅 行程核心 ---
     function renderItinerary() {
-      const p = getCurProject(); if(!p.start) return; 
-      const start = new Date(p.start); const end = new Date(p.end);
-      const totalDays = Math.floor((end - start) / 86400000) + 1;
-      const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+      const p = getCurProject(); if(!p.start) return; const start = new Date(p.start); const end = new Date(p.end); const totalDays = Math.floor((end - start) / 86400000) + 1; const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
       
       let daysHtml = '';
-      for(let i=0; i<totalDays; i++) {
-        const count = (p.plans || []).filter(plan => plan.dayIdx === i).length;
-        daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">
-          第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}
-        </button>`;
-      }
+      for(let i=0; i<totalDays; i++) { const count = (p.plans || []).filter(plan => plan.dayIdx === i).length; daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}</button>`; }
       document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
       document.getElementById('map-day-buttons').innerHTML = daysHtml; 
       
-      const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex);
-      const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
+      const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex); const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
       document.getElementById('itinerary-date-header-text').innerHTML = `第 ${activeDayIndex + 1} 天 <span style="font-size:16px; font-weight:700; color:var(--text-muted); margin-left:4px;">(${dayStr})</span>`;
 
-      const list = document.getElementById('plan-list');
-      const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
-      
+      const list = document.getElementById('plan-list'); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
       if(dayPlans.length === 0) list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:60px 0; font-weight:bold; font-size:15px;">這天還沒有排行程喔 🏝️</div>`;
       else {
           let html = '';
           dayPlans.forEach((plan, index) => {
-             let finalGmapsUrl = plan.lat ? `http://www.google.com/maps/search/?api=1&query=${plan.lat},${plan.lng}` : ''; 
+             let finalGmapsUrl = plan.lat ? `https://www.google.com/maps/dir/?api=1&destination=${plan.lat},${plan.lng}` : ''; 
              let transitHtml = '';
 
              if (index < dayPlans.length - 1) {
-                 const nextPlan = dayPlans[index + 1];
-                 const dist = getDistance(plan.lat, plan.lng, nextPlan.lat, nextPlan.lng);
-                 
-                 let modeStr = plan.transitMode || 'driving'; 
-                 let timeStr = ""; let travelModeParam = modeStr;
+                 const nextPlan = dayPlans[index + 1]; const dist = getDistance(plan.lat, plan.lng, nextPlan.lat, nextPlan.lng);
+                 let modeStr = plan.transitMode || 'driving'; let timeStr = ""; let travelModeParam = modeStr;
 
                  if(plan.transitMode && plan.transitMode.startsWith('custom:')) {
                      timeStr = plan.transitMode.replace('custom:', ''); travelModeParam = 'transit';
                  } else {
                      if (dist !== null) {
-                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 3) * 60))} 分鐘`; travelModeParam = 'walking'; }
-                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸約 ${Math.round((dist / 15) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
+                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelModeParam = 'walking'; }
+                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸估 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
                          else { timeStr = `🚗 開車約 ${Math.round((dist / 35) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
                      } else { timeStr = `📍 點擊設定交通`; }
                  }
                  
-                 const dirUrl = (plan.lat && nextPlan.lat) ? `http://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
+                 const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
 
                  transitHtml = `
                  <div class="transit-container">
@@ -1018,11 +973,10 @@
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
                             <div style="flex:1;">
                                 <strong style="font-size:18px; display:block;">${plan.place}</strong>
-                                ${finalGmapsUrl && index === dayPlans.length - 1 ? `<a href="${finalGmapsUrl}" target="_blank" style="display:inline-block; margin-top:6px; font-size:13px; color:var(--secondary); text-decoration:none; font-weight:800;">📍 Google Maps 單點</a>` : ''}
+                                ${finalGmapsUrl && index === dayPlans.length - 1 ? `<a href="${finalGmapsUrl}" target="_blank" style="display:inline-block; margin-top:6px; font-size:13px; color:var(--secondary); text-decoration:none; font-weight:800;">📍 Google Maps 導航</a>` : ''}
                             </div>
                             ${plan.image ? `<img src="${plan.image}" class="plan-img-display">` : ''}
                         </div>
-                        
                         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:12px;">
                             <div class="creator-badge">由 ${plan.creator || '提議者'} 新增</div>
                             <div style="display:flex; gap:6px;">
@@ -1044,14 +998,11 @@
     function saveTransitMode(modeStr) {
         const planId = document.getElementById('transit-plan-id').value; const p = getCurProject(); const plan = p.plans.find(x => x.id == planId);
         if(!plan) return;
-        
         if(modeStr === 'custom') {
             const tType = document.getElementById('custom-transit-type').value; const tTime = document.getElementById('custom-transit-time').value;
             if(!tType || !tTime) return alert("請輸入自訂交通方式與時間！");
             plan.transitMode = `custom:✨ ${tType} 約 ${tTime} 分鐘`;
-        } else {
-            plan.transitMode = modeStr; 
-        }
+        } else { plan.transitMode = modeStr; }
         updateCurProject(p); renderItinerary(); closeModal('transit-modal');
     }
 
@@ -1126,32 +1077,20 @@
                         <strong>${name}</strong><br><span style="font-size:12px; color:var(--text-muted);">${loc.display_name}</span>
                     </div>`;
                 });
-                resultsContainer.innerHTML = html;
-                resultsContainer.style.display = 'block';
-                showSync("📍 請從選單中選擇精確地點", 1500);
-            } else {
-                resultsContainer.style.display = 'none';
-                alert("找不到該地點，建議貼上 Google Maps 網址來解析");
-            }
+                resultsContainer.innerHTML = html; resultsContainer.style.display = 'block'; showSync("📍 請從選單中選擇精確地點", 1500);
+            } else { resultsContainer.style.display = 'none'; alert("找不到該地點，建議貼上 Google Maps 網址來解析"); }
         }).catch(() => alert("搜尋失敗，請檢查網路"));
     }
 
     function selectSearchResult(name, address, lat, lng) {
-        document.getElementById('map-search-results').style.display = 'none';
-        document.getElementById('map-search-input').value = '';
-        map.setView([lat, lng], 16);
-        if(activeClickMarker) map.removeLayer(activeClickMarker);
-        activeClickMarker = L.marker([lat, lng], {icon: createCustomMapIcon()}).addTo(map);
+        document.getElementById('map-search-results').style.display = 'none'; document.getElementById('map-search-input').value = '';
+        map.setView([lat, lng], 16); if(activeClickMarker) map.removeLayer(activeClickMarker); activeClickMarker = L.marker([lat, lng], {icon: createCustomMapIcon()}).addTo(map);
         openBottomSheet(name, address, lat, lng);
     }
 
     function parseGoogleMapUrl() {
-        const url = document.getElementById('map-url-input').value;
-        const btn = document.getElementById('map-parse-btn');
-        if(!url) return;
-        
-        btn.innerHTML = '⏳...'; btn.disabled = true;
-        let lat = null, lng = null, placeName = "📍 網址匯入地標";
+        const url = document.getElementById('map-url-input').value; const btn = document.getElementById('map-parse-btn'); if(!url) return;
+        btn.innerHTML = '⏳...'; btn.disabled = true; let lat = null, lng = null, placeName = "📍 網址匯入地標";
 
         const nameMatch = url.match(/\/place\/([^\/]+)\//);
         if(nameMatch && nameMatch[1]) placeName = decodeURIComponent(nameMatch[1]).replace(/\+/g, ' ');
@@ -1165,18 +1104,14 @@
             if(lat && lng) {
                 document.getElementById('map-url-input').value = '';
                 if(map) { map.setView([lat, lng], 16); if(activeClickMarker) map.removeLayer(activeClickMarker); activeClickMarker = L.marker([lat, lng], {icon: createCustomMapIcon()}).addTo(map); }
-                openBottomSheet(placeName, "來自 Google Maps 網址", lat, lng);
-                showSync("✅ 解析成功！", 1500);
+                openBottomSheet(placeName, "來自 Google Maps 網址", lat, lng); showSync("✅ 解析成功！", 1500);
             } else { alert("無法解析此網址的座標，請確認網址內包含 @經度,緯度！"); }
         }, 600);
     }
 
     function openMapForEdit() { isEditingLocation = true; switchTab('map'); showSync("在地圖上點擊或貼上網址更換地標", 3000); }
     function openBottomSheet(name, address, lat, lng) {
-        currentSheetSelection = { name, lat, lng }; 
-        document.getElementById('sheet-place-name-input').value = name; 
-        document.getElementById('sheet-place-address-input').value = address || `經緯度: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-
+        currentSheetSelection = { name, lat, lng }; document.getElementById('sheet-place-name-input').value = name; document.getElementById('sheet-place-address-input').value = address || `經緯度: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
         if(isEditingLocation) { document.getElementById('sheet-normal-action').style.display = 'none'; document.getElementById('sheet-edit-action').style.display = 'block'; } 
         else {
             document.getElementById('sheet-normal-action').style.display = 'block'; document.getElementById('sheet-edit-action').style.display = 'none';
@@ -1189,15 +1124,12 @@
     function closeBottomSheet() { document.getElementById('map-bottom-sheet').classList.remove('active'); setTimeout(() => { document.getElementById('sheet-overlay').style.display = 'none'; }, 300); currentSheetSelection = null; }
 
     function addFromSheet() { 
-        if(!currentSheetSelection) return; 
-        const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
+        if(!currentSheetSelection) return; const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
         const day = parseInt(document.getElementById('sheet-popup-day').value); const time = document.getElementById('sheet-popup-time').value; 
-        showAddPlanForm(); addOrUpdatePlan(finalName, currentSheetSelection.lat, currentSheetSelection.lng, day, time); 
-        closeBottomSheet(); switchTab('itinerary'); 
+        showAddPlanForm(); addOrUpdatePlan(finalName, currentSheetSelection.lat, currentSheetSelection.lng, day, time); closeBottomSheet(); switchTab('itinerary'); 
     }
     function updateLocationToForm() { 
-        if(!currentSheetSelection) return; 
-        const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
+        if(!currentSheetSelection) return; const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
         document.getElementById('plan-place').value = finalName; document.getElementById('edit-lat').value = currentSheetSelection.lat; document.getElementById('edit-lng').value = currentSheetSelection.lng; 
         closeBottomSheet(); isEditingLocation = false; switchTab('itinerary'); showSync("📍 地標已帶入，請確認後點擊儲存", 2500); 
     }
@@ -1269,7 +1201,7 @@
                 </div>
                 <div style="display:flex; gap:8px;">
                     <button class="btn btn-outline" style="flex:1; padding:12px;" onclick="toggleInlineExpEdit(${e.id})">取消</button>
-                    <button class="btn btn-action" id="inline-save-btn-${e.id}" style="flex:2; padding:12px; color:#ffffff !important;" onclick="saveInlineExp(${e.id})">更新儲存</button>
+                    <button class="btn btn-action" id="inline-save-btn-${e.id}" style="flex:2; padding:12px; color:white !important;" onclick="saveInlineExp(${e.id})">更新儲存</button>
                 </div>
             </div>`;
         });
@@ -1284,6 +1216,7 @@
             if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); } 
         });
 
+        // 取整數避免循環小數誤差
         let debtors = getTripMembers().map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
         let creditors = getTripMembers().map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
         
@@ -1311,7 +1244,7 @@
                     </div>
                     <div style="text-align:right;">
                         <span style="font-weight:800; color:var(--secondary); font-size:20px; display:block;">$${Math.round(t.amt)}</span>
-                        <button class="btn-small btn-action" style="margin-top:6px; padding:6px 10px; border-radius:8px; font-size:12px; color:#ffffff !important;" onclick="settleDebt('${t.from}', '${t.to}', ${Math.round(t.amt)})">✔️ 標記已還款</button>
+                        <button class="btn-small btn-action" style="margin-top:6px; padding:6px 10px; border-radius:8px; font-size:12px; color:white !important;" onclick="settleDebt('${t.from}', '${t.to}', ${Math.round(t.amt)})">✔️ 標記已還款</button>
                     </div>
                 </div>`;
             }); 
@@ -1413,10 +1346,11 @@
     function delPoll(id) { if(confirm("確定刪除此投票？")) { const p = getCurProject(); p.polls = p.polls.filter(x => x.id !== id); updateCurProject(p); renderPolls(); } }
     function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
 
-    // --- 🎒 行李清單 ---
+    // --- 🎒 行李清單 (需求7: 獨立狀態與共用顯示) ---
     function renderChecklist() {
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
         if(!list) return;
+        
         if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:20px 0; font-weight:bold;">尚無待辦事項</div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
         
         const myDoneCount = p.checklist.filter(c => c.checkedBy && c.checkedBy.includes(currentUser)).length;
