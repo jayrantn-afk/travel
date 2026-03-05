@@ -200,10 +200,10 @@
 </head>
 <body>
 
-  <div id="global-loader" class="modal-overlay">
-    <div class="modal" style="text-align: center;">
+  <div id="global-loader" class="modal-overlay" style="z-index: 9999;">
+    <div class="modal" style="text-align: center; background: transparent; box-shadow: none;">
       <div class="spinner"></div>
-      <h2 style="font-weight: 800; color: var(--primary); margin-top:16px;">開啟旅程中...</h2>
+      <h2 style="font-weight: 800; color: white; margin-top:16px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">處理中...</h2>
     </div>
   </div>
 
@@ -248,7 +248,8 @@
   <div id="detail-view" class="view" style="padding-bottom: 20px;">
     <div class="detail-header">
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <button class="btn-outline btn-small" style="border:none; padding: 8px 0; font-size:15px; cursor:pointer; box-shadow:none;" onclick="goBackToDashboard()">← 返回列表</button>
+        <button class="btn-small" style="background:#F1F5F9; color:var(--text-main); font-weight:800; border:none; border-radius:12px; padding:8px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'" onclick="goBackToDashboard()"><span style="font-size:16px; line-height:1; margin-bottom:2px;">←</span> 返回列表</button>
+        
         <div style="display:flex; gap:8px;">
             <button class="btn-outline btn-small" style="border-radius:12px; font-weight:bold;" onclick="openManageMembersModal()">👥 成員</button>
             <button class="btn-outline btn-small" style="border-radius:12px;" onclick="syncFromCloud(true)">🔄 同步</button>
@@ -546,7 +547,7 @@
     <div class="modal">
         <h2 style="margin-bottom: 12px; font-weight:800;">👥 旅程成員管理</h2>
         <div id="manage-members-list" style="max-height: 50vh; overflow-y: auto; padding-right: 8px;"></div>
-        <button class="btn" style="width:100%; margin-top:20px; padding:16px; border-radius:16px;" onclick="closeModal('manage-members-modal')">完成</button>
+        <button class="btn" style="width:100%; margin-top:20px; padding:16px; border-radius:16px;" onclick="closeManageMembers()">完成</button>
     </div>
   </div>
 
@@ -590,7 +591,7 @@
       <select id="exclusion-user-select" class="form-control" onchange="renderExclusionList()"></select>
       <div id="exclusion-checkboxes" style="max-height: 250px; overflow-y: auto; background: #FAFBFC; border-radius: 16px; padding: 12px; border: 1px solid var(--border);"></div>
       <div style="display: flex; margin-top: 24px;">
-        <button class="btn" style="width:100%; padding: 16px; border-radius:16px;" onclick="closeModal('split-exclusion-modal')">完成並關閉</button>
+        <button class="btn" style="width:100%; padding: 16px; border-radius:16px;" onclick="closeSplitExclusion()">完成並關閉</button>
       </div>
     </div>
   </div>
@@ -760,7 +761,12 @@
         try { renderChecklist(); } catch(e){ console.error(e); }
     }
 
-    function renderUserSelect() { const select = document.getElementById('user-select'); select.innerHTML = allMembers.map(m => `<option value="${m}">👤 ${m}</option>`).join(''); }
+    function renderUserSelect() { 
+        const select = document.getElementById('user-select'); 
+        select.innerHTML = `<option value="" disabled selected>請選擇您的帳號...</option>` + 
+                           allMembers.map(m => `<option value="${m}">🌿 ${m}</option>`).join(''); 
+    }
+    
     function bindEnterEvents() { const bind = (id, func) => { document.getElementById(id).addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); func(); } }); }; bind('password-input', handleLogin); bind('map-search-input', searchMap); }
     function enableDragToScroll() { 
         ['day-buttons', 'map-day-buttons'].forEach(id => {
@@ -815,6 +821,7 @@
 
     function handleLogin() {
       const u = document.getElementById('user-select').value; const p = document.getElementById('password-input').value;
+      if (!u) return alert("請先選擇您的帳號！");
       if (authRules[u] === p) {
         currentUser = u; localStorage.setItem('app_savedUser', currentUser); document.getElementById('display-name').textContent = currentUser;
         document.getElementById('global-loader').classList.add('active'); 
@@ -826,6 +833,24 @@
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     function saveNewUser() { const name = document.getElementById('new-user-name').value.trim(); const pwd = document.getElementById('new-user-pwd').value.trim(); if(!name || !pwd) return alert("請輸入完整名稱與密碼"); if(authRules[name]) return alert("此名稱已存在"); customUsers[name] = pwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...baseAuthRules, ...customUsers }; allMembers = Object.keys(authRules); renderUserSelect(); closeModal('add-user-modal'); document.getElementById('user-select').value = name; document.getElementById('password-input').value = pwd; }
+    
+    // 即時重整與讀取圈機制
+    function closeManageMembers() {
+        document.getElementById('global-loader').classList.add('active');
+        setTimeout(() => {
+            safeRenderAll();
+            closeModal('manage-members-modal');
+            document.getElementById('global-loader').classList.remove('active');
+        }, 400);
+    }
+    function closeSplitExclusion() {
+        document.getElementById('global-loader').classList.add('active');
+        setTimeout(() => {
+            renderBudget();
+            closeModal('split-exclusion-modal');
+            document.getElementById('global-loader').classList.remove('active');
+        }, 400);
+    }
     
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     
@@ -860,8 +885,14 @@
     }
 
     function createProject() {
-      const loc = document.getElementById('trip-location').value; const rawDate = document.getElementById('trip-date-range').value; const dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
-      if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期區間");
+      const loc = document.getElementById('trip-location').value; 
+      const rawDate = document.getElementById('trip-date-range').value; 
+      let dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
+      
+      // 修復：單日判斷防呆
+      if(!loc || dates.length === 0 || dates[0] === "") return alert("請填寫完整地點與日期區間");
+      if(dates.length === 1) dates.push(dates[0]); // 如果只選一天，結束也是同一天
+      
       const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value); selectedMembers.push(currentUser); 
       const db = getDB(); db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
       saveDB(db); closeModal('add-modal'); renderDashboard();
@@ -911,8 +942,8 @@
         }
         list.innerHTML = html;
     }
-    function addTripMember(m) { const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); }
-    function removeTripMember(m) { if(!confirm(`確定要將 ${m} 移出此旅程嗎？`)) return; const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); }
+    function addTripMember(m) { const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }
+    function removeTripMember(m) { if(!confirm(`確定要將 ${m} 移出此旅程嗎？`)) return; const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }
 
     function updateOnlineUsers() { const p = getCurProject(); if(!p || !p.activeUsers) return; const now = Date.now(); const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000); document.getElementById('online-users-text').textContent = activeNames.length > 0 ? `${activeNames.join('、')} 正在協作` : `目前僅你一人在線`; }
     function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }
@@ -1017,13 +1048,22 @@
             }; img.src = e.target.result;
         }; reader.readAsDataURL(file);
     }
+    
     function addOrUpdatePlan(placeName = null, lat = null, lng = null, overrideDay = null, overrideTime = null) {
       const time = overrideTime || document.getElementById('plan-time').value; const place = placeName || document.getElementById('plan-place').value;
       const targetDay = overrideDay !== null ? overrideDay : activeDayIndex; const editId = document.getElementById('edit-plan-id').value;
       const formLat = document.getElementById('edit-lat').value || null; const formLng = document.getElementById('edit-lng').value || null;
       const finalLat = lat || (formLat ? parseFloat(formLat) : null); const finalLng = lng || (formLng ? parseFloat(formLng) : null);
 
-      if(!place || !time) return alert("請輸入時間與景點名稱"); const p = getCurProject(); if(!p.plans) p.plans = [];
+      if(!place || !time) return alert("請輸入時間與景點名稱"); 
+      const p = getCurProject(); if(!p.plans) p.plans = [];
+      
+      // 修復：行程時間碰撞防呆機制
+      const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && x.id != editId);
+      if (isDuplicate) {
+          return alert(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
+      }
+
       if(editId) { const idx = p.plans.findIndex(x => x.id == editId); if(idx > -1) { p.plans[idx].time = time; p.plans[idx].place = place; if (finalLat && finalLng) { p.plans[idx].lat = finalLat; p.plans[idx].lng = finalLng; } if(currentCompressedImage) p.plans[idx].image = currentCompressedImage; } cancelEditPlan(); showSync("✅ 行程已更新", 1500); } 
       else { p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, lat: finalLat, lng: finalLng, image: currentCompressedImage, creator: currentUser }); showSync("✅ 已加入行程", 1500); }
       
