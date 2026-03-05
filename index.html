@@ -40,7 +40,7 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* 按鈕與表單 */
-    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
+    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
     .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
     .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
     .btn:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -54,21 +54,25 @@
     .form-control { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; transition: 0.2s; font-weight: 500;}
     .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); }
     
-    /* 卡片與容器 */
+    /* 首頁與卡片 */
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .create-project-card { background: var(--surface); padding: 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--primary); font-weight: 800; font-size: 16px; }
     .create-project-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(255,90,95,0.15); }
     
-    .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); }
+    /* 需求2: 漸層暈染背景，不干擾黑字閱讀 */
+    .project-card { position: relative; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.05); overflow: hidden;}
     .project-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
     
-    /* 需求3: 經典紅底白字刪除按鈕 + 編輯按鈕 */
-    .project-card-actions { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; z-index: 10; }
+    .project-card-actions { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; z-index: 10; background: rgba(255,255,255,0.7); padding: 4px; border-radius: 20px; backdrop-filter: blur(4px);}
     .card-icon-btn { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; border: none; font-size: 14px; font-weight: bold; }
     .btn-edit-trip { background: #F1F5F9; color: var(--text-main); }
     .btn-edit-trip:hover { background: #E2E8F0; transform: scale(1.1); }
     .btn-del-trip { background: var(--danger); color: white; box-shadow: 0 2px 8px rgba(255,59,48,0.3); }
     .btn-del-trip:hover { background: #E53935; transform: scale(1.1); }
+
+    /* 顏色選擇器 */
+    .color-dot { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .color-dot.active { border-color: var(--text-main); transform: scale(1.15); }
 
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative;}
     .flex-row { display: flex; gap: 12px; align-items: center; }
@@ -95,12 +99,15 @@
     .day-selector-container { position: sticky; top: 0; margin: 0 -20px 20px -20px; background: var(--bg-color); z-index: 100; padding-top: 10px;}
     .day-selector { padding: 0 20px 10px 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; cursor: grab; border-bottom: 1px solid var(--border); }
     .day-selector::-webkit-scrollbar { display: none; }
+    .day-selector-container::after { content: ''; position: absolute; right: 0; top: 0; bottom: 15px; width: 40px; background: linear-gradient(to right, rgba(244, 247, 252, 0), var(--bg-color)); pointer-events: none; opacity: 1; transition: opacity 0.3s; }
+    .day-selector-container.scroll-end::after { opacity: 0; }
+    
     .day-btn { display: inline-flex; align-items: center; padding: 10px 4px; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; margin-right: 20px; font-weight: 800; color: var(--text-muted); transition: 0.2s; font-size: 15px; border-radius: 0; }
     .day-btn:hover { color: var(--primary); }
     .day-btn.active { color: var(--text-main); border-bottom-color: var(--primary); }
     .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 11px; font-weight: bold; margin-left: 6px; line-height: 1; }
 
-    /* 日期標題區與時間軸 */
+    /* 時間軸 */
     .itinerary-date-header { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;}
     .timeline-container { padding-top: 10px; }
     .plan-row { display: flex; position: relative; }
@@ -114,7 +121,6 @@
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
-    /* 交通方式選擇區塊 */
     .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
     .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; transition: 0.2s;}
     .transit-block:hover { background: #E2E8F0; }
@@ -122,7 +128,6 @@
     .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
-    /* 標籤與文字 */
     .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
     .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA; color:var(--text-main);}
     .action-text:hover { filter: brightness(0.95); background: #E2E8F0; }
@@ -133,9 +138,12 @@
     /* 地圖與自訂地標 */
     .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative;}
     .map-search-bar .form-control { margin-bottom: 0; }
+    
     .search-results-container { position: absolute; top: 60px; left: 0; right: 0; background: white; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 500; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
     .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
     .search-result-item:hover { background: #F8F9FA; }
+    .search-result-item:last-child { border-bottom: none; }
+
     .map-wrapper { position: relative; }
     #map-container { height: 500px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
     .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s;}
@@ -160,7 +168,6 @@
     .sheet-input-title:focus { border-bottom-color: var(--primary); border-style: solid; outline:none; }
     .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
 
-    /* iOS 風格切換開關 */
     .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     input:checked + .toggle-switch { background: var(--secondary); }
@@ -239,7 +246,7 @@
       </div>
     </div>
     
-    <div class="create-project-card" onclick="openEditTripModal(null)">
+    <div class="create-project-card" onclick="openCreateTripModal()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         建立新旅程
     </div>
@@ -271,7 +278,7 @@
         <div class="nav-item active" onclick="switchTab('itinerary')"><div class="nav-icon">📅</div><div class="nav-text">行程</div></div>
         <div class="nav-item" onclick="switchTab('map')"><div class="nav-icon">🗺️</div><div class="nav-text">地圖</div></div>
         <div class="nav-item" onclick="switchTab('budget')"><div class="nav-icon">💰</div><div class="nav-text">分帳</div></div>
-        <div class="nav-item" onclick="switchTab('notes')"><div class="nav-icon">📝<span id="note-count" class="notification-dot"></span></div><div class="nav-text">記事</div></div>
+        <div class="nav-item" onclick="switchTab('notes')"><div class="nav-icon">📝<span id="note-count" class="notification-dot" style="width:14px; height:14px; right:-6px; top:-4px; font-size:9px; display:none; align-items:center; justify-content:center; animation:none;"></span></div><div class="nav-text">記事</div></div>
         <div class="nav-item" onclick="switchTab('more')"><div class="nav-icon">⚙️<span id="more-poll-dot" class="notification-dot"></span></div><div class="nav-text">更多</div></div>
     </div>
 
@@ -493,6 +500,18 @@
   </div>
   <div id="sheet-overlay" class="modal-overlay" style="z-index: 1999; display: none;" onclick="closeBottomSheet()"></div>
 
+  <div id="bank-info-modal" class="modal-overlay">
+    <div class="modal">
+      <h3 style="margin-bottom: 16px; font-weight:800; color:var(--text-main); text-align:center;">🏦 收款帳號設定</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; text-align:center;">輸入大家的帳號，結算匯款更方便！</p>
+      <div id="bank-info-container" style="max-height: 50vh; overflow-y: auto; padding-right:8px;"></div>
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('bank-info-modal')">取消</button>
+        <button class="btn btn-action" style="flex:1; padding: 14px;" onclick="saveBankInfo()">更新儲存</button>
+      </div>
+    </div>
+  </div>
+
   <div id="budget-info-modal" class="modal-overlay">
     <div class="modal">
       <h3 style="margin-bottom: 16px; font-weight:800; color:var(--secondary); text-align:center;">ℹ️ 系統如何分帳？</h3>
@@ -530,7 +549,7 @@
       <input type="hidden" id="edit-project-id" value="">
       
       <label style="font-size:12px; font-weight:bold; color:var(--text-muted); display:block; margin-bottom:8px;">🎨 選擇旅程主題色</label>
-      <input type="color" id="trip-theme-color" class="form-control" value="#FF5A5F" style="height: 50px; padding: 4px; cursor: pointer; border-radius:12px;">
+      <input type="color" id="trip-theme-color" class="form-control" value="#FF5A5F" style="height: 50px; padding: 4px; cursor: pointer; border-radius:12px; margin-bottom:20px;">
       
       <input type="text" id="trip-location" class="form-control" placeholder="📍 目的地 (如: 日本福岡)">
       <input type="text" id="trip-date-range" class="form-control" placeholder="📅 點擊選擇日期區間" readonly>
@@ -615,7 +634,6 @@
 
     function getTripMembers() { const p = getCurProject(); if(!p) return allMembers; return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
 
-    // 自動校正簡體字與成員名單
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
         if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
@@ -631,7 +649,6 @@
         return db; 
     }
 
-    // 點擊空白處取消搜尋結果 
     document.addEventListener('click', function(e) {
         const searchBar = document.querySelector('.map-search-bar');
         const searchResults = document.getElementById('map-search-results');
@@ -654,7 +671,7 @@
         }
     }
 
-    // --- 管理員系統 (支援改名、同步雲端) ---
+    // --- 管理員系統 ---
     function openAdminLogin() { openModal('admin-login-modal'); document.getElementById('admin-pwd-input').value = ''; }
     function verifyAdmin() {
         if(document.getElementById('admin-pwd-input').value === 'jo4aup3vm0') {
@@ -741,7 +758,7 @@
         }
     }
 
-    // --- 重新整理防呆 (絕對不會卡死) ---
+    // --- 重新整理防呆 (加入強制取消 Loader) ---
     window.onload = () => { 
         renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
         
@@ -782,11 +799,13 @@
             syncFromCloud(false, true).then(() => {
                 if(currentProjectId) { safeRenderAll(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
                 else { renderDashboard(); }
-            }).catch(e => console.error(e)).finally(() => { hideLoader(); });
+            }).catch(e => console.error(e)).finally(() => {
+                hideLoader();
+            });
             startAutoSync();
         } else { switchView('login-view'); }
 
-        // 終極保險：3秒後絕對強制關閉遮罩
+        // 終極保險：如果任何原因導致讀取框卡住，3秒後強制關閉
         setTimeout(hideLoader, 3000);
     };
 
@@ -824,7 +843,6 @@
       const p2 = fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}_Users&t=${Date.now()}`).then(res => res.json()).catch(() => ({}));
 
       return Promise.all([p1, p2]).then(([newData, remoteUsers]) => {
-            // 需求1: 雙向合併名單 (防消失)
             if (remoteUsers && typeof remoteUsers === 'object' && !Array.isArray(remoteUsers) && Object.keys(remoteUsers).length > 0) {
                 const localUsersStr = localStorage.getItem(`app_users_${currentWorkspace}`);
                 const remoteUsersStr = JSON.stringify(remoteUsers);
@@ -916,75 +934,87 @@
         if(targetBtn) targetBtn.classList.add('active');
     }
 
+    // 需求3: 編輯旅程 (支援改名、顏色、日期)
     let editProjectId = null;
     function openCreateTripModal() {
-        editProjectId = null;
-        document.getElementById('add-modal-title').textContent = "✈️ 建立新旅程";
-        document.getElementById('add-modal-btn').textContent = "建立";
-        document.getElementById('trip-location').value = ''; document.getElementById('trip-date-range').value = '';
-        document.getElementById('trip-theme-color').value = '#FF5A5F';
-        
-        const list = document.getElementById('create-trip-invite-list');
-        list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => `
-            <label class="checkbox-item" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
-                <span style="font-weight:bold; font-size:14px;">${m}</span>
-                <input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);">
-            </label>
-        `).join('');
-        openModal('add-modal');
+        try {
+            editProjectId = null;
+            document.getElementById('add-modal-title').textContent = "✈️ 建立新旅程";
+            document.getElementById('add-modal-btn').textContent = "建立";
+            document.getElementById('trip-location').value = ''; 
+            document.getElementById('trip-date-range').value = '';
+            document.getElementById('trip-theme-color').value = '#FF5A5F';
+            
+            const list = document.getElementById('create-trip-invite-list');
+            list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => `
+                <label class="checkbox-item" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold; font-size:14px;">${m}</span>
+                    <input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);">
+                </label>
+            `).join('');
+            openModal('add-modal');
+        } catch(e) { console.error(e); alert("開啟表單時發生錯誤！"); }
     }
     
-    // 需求3: 編輯旅程 (支援改名、顏色、日期)
     function openEditTripModal(id, e) {
-        e.stopPropagation();
-        const p = getDB().find(x => x.id === id);
-        if(!p) return;
-        editProjectId = id;
-        document.getElementById('add-modal-title').textContent = "✏️ 編輯旅程";
-        document.getElementById('add-modal-btn').textContent = "更新";
-        document.getElementById('trip-location').value = p.location;
-        document.getElementById('trip-theme-color').value = p.themeColor || '#FF5A5F';
-        document.querySelector("#trip-date-range")._flatpickr.setDate([p.start, p.end]);
-        
-        const list = document.getElementById('create-trip-invite-list');
-        list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => `
-            <label class="checkbox-item" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
-                <span style="font-weight:bold; font-size:14px;">${m}</span>
-                <input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);" ${p.members.includes(m) ? 'checked' : ''}>
-            </label>
-        `).join('');
-        openModal('add-modal');
+        try {
+            e.stopPropagation();
+            const p = getDB().find(x => x.id === id);
+            if(!p) return;
+            editProjectId = id;
+            document.getElementById('add-modal-title').textContent = "✏️ 編輯旅程";
+            document.getElementById('add-modal-btn').textContent = "更新";
+            document.getElementById('trip-location').value = p.location;
+            document.getElementById('trip-theme-color').value = p.themeColor || '#FF5A5F';
+            
+            if(p.start && p.end) {
+                document.querySelector("#trip-date-range")._flatpickr.setDate([p.start, p.end]);
+            }
+            
+            const list = document.getElementById('create-trip-invite-list');
+            list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => `
+                <label class="checkbox-item" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold; font-size:14px;">${m}</span>
+                    <input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);" ${p.members && p.members.includes(m) ? 'checked' : ''}>
+                </label>
+            `).join('');
+            openModal('add-modal');
+        } catch(e) { console.error(e); alert("開啟表單時發生錯誤！"); }
     }
 
     function createProject() {
-      const loc = document.getElementById('trip-location').value; const rawDate = document.getElementById('trip-date-range').value; const dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
-      const tColor = document.getElementById('trip-theme-color').value || '#FF5A5F';
-      if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期區間");
-      
-      const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value);
-      if(!selectedMembers.includes(currentUser)) selectedMembers.push(currentUser); 
-      
-      showActionLoader("儲存旅程中...");
-      setTimeout(() => {
-          const db = getDB(); 
-          if(editProjectId) {
-              const idx = db.findIndex(x => x.id === editProjectId);
-              if(idx > -1) {
-                  db[idx].location = loc; db[idx].start = dates[0]; db[idx].end = dates[1]; db[idx].themeColor = tColor; db[idx].members = selectedMembers;
-              }
-          } else {
-              db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], themeColor: tColor, members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
-          }
-          saveDB(db); closeModal('add-modal'); renderDashboard(); hideLoader(); showSync("✅ 儲存成功", 1500);
-      }, 400);
+      try {
+          const loc = document.getElementById('trip-location').value; const rawDate = document.getElementById('trip-date-range').value; const dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
+          const tColor = document.getElementById('trip-theme-color').value || '#FF5A5F';
+          if(!loc || dates.length !== 2) return alert("請填寫完整地點與日期區間");
+          
+          const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value);
+          if(!selectedMembers.includes(currentUser)) selectedMembers.push(currentUser); 
+          
+          showActionLoader("儲存旅程中...");
+          setTimeout(() => {
+              try {
+                  const db = getDB(); 
+                  if(editProjectId) {
+                      const idx = db.findIndex(x => x.id === editProjectId);
+                      if(idx > -1) {
+                          db[idx].location = loc; db[idx].start = dates[0]; db[idx].end = dates[1]; db[idx].themeColor = tColor; db[idx].members = selectedMembers;
+                      }
+                  } else {
+                      db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], themeColor: tColor, members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
+                  }
+                  saveDB(db); closeModal('add-modal'); renderDashboard(); hideLoader(); showSync("✅ 儲存成功", 1500);
+              } catch(e) { console.error(e); hideLoader(); alert("儲存失敗"); }
+          }, 400);
+      } catch(e) { console.error(e); alert("建立失敗，請檢查資料格式"); }
     }
 
     function renderDashboard() {
       const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
       db.filter(p => p.members && p.members.includes(currentUser)).slice().reverse().forEach((p) => {
-        const themeColor = p.themeColor || 'var(--primary)';
-        // 左側色彩標籤 + 編輯與刪除按鈕
-        html += `<div class="project-card" style="border-left: 6px solid ${themeColor}; padding-left:20px;" onclick="openProject(${p.id})">
+        const themeColor = p.themeColor || '#FF5A5F';
+        // 需求2: 柔和漸層背景
+        html += `<div class="project-card" style="border-top: 6px solid ${themeColor}; background: linear-gradient(180deg, ${themeColor}15 0%, #ffffff 50%);" onclick="openProject(${p.id})">
             <div class="project-card-actions">
                 <button class="card-icon-btn btn-edit-trip" onclick="openEditTripModal(${p.id}, event)">✏️</button>
                 <button class="card-icon-btn btn-del-trip" onclick="delProject(${p.id}, event)">✕</button>
@@ -1000,14 +1030,17 @@
     function delProject(id, e) { e.stopPropagation(); if(confirm("⚠️ 確定要刪除整個旅程嗎？")) { const db = getDB().filter(p => p.id !== id); saveDB(db); renderDashboard(); } }
 
     function openProject(id, silent = false) {
-      currentProjectId = id; activeDayIndex = localStorage.getItem('app_lastDayIdx') ? parseInt(localStorage.getItem('app_lastDayIdx')) : 0; 
-      const p = getCurProject(); if(!p || !p.location) return;
-      localStorage.setItem('app_lastProj', id); 
-      
-      refreshMemberDependentUIs();
-      try { safeRenderAll(); } catch(e) { console.error("SafeRenderAll Failed", e); }
-      updateOnlineUsers(); p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
-      if(!silent) { switchView('detail-view'); switchTab('itinerary'); }
+      try {
+          currentProjectId = id; activeDayIndex = localStorage.getItem('app_lastDayIdx') ? parseInt(localStorage.getItem('app_lastDayIdx')) : 0; 
+          if(isNaN(activeDayIndex)) activeDayIndex = 0;
+          const p = getCurProject(); if(!p || !p.location) return;
+          localStorage.setItem('app_lastProj', id); 
+          
+          refreshMemberDependentUIs();
+          try { safeRenderAll(); } catch(e) { console.error("SafeRenderAll Failed", e); }
+          updateOnlineUsers(); p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
+          if(!silent) { switchView('detail-view'); switchTab('itinerary'); }
+      } catch(e) { console.error(e); alert("開啟專案時發生錯誤，請重新整理！"); hideLoader(); }
     }
     
     function refreshMemberDependentUIs() {
@@ -1034,7 +1067,6 @@
         list.innerHTML = html;
     }
     
-    // 新增與刪除成員時加上過場動畫，並強制刷新
     function addTripMember(m) { 
         showActionLoader("更新成員中...");
         setTimeout(() => {
@@ -1071,7 +1103,6 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; 
     }
 
-    // --- 📅 行程核心邏輯 ---
     function renderItinerary() {
       const p = getCurProject(); if(!p.start) return; 
       const start = new Date(p.start); const end = new Date(p.end);
@@ -1201,7 +1232,6 @@
 
       if(!place || !time) return alert("請輸入時間與景點名稱"); const p = getCurProject(); if(!p.plans) p.plans = [];
       
-      // 防呆：自動微調衝突時間
       let finalTime = time;
       const hasCollision = p.plans.some(x => x.dayIdx === targetDay && x.time === finalTime && x.id != editId);
       if (hasCollision) {
@@ -1411,7 +1441,7 @@
                 </div>
                 <div style="display:flex; gap:8px;">
                     <button class="btn-outline" style="flex:1; padding:12px; border-radius:14px; font-weight:bold;" onclick="toggleInlineExpEdit(${e.id})">取消</button>
-                    <button class="btn btn-action" id="inline-save-btn-${e.id}" style="flex:2; padding:12px;" onclick="saveInlineExp(${e.id})">更新儲存</button>
+                    <button class="btn btn-action" id="inline-save-btn-${e.id}" style="flex:2; padding:12px; color:white !important;" onclick="saveInlineExp(${e.id})">更新儲存</button>
                 </div>
             </div>`;
         });
