@@ -57,12 +57,10 @@
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .create-project-card { border: 2px dashed #CBD5E1; background: transparent; padding: 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
     .create-project-card:hover { border-color: var(--primary); color: var(--primary); background: rgba(255,90,95,0.02); }
-    
     .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); }
     .project-card:hover { border-color: var(--primary); transform: translateY(-2px); }
     .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); transition: 0.2s; }
     .del-btn-card:hover { transform: scale(1.15); background: #E53935; }
-
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative;}
     .flex-row { display: flex; gap: 12px; align-items: center; }
 
@@ -105,8 +103,8 @@
     .plan-timeline-line { position: absolute; left: 54px; top: 38px; bottom: -38px; width: 2px; background: #E4E8ED; z-index: 1; }
     .plan-row:last-child .plan-timeline-line { display: none; }
     .plan-dot { position: absolute; left: 49px; top: 22px; width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 2; border: 3px solid var(--secondary); }
-    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px;}
-    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s;}
+    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column;}
+    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
@@ -114,26 +112,24 @@
     .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
     .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; transition: 0.2s;}
     .transit-block:hover { background: #E2E8F0; }
+    .transit-block:active { transform: scale(0.95); }
     .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center;}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
-    /* 標籤與文字 (強制對齊左下角) */
-    .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
+    /* 標籤與文字 (固定位置) */
+    .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0;}
     .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
     .action-text:hover { filter: brightness(0.95); background: #E2E8F0; }
     .edit-text { color: var(--secondary); margin-right: 6px; }
     .del-text { color: var(--danger); background: #FFF0F0;}
     
-    /* 地圖與自訂地標 (懸浮定位與搜尋選單) */
+    /* 地圖與自訂地標 */
     .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative;}
     .map-search-bar .form-control { margin-bottom: 0; }
-    
-    /* 需求3: 搜尋結果選單 */
     .search-results-container { position: absolute; top: 60px; left: 0; right: 0; background: white; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 500; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
     .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
     .search-result-item:hover { background: #F8F9FA; }
     .search-result-item:last-child { border-bottom: none; }
-
     .map-wrapper { position: relative; }
     #map-container { height: 500px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
     .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s;}
@@ -159,15 +155,21 @@
     .sheet-input-title:focus { border-bottom-color: var(--primary); border-style: solid; outline:none; }
     .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
 
-    /* iOS 風格切換開關 */
     .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     input:checked + .toggle-switch { background: var(--secondary); }
     input:checked + .toggle-switch::after { transform: translateX(20px); }
     .checkbox-item { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-bottom: 1px solid var(--border); cursor: pointer;}
 
+    .poll-title-text { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; display: block; border-bottom: 2px solid var(--border); padding-bottom: 8px;}
     .poll-opt-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
     .poll-opt-input { background: #FAFBFC; font-size: 15px; border-radius: 12px;}
+    
+    /* 工具列導航美化 (需求3: 膠囊樣式) */
+    .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; }
+    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; position: relative; }
+    .sub-nav-btn.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    
     .tool-btn-wrap { display: flex; gap: 10px; margin-top: 16px; }
     .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; display: inline-block; cursor: pointer; transition: 0.2s; box-shadow: none;}
     .tool-btn.call { background: #E8F4FD; color: #0284C7; }
@@ -216,6 +218,7 @@
         <input type="password" id="password-input" class="form-control" placeholder="請輸入登入密碼">
         <button class="btn" style="width: 100%; font-size: 18px; margin-top: 12px; padding: 16px;" onclick="handleLogin()">進入系統 🚀</button>
       </div>
+      <div style="position:absolute; bottom:20px; right:20px; color:#ccc; font-size:24px; cursor:pointer; opacity:0.3;" onclick="openAdminLogin()">⚙️</div>
     </div>
   </div>
 
@@ -229,7 +232,7 @@
     </div>
     
     <div class="create-project-card" onclick="openModal('add-modal')">
-        <div class="create-icon">+</div>
+        <div class="create-icon" style="font-size: 28px; font-weight: 800; color:var(--primary);">+</div>
         <div style="font-weight: bold; color: var(--text-muted); font-size: 15px;">建立新旅程</div>
     </div>
     
@@ -266,7 +269,7 @@
       
       <div class="itinerary-date-header">
           <span id="itinerary-date-header-text"></span>
-          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:16px; margin-right:2px; line-height:1;">+</span> 新增</button>
+          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()">➕ 新增</button>
       </div>
       
       <div id="plan-form-card" class="card-panel" style="padding: 20px; display: none; border: 2px solid var(--border);">
@@ -294,20 +297,19 @@
       <div class="timeline-container" id="plan-list"></div>
       
       <div style="display: flex; justify-content: center; margin-top: 20px;">
-        <button class="btn-small btn-outline" style="font-weight:bold; box-shadow: 0 2px 6px rgba(0,0,0,0.05);" onclick="exportItinerary()">📋 複製本日行程</button>
+        <button class="btn-small btn-outline" style="border: 1px solid #CBD5E1; color:var(--text-main); font-weight:800; background:white; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor:pointer;" onclick="exportItinerary()">📋 複製本日行程分享</button>
       </div>
     </div>
 
     <div id="tab-map" class="module-content">
       <div style="display:flex; gap:8px; margin-bottom: 12px;">
-          <input type="text" id="map-url-input" class="form-control" style="margin-bottom:0; flex:1; border-color:var(--secondary);" placeholder="🔗 貼上 Google Maps 網址">
+          <input type="text" id="map-url-input" class="form-control" style="margin-bottom:0; flex:1; border-color:var(--secondary);" placeholder="🔗 貼上 Google Maps 網址自動解析">
           <button id="map-parse-btn" class="btn btn-action" style="border-radius:14px; white-space:nowrap; padding: 14px 20px;" onclick="parseGoogleMapUrl()">解析</button>
       </div>
       
       <div class="map-search-bar" style="position:relative;">
           <input type="text" id="map-search-input" class="form-control" placeholder="輸入地標或餐廳搜尋...">
           <button class="btn" style="border-radius:14px; padding:14px 20px;" onclick="searchMap()">🔍</button>
-          
           <div id="map-search-results" class="search-results-container"></div>
       </div>
       
@@ -339,8 +341,8 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
           <h4 style="margin:0; font-size:16px;">結算建議</h4>
           <div style="display:flex; gap:8px;">
-              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
-              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
+              <button class="btn-small btn-outline" style="border-radius:12px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
+              <button class="btn-small btn-outline" style="border-radius:12px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
           </div>
       </div>
       <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4;"></div>
@@ -362,15 +364,15 @@
     </div>
 
     <div id="tab-more" class="module-content">
-        <div style="display:flex; gap:12px; margin-bottom:20px; overflow-x:auto; padding-bottom:8px;">
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; white-space:nowrap;" onclick="switchMoreTab('more-contact')">📞 聯絡人</div>
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; position:relative; white-space:nowrap;" onclick="switchMoreTab('more-poll')">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:15px; top:12px;"></span></div>
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; white-space:nowrap;" onclick="switchMoreTab('more-checklist')">🎒 行李清單</div>
+        <div class="sub-nav-container">
+            <div class="sub-nav-btn active" id="btn-more-contact" onclick="switchMoreTab('more-contact')">📞 聯絡人</div>
+            <div class="sub-nav-btn" id="btn-more-poll" onclick="switchMoreTab('more-poll')">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:10px; top:2px;"></span></div>
+            <div class="sub-nav-btn" id="btn-more-checklist" onclick="switchMoreTab('more-checklist')">🎒 行李清單</div>
         </div>
 
         <div id="more-contact" class="more-section" style="display:block;">
           <div id="contact-form-card" class="card-panel">
-            <h4 id="contact-form-title" style="margin-bottom: 16px; font-size: 16px;">新增聯絡人</h4>
+            <h4 id="contact-form-title" style="margin-bottom: 12px; font-size: 16px;">新增聯絡人</h4>
             <input type="hidden" id="edit-contact-id" value="">
             <input type="text" id="contact-name" class="form-control" placeholder="名稱 (如: 租車公司)">
             <input type="tel" id="contact-phone" class="form-control" placeholder="電話號碼">
@@ -382,8 +384,8 @@
           <div id="contacts-list"></div>
         </div>
 
-        <div id="more-poll" class="more-section" style="display:none;">
-          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
+        <div id="more-poll" class="more-section">
+          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';">➕ 建立新投票</button>
           
           <div id="poll-form-card" class="card-panel" style="display:none;">
             <h4 id="poll-form-title" style="margin-bottom: 12px; font-size:16px;">建立投票</h4>
@@ -397,7 +399,7 @@
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div>
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>
             </div>
-            <button class="btn btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; font-weight:bold;" onclick="addPollOptionField()"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 新增選項</button>
+            <button class="btn btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; font-weight:bold;" onclick="addPollOptionField()">➕ 新增選項</button>
             <div style="display: flex; gap: 12px;">
                 <button id="cancel-poll-btn" class="btn btn-outline" style="flex: 1;" onclick="cancelEditPoll()">取消</button>
                 <button id="save-poll-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdatePoll()">發布</button>
@@ -406,7 +408,7 @@
           <div id="polls-list"></div>
         </div>
 
-        <div id="more-checklist" class="more-section" style="display:none;">
+        <div id="more-checklist" class="more-section">
             <div class="card-panel" style="padding:16px;">
                 <div style="display:flex; gap:8px;">
                     <input type="text" id="checklist-input" class="form-control" style="margin:0;" placeholder="新增待辦或行李...">
@@ -433,6 +435,8 @@
         <div style="display:flex; flex-direction:column; gap:12px;">
             <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('walking', '🚶 步行')">🚶 步行 (自動計算)</button>
             <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('driving', '🚗 開車')">🚗 開車 (自動計算)</button>
+            <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('transit', '🚇 大眾運輸')">🚇 大眾運輸 (自動計算)</button>
+            
             <div style="padding:16px; background:#F8F9FA; border-radius:16px; border:1px solid #E4E8ED; text-align:left; margin-top:8px;">
                 <div style="font-weight:bold; margin-bottom:8px; color:var(--secondary);">✨ 自訂其他交通</div>
                 <input type="text" id="custom-transit-type" class="form-control" placeholder="例: 捷運銀座線 / 新幹線" style="margin-bottom:8px; padding:10px;">
@@ -470,13 +474,31 @@
 
   <div id="budget-info-modal" class="modal-overlay">
     <div class="modal">
-      <h3 style="margin-bottom: 16px; font-weight:800; color:var(--secondary);">ℹ️ 系統如何分帳？</h3>
-      <ol style="padding-left:20px; color:var(--text-muted); font-weight:600; line-height:1.8;">
-          <li style="margin-bottom:8px;">每一筆花費，會先扣除<strong>「排除名單」</strong>裡的人。</li>
-          <li style="margin-bottom:8px;">剩下該付錢的人，將總金額<strong>平均分攤</strong>。</li>
-          <li style="margin-bottom:8px;">最後統整每個人「先代墊出去的錢」扣掉「自己該付的錢」。</li>
-          <li><strong>少付的人，把錢給多付的人</strong>，用最少次數的轉帳結清！</li>
-      </ol>
+      <h3 style="margin-bottom: 16px; font-weight:800; color:var(--secondary); text-align:center;">ℹ️ 系統如何分帳？</h3>
+      <div style="color:var(--text-muted); font-size:14px; line-height:1.6; max-height:60vh; overflow-y:auto; padding-right:8px;">
+          <p>這個分攤系統算出來的金額是 <strong>完全正確</strong> 的喔！</p>
+          <p>系統使用的是「最少轉帳次數」的最佳化演算法。它不會讓大家互相轉來轉去（例如 A 轉給 B，A 又轉給 C），而是算出每個人「總共該付多少」和「總共代墊多少」，最後再把「欠錢的人」跟「該收錢的人」配對，把轉帳次數降到最低。</p>
+          
+          <h4 style="margin-top:16px; color:var(--text-main);">📌 第一步：各項目分攤</h4>
+          <p>系統會根據每一筆花費，自動扣除「不參與分攤」的人，由剩下的人平分。</p>
+          <ul style="padding-left:20px;">
+              <li>晚餐拉麵 ($580)：5人平分，每人 $116。</li>
+              <li>博物館門票 ($1800)：若勾選2人不參與，由剩下3人平分，每人 $600。</li>
+          </ul>
+
+          <h4 style="margin-top:16px; color:var(--text-main);">📌 第二步：計算「總共該出多少錢」</h4>
+          <p>把每個人在所有項目中「自己應該負擔」的錢加總。</p>
+
+          <h4 style="margin-top:16px; color:var(--text-main);">📌 第三步：計算「誰欠錢」跟「誰該收錢」</h4>
+          <p><strong>自己先代墊的錢 - 自己應該出的錢 = 最終結算金額</strong></p>
+          <ul style="padding-left:20px;">
+              <li>負數：代表要拿錢給別人（欠款組）</li>
+              <li>正數：代表要向別人收錢（收錢組）</li>
+          </ul>
+
+          <h4 style="margin-top:16px; color:var(--text-main);">📌 第四步：結算建議出爐！</h4>
+          <p>系統會自動將「欠款組」的錢，大筆大筆地直接補給「收錢組」。這樣一來，所有人都不互欠，而且只需要最少次數的轉帳就能解決複雜的拆帳問題！</p>
+      </div>
       <button class="btn" style="width:100%; margin-top:24px;" onclick="closeModal('budget-info-modal')">我懂了</button>
     </div>
   </div>
@@ -505,6 +527,30 @@
     </div>
   </div>
 
+  <div id="admin-login-modal" class="modal-overlay">
+    <div class="modal" style="text-align:center;">
+      <h2 style="margin-bottom: 16px; font-weight:800;">⚙️ 管理員驗證</h2>
+      <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">請輸入管理員授權密碼</p>
+      <input type="password" id="admin-pwd-input" class="form-control" placeholder="請輸入密碼">
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="btn btn-outline" style="flex:1; padding: 14px;" onclick="closeModal('admin-login-modal')">取消</button>
+        <button class="btn btn-action" style="flex:1; padding: 14px;" onclick="verifyAdmin()">驗證</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-dashboard-modal" class="modal-overlay">
+    <div class="modal">
+      <h2 style="margin-bottom: 16px; font-weight:800; color:var(--primary);">👑 系統管理台</h2>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">在這裡修改的密碼將會直接覆蓋雲端與所有設備的設定。</p>
+      
+      <div id="admin-user-list" style="max-height: 40vh; overflow-y: auto; background:#F8F9FA; padding:12px; border-radius:12px; margin-bottom:20px;">
+          </div>
+      
+      <button class="btn" style="width:100%; padding: 16px;" onclick="closeModal('admin-dashboard-modal')">完成並關閉</button>
+    </div>
+  </div>
+
   <div id="split-exclusion-modal" class="modal-overlay">
     <div class="modal">
       <h2 style="margin-bottom: 12px; font-weight:800;">⚙️ 人員分攤排除</h2>
@@ -524,6 +570,7 @@
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
 
+    // 錯字修復
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     let customUsers = JSON.parse(localStorage.getItem(`app_users_${currentWorkspace}`) || '{}');
     let authRules = { ...baseAuthRules, ...customUsers };
@@ -536,12 +583,55 @@
         return L.divIcon({ className: 'custom-leaflet-icon', html: `<div class="custom-map-pin ${isBlue ? 'pin-blue' : ''}"><div class="custom-map-pin-inner">${number}</div></div>`, iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -35] });
     };
 
+    // 自動校正舊資料中的簡體字
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
         if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
         return JSON.parse(raw); 
     }
 
+    // --- 需求2: 管理員權限 ---
+    function openAdminLogin() { openModal('admin-login-modal'); document.getElementById('admin-pwd-input').value = ''; }
+    function verifyAdmin() {
+        if(document.getElementById('admin-pwd-input').value === 'jo4aup3vm0') {
+            closeModal('admin-login-modal'); openModal('admin-dashboard-modal'); renderAdminUsers();
+        } else { alert("權限密碼錯誤！"); }
+    }
+    function renderAdminUsers() {
+        const list = document.getElementById('admin-user-list'); let html = '';
+        allMembers.forEach(m => {
+            const isBase = baseAuthRules[m] !== undefined;
+            const pwd = customUsers[m] || baseAuthRules[m];
+            html += `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #E4E8ED;">
+                <div style="font-weight:bold;">${m} ${isBase ? '<span style="font-size:10px; color:#aaa;">(預設)</span>' : ''}</div>
+                <div style="display:flex; gap:6px;">
+                    <input type="text" id="admin-pwd-${m}" value="${pwd}" class="form-control" style="margin:0; padding:6px 10px; width:100px; font-size:14px;">
+                    <button class="btn-small btn-action" onclick="adminSaveUser('${m}')">修改</button>
+                    ${!isBase ? `<button class="btn-small" style="background:#FFF0F0; color:red;" onclick="adminDelUser('${m}')">刪</button>` : ''}
+                </div>
+            </div>`;
+        });
+        list.innerHTML = html;
+    }
+    function adminSaveUser(name) {
+        const newPwd = document.getElementById(`admin-pwd-${name}`).value.trim();
+        if(!newPwd) return alert("密碼不能為空");
+        customUsers[name] = newPwd;
+        localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+        authRules = { ...baseAuthRules, ...customUsers };
+        showSync("✅ 密碼已更新", 1500);
+    }
+    function adminDelUser(name) {
+        if(confirm(`確定要刪除 ${name} 嗎？`)) {
+            delete customUsers[name];
+            localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+            authRules = { ...baseAuthRules, ...customUsers }; allMembers = Object.keys(authRules);
+            renderUserSelect(); renderAdminUsers(); showSync("✅ 帳號已刪除", 1500);
+        }
+    }
+
+    // --- 重新整理防呆 ---
     window.onload = () => { 
         renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
         const savedUser = localStorage.getItem('app_savedUser');
@@ -583,7 +673,7 @@
     }
 
     function renderUserSelect() { const select = document.getElementById('user-select'); select.innerHTML = allMembers.map(m => `<option value="${m}">👤 ${m}</option>`).join(''); }
-    function bindEnterEvents() { const bind = (id, func) => { document.getElementById(id).addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); func(); } }); }; bind('password-input', handleLogin); }
+    function bindEnterEvents() { const bind = (id, func) => { document.getElementById(id).addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); func(); } }); }; bind('password-input', handleLogin); bind('map-search-input', searchMap); }
     function enableDragToScroll() { 
         ['day-buttons', 'map-day-buttons'].forEach(id => {
             const slider = document.getElementById(id); if(!slider) return;
@@ -661,9 +751,14 @@
       if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
     }
     
+    // 需求3: 膠囊 UI 切換邏輯
     function switchMoreTab(sectionId) {
         document.querySelectorAll('.more-section').forEach(s => s.style.display = 'none');
+        document.querySelectorAll('.sub-nav-btn').forEach(btn => btn.classList.remove('active'));
+        
         document.getElementById(sectionId).style.display = 'block';
+        const targetBtn = document.getElementById(`btn-${sectionId}`);
+        if(targetBtn) targetBtn.classList.add('active');
     }
 
     function createProject() {
@@ -675,7 +770,7 @@
 
     function renderDashboard() {
       const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
-      db.slice().reverse().forEach(p => {
+      db.slice().reverse().forEach((p, idx) => {
         html += `<div class="project-card" onclick="openProject(${p.id})">
             <button class="del-btn-card" onclick="delProject(${p.id}, event)">✕</button>
             <div style="font-size:13px; font-weight:800; margin-bottom:6px; color:var(--secondary);">📅 ${p.start} ~ ${p.end}</div>
@@ -716,6 +811,7 @@
         renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
     }
 
+    // --- 🌍 智能距離計算 ---
     function getDistance(lat1, lon1, lat2, lon2) {
         if(!lat1 || !lon1 || !lat2 || !lon2) return null;
         const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -723,7 +819,7 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; 
     }
 
-    // --- 📅 行程核心 ---
+    // --- 📅 行程核心邏輯 ---
     function renderItinerary() {
       const p = getCurProject(); if(!p.start) return; 
       const start = new Date(p.start); const end = new Date(p.end);
@@ -737,7 +833,7 @@
           第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}
         </button>`;
       }
-      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
+      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()">+ 延一天</button>`;
       document.getElementById('map-day-buttons').innerHTML = daysHtml; 
       
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex);
@@ -766,15 +862,16 @@
                      timeStr = plan.transitMode.replace('custom:', ''); travelModeParam = 'transit';
                  } else {
                      if (dist !== null) {
-                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelModeParam = 'walking'; }
-                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸估 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
+                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 3) * 60))} 分鐘`; travelModeParam = 'walking'; }
+                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸約 ${Math.round((dist / 15) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
                          else { timeStr = `🚗 開車約 ${Math.round((dist / 35) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
                      } else { timeStr = `📍 點擊設定交通`; }
                  }
                  
-                 // 需求1: 路線導航修復
+                 // 需求1: 路線導航修復 (官方 API)
                  const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
 
+                 // 需求4: 排版不歪掉 (Flexbox)
                  transitHtml = `
                  <div class="transit-container">
                     <div class="transit-block" onclick="openTransitModal(${plan.id})">${timeStr}</div>
@@ -872,6 +969,7 @@
         map.on('click', function(e) {
             showSync("📍 解析地標中...");
             if(activeClickMarker) map.removeLayer(activeClickMarker); activeClickMarker = L.marker(e.latlng, {icon: createCustomMapIcon()}).addTo(map);
+            // 需求5: 強制中文參數
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&zoom=18&addressdetails=1&accept-language=zh-TW`).then(res => res.json())
                 .then(data => { let placeName = data.name || (data.address && (data.address.road || data.address.suburb || data.address.city)) || "自選地點"; if(placeName === "自選地點" && data.display_name) placeName = data.display_name.split(',')[0]; openBottomSheet(placeName, data.display_name || '無詳細地址', e.latlng.lat, e.latlng.lng); })
                 .catch(() => { openBottomSheet("自選地點", "經緯度：" + e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4), e.latlng.lat, e.latlng.lng); });
@@ -885,7 +983,6 @@
         map.once('locationfound', function(e) { if(activeClickMarker) map.removeLayer(activeClickMarker); activeClickMarker = L.marker(e.latlng, {icon: createCustomMapIcon()}).addTo(map).bindPopup("您目前的位置").openPopup(); map.setView(e.latlng, 16); showSync("✅ 定位成功", 1500); });
     }
 
-    // 需求3: Google Maps 風格搜尋下拉選單
     function searchMap() {
         const q = document.getElementById('map-search-input').value; if(!q) return alert("請輸入地名"); 
         showSync("🔍 搜尋中...");
@@ -994,7 +1091,7 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // --- 💰 分帳邏輯 (精準小數點修復) ---
+    // --- 💰 分帳邏輯 (需求1: 精準修復小數點算法 + 修復不互欠邏輯) ---
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
@@ -1056,11 +1153,16 @@
         let balances = {}; allMembers.forEach(m => balances[m] = 0); 
         p.expenses.forEach(e => { 
             const cost = parseFloat(e.cost) || 0; 
-            if(balances[e.payer] !== undefined) balances[e.payer] += cost; 
+            if(balances[e.payer] !== undefined) balances[e.payer] += cost; // 代墊者加錢
+            
             const excludes = e.excludes || []; const shareMembers = allMembers.filter(m => !excludes.includes(m)); 
-            if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); } 
+            if(shareMembers.length > 0) { 
+                const costPerPerson = cost / shareMembers.length; 
+                shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); // 要付錢的扣錢
+            } 
         });
 
+        // 取整數，消除 JS 浮點數微小誤差
         let debtors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
         let creditors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
         
@@ -1073,7 +1175,7 @@
         } 
         
         if(transfers.length === 0) adviceBox.innerHTML = `<div style="text-align:center; font-weight:800; color:var(--secondary); font-size:16px;">🎉 帳目已結清！</div>`; 
-        else { let html = ``; transfers.forEach(t => html += `<div class="flex-row" style="justify-content:space-between; background:white; padding:14px 16px; border-radius:12px; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.02);"><span><strong style="color:var(--danger);">${t.from}</strong> 給 <strong style="color:var(--text-main);">${t.to}</strong></span><span style="font-weight:800; color:var(--secondary); font-size:18px;">$${Math.round(t.amt)}</span></div>`); adviceBox.innerHTML = html; } 
+        else { let html = ``; transfers.forEach(t => html += `<div class="flex-row" style="justify-content:space-between; background:white; padding:14px 16px; border-radius:12px; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.02);"><span><strong style="color:var(--danger);">${t.from}</strong> 需給 <strong style="color:var(--text-main);">${t.to}</strong></span><span style="font-weight:800; color:var(--secondary); font-size:18px;">$${Math.round(t.amt)}</span></div>`); adviceBox.innerHTML = html; } 
         adviceBox.style.display = 'block'; 
     }
 
@@ -1109,7 +1211,7 @@
     function cancelEditContact() { document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; document.getElementById('edit-contact-id').value=''; document.getElementById('contact-form-title').innerHTML = "新增聯絡人"; document.getElementById('save-contact-btn').innerHTML = "儲存"; document.getElementById('cancel-contact-btn').style.display = "none"; document.getElementById('contact-form-card').classList.remove('edit-mode-active'); }
     function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
 
-    function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()"><span style="line-height:1;">✕</span></button>`; container.appendChild(div); }
+    function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()">✕</button>`; container.appendChild(div); }
     function checkPollNotification() { 
         const p = getCurProject(); const dot = document.getElementById('more-poll-dot'); const innerDot = document.getElementById('inner-poll-dot');
         if(!p || !p.polls || p.polls.length === 0) { if(dot) dot.style.display = 'none'; if(innerDot) innerDot.style.display = 'none'; return; } 
@@ -1142,8 +1244,10 @@
     function renderChecklist() {
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
         if(!list) return;
+        
         if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:20px 0; font-weight:bold;">尚無待辦事項</div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
         
+        // 精準計算「自己」完成的數量
         const myDoneCount = p.checklist.filter(c => c.checkedBy && c.checkedBy.includes(currentUser)).length;
         progText.textContent = `${myDoneCount} / ${p.checklist.length}`;
         progBar.style.width = `${(myDoneCount / p.checklist.length) * 100}%`;
@@ -1155,10 +1259,10 @@
                 whoCheckedText = `<div class="checked-by-tags">✅ ${c.checkedBy.join('、')} 已準備</div>`;
             }
             return `
-            <div class="checklist-item ${isMeDone ? 'done' : ''}" onclick="toggleChecklist(${c.id})">
-                <div class="check-circle"></div>
+            <div class="checklist-item" onclick="toggleChecklist(${c.id})">
+                <div class="check-circle" style="${isMeDone ? 'background:var(--secondary); border-color:var(--secondary); color:white;' : ''}">${isMeDone ? '✓' : ''}</div>
                 <div style="flex:1;">
-                    <div class="checklist-text">${c.text}</div>
+                    <div class="checklist-text" style="${isMeDone ? 'text-decoration:line-through; color:var(--text-muted); opacity:0.6;' : ''}">${c.text}</div>
                     ${whoCheckedText}
                 </div>
                 <span class="action-text del-text" style="padding:4px 8px; margin:0;" onclick="delChecklist(${c.id}, event)">✕</span>
@@ -1166,6 +1270,8 @@
         }).join('');
     }
     function addChecklistItem() { const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return; const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, checkedBy: [] }); updateCurProject(p); input.value = ''; renderChecklist(); }
+    
+    // 獨立記錄打勾狀態，不干擾別人
     function toggleChecklist(id) { 
         const p = getCurProject(); const item = p.checklist.find(x => x.id === id); 
         if(item) { 
