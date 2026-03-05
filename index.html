@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="旅遊趣">
+  <!-- 修正為最相容的相對路徑 -->
   <link rel="apple-touch-icon" href="logo.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -135,8 +136,14 @@
     
     /* 交通方式選擇區塊 */
     .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
-    .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); }
-    .transit-block:hover { background: #E2E8F0; }
+    /* 新增 click-hint 動畫，提示使用者可點擊 */
+    @keyframes pulse-border {
+        0% { box-shadow: 0 0 0 0 rgba(0, 166, 153, 0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(0, 166, 153, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 166, 153, 0); }
+    }
+    .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); animation: pulse-border 2s infinite; }
+    .transit-block:hover { background: #E2E8F0; animation: none;}
     .transit-block:active { transform: scale(0.95); }
     .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; display: inline-flex; align-items: center;}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
@@ -237,7 +244,7 @@
 
     /* 封存唯讀模式隱藏邏輯 (Archived Mode CSS) */
     .archived-mode .hide-in-archive { display: none !important; }
-    .archived-mode .transit-block { pointer-events: none; }
+    .archived-mode .transit-block { pointer-events: none; animation: none;}
     .archived-mode .checklist-item { pointer-events: none; cursor: default; }
     .archived-mode .checkbox-item { pointer-events: none; }
     .archived-mode .poll-opt-row, .archived-mode [onclick*="vote"] { pointer-events: none; opacity: 0.8; cursor: default; }
@@ -1561,7 +1568,7 @@
                          if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelModeParam = 'walking'; }
                          else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸估 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
                          else { timeStr = `🚗 開車約 ${Math.round((dist / 35) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
-                     } else { timeStr = `📍 點擊設定交通`; }
+                     } else { timeStr = `📍 尚未設定`; }
                  }
                  
                  const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
