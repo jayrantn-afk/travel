@@ -7,7 +7,7 @@
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="旅遊秘書">
+  <meta name="apple-mobile-web-app-title" content="旅遊趣">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -41,7 +41,7 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* 按鈕與表單 */
-    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
+    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
     .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
     .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
     .btn:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -105,29 +105,35 @@
     .plan-timeline-line { position: absolute; left: 54px; top: 38px; bottom: -38px; width: 2px; background: #E4E8ED; z-index: 1; }
     .plan-row:last-child .plan-timeline-line { display: none; }
     .plan-dot { position: absolute; left: 49px; top: 22px; width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 2; border: 3px solid var(--secondary); }
-    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column;}
-    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s; flex: 1; display: flex; flex-direction: column;}
+    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px;}
+    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s;}
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
-    /* 交通方式選擇區塊 (修復排版) */
-    .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
-    .transit-container::before { content: ''; position: absolute; left: 0; top: -20px; bottom: 0; width: 2px; background: #E4E8ED; }
+    /* 交通方式選擇區塊 */
+    .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
     .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; transition: 0.2s;}
     .transit-block:hover { background: #E2E8F0; }
     .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center;}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
-    /* 標籤與文字 (固定位置) */
-    .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0;}
+    /* 標籤與文字 (強制對齊左下角) */
+    .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
     .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
     .action-text:hover { filter: brightness(0.95); background: #E2E8F0; }
     .edit-text { color: var(--secondary); margin-right: 6px; }
     .del-text { color: var(--danger); background: #FFF0F0;}
     
-    /* 地圖 */
-    .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; }
+    /* 地圖與自訂地標 (懸浮定位與搜尋選單) */
+    .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative;}
     .map-search-bar .form-control { margin-bottom: 0; }
+    
+    /* 需求3: 搜尋結果選單 */
+    .search-results-container { position: absolute; top: 60px; left: 0; right: 0; background: white; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 500; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
+    .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+    .search-result-item:hover { background: #F8F9FA; }
+    .search-result-item:last-child { border-bottom: none; }
+
     .map-wrapper { position: relative; }
     #map-container { height: 500px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
     .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s;}
@@ -135,8 +141,6 @@
     .custom-map-pin { width: 30px; height: 30px; background: var(--primary); border: 3px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: -2px 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
     .custom-map-pin-inner { transform: rotate(45deg); color: white; font-weight: bold; font-size: 14px; }
     .pin-blue { background: var(--secondary); }
-    
-    /* 地標 Tooltip 雙行設計 */
     .day-tooltip { background: var(--surface); border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px 12px; text-align: center; line-height: 1.3;}
     .day-tooltip-title { font-size: 11px; color: var(--secondary); font-weight: 800; margin-bottom: 2px;}
     .day-tooltip-place { font-size: 14px; font-weight: bold; color: var(--text-main);}
@@ -145,7 +149,9 @@
     .plan-img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; display: none; border: 1px solid var(--border); margin-top: 12px; }
     .plan-img-display { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid #E4E8ED; flex-shrink: 0; }
     .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
+    .file-upload-label:hover { background: #F1F5F9; border-color: var(--secondary); color: var(--secondary); }
     
+    /* 底部懸浮面板 */
     .bottom-sheet { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); z-index: 2000; transition: bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .bottom-sheet.active { bottom: 0; }
     .sheet-handle { width: 40px; height: 5px; background: #E4E8ED; border-radius: 10px; margin: 0 auto 16px auto; }
@@ -153,6 +159,7 @@
     .sheet-input-title:focus { border-bottom-color: var(--primary); border-style: solid; outline:none; }
     .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
 
+    /* iOS 風格切換開關 */
     .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     input:checked + .toggle-switch { background: var(--secondary); }
@@ -165,7 +172,7 @@
     .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; display: inline-block; cursor: pointer; transition: 0.2s; box-shadow: none;}
     .tool-btn.call { background: #E8F4FD; color: #0284C7; }
 
-    /* 行李清單 (個人狀態與共用檢視) */
+    /* 行李清單 */
     .more-section { display: none; }
     .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor:pointer;}
     .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; font-size: 12px;}
@@ -198,13 +205,13 @@
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center;">
       <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" style="width: 90px; margin-bottom: 20px; filter: drop-shadow(0px 8px 16px rgba(255,90,95,0.3));">
-      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">家族旅遊秘書</h1>
+      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       
       <div class="card-panel" style="text-align: left; padding: 28px;">
         <div class="flex-row" style="margin-bottom: 12px;">
           <select id="user-select" class="form-control" style="margin-bottom: 0;"></select>
-          <button class="btn btn-outline" style="padding: 14px; border-radius: 14px;" onclick="openModal('add-user-modal')" title="新增成員">➕</button>
+          <button class="btn btn-outline" style="padding: 14px; border-radius: 14px;" onclick="openModal('add-user-modal')" title="新增成員"><span style="font-size:18px; line-height:1;">+</span></button>
         </div>
         <input type="password" id="password-input" class="form-control" placeholder="請輸入登入密碼">
         <button class="btn" style="width: 100%; font-size: 18px; margin-top: 12px; padding: 16px;" onclick="handleLogin()">進入系統 🚀</button>
@@ -220,10 +227,12 @@
         <button class="btn btn-outline btn-small" onclick="handleLogout()" style="color: var(--text-muted);">登出</button>
       </div>
     </div>
+    
     <div class="create-project-card" onclick="openModal('add-modal')">
-        <div class="create-icon">➕</div>
+        <div class="create-icon">+</div>
         <div style="font-weight: bold; color: var(--text-muted); font-size: 15px;">建立新旅程</div>
     </div>
+    
     <div class="projects-container" id="projects-grid"></div>
   </div>
 
@@ -257,7 +266,7 @@
       
       <div class="itinerary-date-header">
           <span id="itinerary-date-header-text"></span>
-          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()">➕ 新增</button>
+          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:16px; margin-right:2px; line-height:1;">+</span> 新增</button>
       </div>
       
       <div id="plan-form-card" class="card-panel" style="padding: 20px; display: none; border: 2px solid var(--border);">
@@ -272,6 +281,7 @@
         </div>
         
         <button id="reselect-map-btn" class="btn btn-outline" style="width: 100%; margin-top: 12px; border-style:dashed; color:var(--secondary); border-color:var(--secondary);" onclick="openMapForEdit()">📍 在地圖重新選地標</button>
+        
         <label class="file-upload-label" style="margin-top: 12px;"><span>📷 附加照片 (選填)</span><input type="file" id="plan-image-input" accept="image/*" style="display: none;" onchange="previewImage(event)"></label>
         <img id="plan-img-preview" class="plan-img-preview">
         
@@ -284,19 +294,21 @@
       <div class="timeline-container" id="plan-list"></div>
       
       <div style="display: flex; justify-content: center; margin-top: 20px;">
-        <button class="btn-small btn-outline" style="border:none; color:var(--secondary); font-weight:bold; background:transparent;" onclick="exportItinerary()">📋 複製本日行程分享</button>
+        <button class="btn-small btn-outline" style="font-weight:bold; box-shadow: 0 2px 6px rgba(0,0,0,0.05);" onclick="exportItinerary()">📋 複製本日行程</button>
       </div>
     </div>
 
     <div id="tab-map" class="module-content">
       <div style="display:flex; gap:8px; margin-bottom: 12px;">
-          <input type="text" id="map-url-input" class="form-control" style="margin-bottom:0; flex:1; border-color:var(--secondary);" placeholder="🔗 貼上 Google Maps 網址自動解析">
+          <input type="text" id="map-url-input" class="form-control" style="margin-bottom:0; flex:1; border-color:var(--secondary);" placeholder="🔗 貼上 Google Maps 網址">
           <button id="map-parse-btn" class="btn btn-action" style="border-radius:14px; white-space:nowrap; padding: 14px 20px;" onclick="parseGoogleMapUrl()">解析</button>
       </div>
       
-      <div class="map-search-bar">
+      <div class="map-search-bar" style="position:relative;">
           <input type="text" id="map-search-input" class="form-control" placeholder="輸入地標或餐廳搜尋...">
           <button class="btn" style="border-radius:14px; padding:14px 20px;" onclick="searchMap()">🔍</button>
+          
+          <div id="map-search-results" class="search-results-container"></div>
       </div>
       
       <div class="map-wrapper">
@@ -352,7 +364,7 @@
     <div id="tab-more" class="module-content">
         <div style="display:flex; gap:12px; margin-bottom:20px; overflow-x:auto; padding-bottom:8px;">
             <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; white-space:nowrap;" onclick="switchMoreTab('more-contact')">📞 聯絡人</div>
-            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; position:relative; white-space:nowrap;" onclick="switchMoreTab('more-poll')">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:10px; top:12px;"></span></div>
+            <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; position:relative; white-space:nowrap;" onclick="switchMoreTab('more-poll')">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot" style="right:15px; top:12px;"></span></div>
             <div class="btn btn-outline" style="flex:1; border-color:var(--text-main); font-size:14px; white-space:nowrap;" onclick="switchMoreTab('more-checklist')">🎒 行李清單</div>
         </div>
 
@@ -371,7 +383,7 @@
         </div>
 
         <div id="more-poll" class="more-section" style="display:none;">
-          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';">➕ 建立新投票</button>
+          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
           
           <div id="poll-form-card" class="card-panel" style="display:none;">
             <h4 id="poll-form-title" style="margin-bottom: 12px; font-size:16px;">建立投票</h4>
@@ -385,7 +397,7 @@
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div>
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>
             </div>
-            <button class="btn btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; font-weight:bold;" onclick="addPollOptionField()">➕ 新增選項</button>
+            <button class="btn btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; font-weight:bold;" onclick="addPollOptionField()"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 新增選項</button>
             <div style="display: flex; gap: 12px;">
                 <button id="cancel-poll-btn" class="btn btn-outline" style="flex: 1;" onclick="cancelEditPoll()">取消</button>
                 <button id="save-poll-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdatePoll()">發布</button>
@@ -421,8 +433,6 @@
         <div style="display:flex; flex-direction:column; gap:12px;">
             <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('walking', '🚶 步行')">🚶 步行 (自動計算)</button>
             <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('driving', '🚗 開車')">🚗 開車 (自動計算)</button>
-            <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('transit', '🚇 大眾運輸')">🚇 大眾運輸 (自動計算)</button>
-            
             <div style="padding:16px; background:#F8F9FA; border-radius:16px; border:1px solid #E4E8ED; text-align:left; margin-top:8px;">
                 <div style="font-weight:bold; margin-bottom:8px; color:var(--secondary);">✨ 自訂其他交通</div>
                 <input type="text" id="custom-transit-type" class="form-control" placeholder="例: 捷運銀座線 / 新幹線" style="margin-bottom:8px; padding:10px;">
@@ -449,7 +459,7 @@
             <select id="sheet-popup-day" class="form-control" style="margin:0; flex:1;"></select>
             <input type="time" id="sheet-popup-time" class="form-control" style="margin:0; flex:1;" value="12:00">
         </div>
-        <button class="btn btn-action" style="width:100%; margin-top:16px; padding: 14px; border-radius:14px;" onclick="addFromSheet()">加到行程</button>
+        <button class="btn btn-action" style="width:100%; margin-top:16px; padding: 14px; border-radius:14px;" onclick="addFromSheet()">加到行程規劃</button>
     </div>
     
     <div id="sheet-edit-action" style="display:none;">
@@ -526,13 +536,9 @@
         return L.divIcon({ className: 'custom-leaflet-icon', html: `<div class="custom-map-pin ${isBlue ? 'pin-blue' : ''}"><div class="custom-map-pin-inner">${number}</div></div>`, iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -35] });
     };
 
-    // --- 需求1: 錯字自動修復腳本 (防止分帳 BUG) ---
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
-        if (raw.includes('魏敏轩')) {
-            raw = raw.replace(/魏敏轩/g, '魏敏軒');
-            localStorage.setItem(`app_${currentWorkspace}`, raw);
-        }
+        if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
         return JSON.parse(raw); 
     }
 
@@ -568,16 +574,16 @@
     };
 
     function safeRenderAll() {
-        try { renderItinerary(); } catch(e){ console.error(e); }
-        try { renderBudget(); } catch(e){ console.error(e); }
-        try { renderContacts(); } catch(e){ console.error(e); }
-        try { renderPolls(); } catch(e){ console.error(e); }
-        try { renderNotes(); } catch(e){ console.error(e); }
-        try { renderChecklist(); } catch(e){ console.error(e); }
+        try { renderItinerary(); } catch(e){ console.error("Itinerary Error", e); }
+        try { renderBudget(); } catch(e){ console.error("Budget Error", e); }
+        try { renderContacts(); } catch(e){ console.error("Contact Error", e); }
+        try { renderPolls(); } catch(e){ console.error("Poll Error", e); }
+        try { renderNotes(); } catch(e){ console.error("Note Error", e); }
+        try { renderChecklist(); } catch(e){ console.error("Checklist Error", e); }
     }
 
     function renderUserSelect() { const select = document.getElementById('user-select'); select.innerHTML = allMembers.map(m => `<option value="${m}">👤 ${m}</option>`).join(''); }
-    function bindEnterEvents() { const bind = (id, func) => { document.getElementById(id).addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); func(); } }); }; bind('password-input', handleLogin); bind('map-search-input', searchMap); }
+    function bindEnterEvents() { const bind = (id, func) => { document.getElementById(id).addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); func(); } }); }; bind('password-input', handleLogin); }
     function enableDragToScroll() { 
         ['day-buttons', 'map-day-buttons'].forEach(id => {
             const slider = document.getElementById(id); if(!slider) return;
@@ -685,7 +691,10 @@
       currentProjectId = id; activeDayIndex = localStorage.getItem('app_lastDayIdx') ? parseInt(localStorage.getItem('app_lastDayIdx')) : 0; 
       const p = getCurProject(); if(!p || !p.location) return;
       localStorage.setItem('app_lastProj', id); 
-      document.getElementById('project-title-display').textContent = `${p.location}`;
+      
+      const formatD = (dStr) => { const d = new Date(dStr); return `${d.getMonth()+1}/${d.getDate()}`; };
+      document.getElementById('project-title-display').innerHTML = `${p.location} <span style="font-size:15px; color:var(--text-muted); font-weight:700; margin-left:8px;">(${formatD(p.start)} - ${formatD(p.end)})</span>`;
+      
       document.getElementById('exp-payer').innerHTML = allMembers.map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
       document.getElementById('exclusion-user-select').innerHTML = `<option value="">-- 選擇人員 --</option>` + allMembers.map(m => `<option value="${m}">${m}</option>`).join('');
       
@@ -702,9 +711,11 @@
 
     function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }
 
-    function changeDayIndex(idx) { activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx); renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
+    function changeDayIndex(idx) {
+        activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx);
+        renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
+    }
 
-    // --- 🌍 智能距離計算 ---
     function getDistance(lat1, lon1, lat2, lon2) {
         if(!lat1 || !lon1 || !lat2 || !lon2) return null;
         const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -712,7 +723,7 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; 
     }
 
-    // --- 📅 行程核心邏輯 (日期獨立標題 + 修復排版歪掉) ---
+    // --- 📅 行程核心 ---
     function renderItinerary() {
       const p = getCurProject(); if(!p.start) return; 
       const start = new Date(p.start); const end = new Date(p.end);
@@ -721,13 +732,12 @@
       
       let daysHtml = '';
       for(let i=0; i<totalDays; i++) {
-        const d = new Date(start); d.setDate(d.getDate() + i);
         const count = (p.plans || []).filter(plan => plan.dayIdx === i).length;
         daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">
           第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}
         </button>`;
       }
-      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()">+ 延一天</button>`;
+      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
       document.getElementById('map-day-buttons').innerHTML = daysHtml; 
       
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex);
@@ -741,7 +751,7 @@
       else {
           let html = '';
           dayPlans.forEach((plan, index) => {
-             // 需求1: Google Maps 官方標準 API (解決跳到 20號 的 bug)
+             // 需求1: Google Maps 官方標準 API 修復
              let finalGmapsUrl = plan.lat ? `https://www.google.com/maps/search/?api=1&query=${plan.lat},${plan.lng}` : ''; 
              let transitHtml = '';
 
@@ -752,17 +762,17 @@
                  let modeStr = plan.transitMode || 'driving'; 
                  let timeStr = ""; let travelModeParam = modeStr;
 
-                 // 需求2: 支援自訂交通工具文字
                  if(plan.transitMode && plan.transitMode.startsWith('custom:')) {
                      timeStr = plan.transitMode.replace('custom:', ''); travelModeParam = 'transit';
                  } else {
                      if (dist !== null) {
-                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 3) * 60))} 分鐘`; travelModeParam = 'walking'; }
-                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸約 ${Math.round((dist / 15) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
-                         else { timeStr = `🚗 開車約 ${Math.round((dist / 30) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
+                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelModeParam = 'walking'; }
+                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸估 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
+                         else { timeStr = `🚗 開車約 ${Math.round((dist / 35) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
                      } else { timeStr = `📍 點擊設定交通`; }
                  }
                  
+                 // 需求1: 路線導航修復
                  const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
 
                  transitHtml = `
@@ -806,14 +816,14 @@
     }
 
     function openTransitModal(planId) { document.getElementById('transit-plan-id').value = planId; document.getElementById('custom-transit-type').value = ''; document.getElementById('custom-transit-time').value = ''; openModal('transit-modal'); }
-    function saveTransitMode(modeStr, textLabel) {
+    function saveTransitMode(modeStr) {
         const planId = document.getElementById('transit-plan-id').value; const p = getCurProject(); const plan = p.plans.find(x => x.id == planId);
         if(!plan) return;
         
         if(modeStr === 'custom') {
             const tType = document.getElementById('custom-transit-type').value; const tTime = document.getElementById('custom-transit-time').value;
             if(!tType || !tTime) return alert("請輸入自訂交通方式與時間！");
-            plan.transitMode = `custom:🚇 ${tType} 約 ${tTime} 分鐘`;
+            plan.transitMode = `custom:✨ ${tType} 約 ${tTime} 分鐘`;
         } else {
             plan.transitMode = modeStr; 
         }
@@ -854,7 +864,7 @@
     function delPlan(id) { if(confirm("確定刪除此行程？")) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); } }
     function exportItinerary() { const p = getCurProject(); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time)); if(dayPlans.length === 0) return alert("這天還沒有行程可以複製喔！"); let text = `📍 ${p.location} - 第 ${activeDayIndex + 1} 天行程\n\n`; dayPlans.forEach((plan, i) => { text += `${i+1}. [${plan.time}] ${plan.place}\n`; }); navigator.clipboard.writeText(text).then(() => showSync("📋 行程已複製", 2000)); }
 
-    // --- 🗺️ 地圖核心 (需求1 & 5: 面板可編輯、網址神級解析) ---
+    // --- 🗺️ 地圖核心 ---
     function initMap() {
       if (!map) {
         map = L.map('map-container', {zoomControl: false}).setView([23.6978, 120.9605], 7); 
@@ -875,13 +885,40 @@
         map.once('locationfound', function(e) { if(activeClickMarker) map.removeLayer(activeClickMarker); activeClickMarker = L.marker(e.latlng, {icon: createCustomMapIcon()}).addTo(map).bindPopup("您目前的位置").openPopup(); map.setView(e.latlng, 16); showSync("✅ 定位成功", 1500); });
     }
 
+    // 需求3: Google Maps 風格搜尋下拉選單
     function searchMap() {
-      const q = document.getElementById('map-search-input').value; if(!q) return alert("請輸入地名"); showSync("🔍 搜尋中...");
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1&accept-language=zh-TW`).then(res => res.json())
+        const q = document.getElementById('map-search-input').value; if(!q) return alert("請輸入地名"); 
+        showSync("🔍 搜尋中...");
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&accept-language=zh-TW`)
+        .then(res => res.json())
         .then(data => {
-          if (data && data.length > 0) { const loc = data[0]; const lat = parseFloat(loc.lat); const lng = parseFloat(loc.lon); map.setView([lat, lng], 16); if(activeClickMarker) map.removeLayer(activeClickMarker); activeClickMarker = L.marker([lat, lng], {icon: createCustomMapIcon()}).addTo(map); const placeName = loc.display_name.split(',')[0].replace(/'/g, "\\'"); openBottomSheet(placeName, loc.display_name, lat, lng); showSync("📍 找到地點了", 1000); } 
-          else alert("找不到該地點，請換個關鍵字");
+            const resultsContainer = document.getElementById('map-search-results');
+            if (data && data.length > 0) {
+                let html = '';
+                data.forEach((loc) => {
+                    const name = loc.display_name.split(',')[0].replace(/'/g, "\\'");
+                    const address = loc.display_name.replace(/'/g, "\\'");
+                    html += `<div class="search-result-item" onclick="selectSearchResult('${name}', '${address}', ${loc.lat}, ${loc.lon})">
+                        <strong>${name}</strong><br><span style="font-size:12px; color:var(--text-muted);">${loc.display_name}</span>
+                    </div>`;
+                });
+                resultsContainer.innerHTML = html;
+                resultsContainer.style.display = 'block';
+                showSync("📍 請從選單中選擇精確地點", 1500);
+            } else {
+                resultsContainer.style.display = 'none';
+                alert("找不到該地點，請換個關鍵字");
+            }
         }).catch(() => alert("搜尋失敗，請檢查網路"));
+    }
+
+    function selectSearchResult(name, address, lat, lng) {
+        document.getElementById('map-search-results').style.display = 'none';
+        document.getElementById('map-search-input').value = '';
+        map.setView([lat, lng], 16);
+        if(activeClickMarker) map.removeLayer(activeClickMarker);
+        activeClickMarker = L.marker([lat, lng], {icon: createCustomMapIcon()}).addTo(map);
+        openBottomSheet(name, address, lat, lng);
     }
 
     function parseGoogleMapUrl() {
@@ -949,6 +986,7 @@
       dayPlans.forEach((plan, index) => {
         const pt = [plan.lat, plan.lng]; latlngs.push(pt);
         const marker = L.marker(pt, {icon: createCustomMapIcon(index + 1, true)}).addTo(map);
+        // 需求5: 地標加上地點名稱
         marker.bindTooltip(`<div class="day-tooltip-title">第 ${activeDayIndex + 1} 天</div><div class="day-tooltip-place">${plan.place}</div>`, {permanent: true, direction: "top", offset: [0, -35], className: "day-tooltip"});
         marker.bindPopup(`<b>${index+1}. ${plan.place}</b><br>時間: ${plan.time}`); mapMarkers.push(marker);
       });
@@ -956,15 +994,14 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // --- 💰 分帳邏輯 (需求5: 精準小數點與安全保護) ---
+    // --- 💰 分帳邏輯 (精準小數點修復) ---
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
         
         let html = '';
         p.expenses.forEach(e => {
-            const costNum = Number(e.cost) || 0;
-            total += costNum;
+            const costNum = Number(e.cost) || 0; total += costNum;
             let excludeText = (e.excludes && e.excludes.length > 0) ? `<div style="font-size:12px; color:var(--warning); margin-top:4px;">⚠️ ${e.excludes.join(', ')} 不參與分攤</div>` : '';
             
             html += `
@@ -1024,7 +1061,6 @@
             if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); } 
         });
 
-        // 精準小數點四捨五入防呆
         let debtors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
         let creditors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
         
@@ -1073,7 +1109,7 @@
     function cancelEditContact() { document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; document.getElementById('edit-contact-id').value=''; document.getElementById('contact-form-title').innerHTML = "新增聯絡人"; document.getElementById('save-contact-btn').innerHTML = "儲存"; document.getElementById('cancel-contact-btn').style.display = "none"; document.getElementById('contact-form-card').classList.remove('edit-mode-active'); }
     function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
 
-    function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()">✕</button>`; container.appendChild(div); }
+    function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()"><span style="line-height:1;">✕</span></button>`; container.appendChild(div); }
     function checkPollNotification() { 
         const p = getCurProject(); const dot = document.getElementById('more-poll-dot'); const innerDot = document.getElementById('inner-poll-dot');
         if(!p || !p.polls || p.polls.length === 0) { if(dot) dot.style.display = 'none'; if(innerDot) innerDot.style.display = 'none'; return; } 
@@ -1106,10 +1142,8 @@
     function renderChecklist() {
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
         if(!list) return;
-        
         if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:20px 0; font-weight:bold;">尚無待辦事項</div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
         
-        // 精準計算「自己」完成的數量
         const myDoneCount = p.checklist.filter(c => c.checkedBy && c.checkedBy.includes(currentUser)).length;
         progText.textContent = `${myDoneCount} / ${p.checklist.length}`;
         progBar.style.width = `${(myDoneCount / p.checklist.length) * 100}%`;
@@ -1132,8 +1166,6 @@
         }).join('');
     }
     function addChecklistItem() { const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return; const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, checkedBy: [] }); updateCurProject(p); input.value = ''; renderChecklist(); }
-    
-    // 獨立記錄打勾狀態，不干擾別人
     function toggleChecklist(id) { 
         const p = getCurProject(); const item = p.checklist.find(x => x.id === id); 
         if(item) { 
