@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="旅遊趣">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5062/5062832.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
@@ -60,10 +60,14 @@
     .create-project-card { border: 2px dashed #CBD5E1; background: transparent; padding: 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
     .create-project-card:hover { border-color: var(--primary); color: var(--primary); background: rgba(255,90,95,0.02); }
     
-    .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); }
+    .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); overflow: hidden;}
     .project-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    
+    /* 刪除與編輯專案按鈕 */
     .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); transition: 0.2s; }
     .del-btn-card:hover { transform: scale(1.15); background: #E53935; }
+    .edit-btn-card { position: absolute; top: 16px; right: 56px; background: #F1F5F9; color: var(--text-main); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s; }
+    .edit-btn-card:hover { transform: scale(1.15); background: #E2E8F0; }
 
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative;}
     .flex-row { display: flex; gap: 12px; align-items: center; }
@@ -211,7 +215,7 @@
 
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
-      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" style="width: 90px; margin-bottom: 20px; filter: drop-shadow(0px 8px 16px rgba(255,90,95,0.3));">
+      <img src="https://cdn-icons-png.flaticon.com/512/5062/5062832.png" alt="Logo" style="width: 100px; margin-bottom: 20px; filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.15));">
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       
@@ -529,16 +533,24 @@
 
   <div id="add-modal" class="modal-overlay">
     <div class="modal">
-      <h2 style="margin-bottom: 24px; font-weight:800; font-size:22px;">✈️ 建立新旅程</h2>
+      <h2 id="project-modal-title" style="margin-bottom: 24px; font-weight:800; font-size:22px;">✈️ 建立新旅程</h2>
+      <input type="hidden" id="edit-project-id" value="">
+      
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <label style="font-size:14px; font-weight:bold; color:var(--text-muted);">🎨 專案顏色:</label>
+          <input type="color" id="trip-color" value="#FF5A5F" style="border:none; width:40px; height:40px; border-radius:8px; cursor:pointer; background:transparent;">
+      </div>
+
       <input type="text" id="trip-location" class="form-control" placeholder="📍 目的地 (如: 日本福岡)">
       <input type="text" id="trip-date-range" class="form-control" placeholder="📅 點擊選擇日期區間" readonly>
       
       <label style="font-size:12px; font-weight:bold; color:var(--text-muted); display:block; margin-top:16px;">👥 邀請成員 (建立後也可修改)</label>
-      <div id="create-trip-invite-list" style="max-height: 120px; overflow-y: auto; background:#F8F9FA; padding:8px; border-radius:12px; border:1px solid var(--border); margin-top:8px; margin-bottom: 12px;"></div>
+      <input type="text" id="member-search-input" class="form-control" placeholder="🔍 搜尋成員..." style="padding:10px; margin-bottom:8px; font-size:14px;" onkeyup="filterMembers()">
+      <div id="create-trip-invite-list" style="max-height: 120px; overflow-y: auto; background:#F8F9FA; padding:8px; border-radius:12px; border:1px solid var(--border); margin-bottom: 12px;"></div>
       
       <div style="display: flex; gap: 12px; margin-top: 12px;">
         <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('add-modal')">取消</button>
-        <button class="btn" style="flex:1; padding: 14px;" onclick="createProject()">建立</button>
+        <button id="save-project-btn" class="btn" style="flex:1; padding: 14px;" onclick="saveProject()">建立</button>
       </div>
     </div>
   </div>
@@ -602,6 +614,7 @@
     let currentUser = null; let currentWorkspace = 'FamilyTripPro'; let currentProjectId = null; let activeDayIndex = 0;
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
+    let lastSaveTime = 0; // 存檔時間鎖機制
 
     // 全域名單配置
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
@@ -792,6 +805,12 @@
               if (newDataString.includes('魏敏轩')) newDataString = newDataString.replace(/魏敏轩/g, '魏敏軒');
               
               const oldDataString = localStorage.getItem(`app_${currentWorkspace}`); 
+              
+              // 存檔鎖機制：如果最近 4 秒內剛寫入過本地（代表發送了存檔請求），先拒絕來自雲端的舊資料覆蓋
+              if (Date.now() - lastSaveTime < 4000) {
+                  return;
+              }
+
               if (oldDataString !== newDataString) {
                 localStorage.setItem(`app_${currentWorkspace}`, newDataString);
                 if(currentProjectId && !isBackground) { 
@@ -808,6 +827,7 @@
     function startAutoSync() { if(syncInterval) clearInterval(syncInterval); syncInterval = setInterval(() => { if(document.visibilityState === 'visible') syncFromCloud(false, true); }, 15000); }
 
     function saveDB(data) { 
+      lastSaveTime = Date.now(); // 寫入存檔鎖時間
       const pIdx = data.findIndex(p => p.id === currentProjectId);
       if(pIdx > -1) { if(!data[pIdx].activeUsers) data[pIdx].activeUsers = {}; data[pIdx].activeUsers[currentUser] = Date.now(); }
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
@@ -873,38 +893,106 @@
         if(targetBtn) targetBtn.classList.add('active');
     }
 
+    // 專案搜尋人員
+    function filterMembers() {
+        const q = document.getElementById('member-search-input').value.toLowerCase();
+        document.querySelectorAll('.member-checkbox-row').forEach(row => {
+            const name = row.getAttribute('data-name').toLowerCase();
+            row.style.display = name.includes(q) ? 'flex' : 'none';
+        });
+    }
+
     function openCreateTripModal() {
-        document.getElementById('trip-location').value = ''; document.getElementById('trip-date-range').value = '';
+        document.getElementById('project-modal-title').innerText = '✈️ 建立新旅程';
+        document.getElementById('save-project-btn').innerText = '建立';
+        document.getElementById('edit-project-id').value = '';
+        document.getElementById('trip-location').value = ''; 
+        document.getElementById('trip-color').value = '#FF5A5F'; 
+        
+        const fp = document.getElementById('trip-date-range')._flatpickr;
+        fp.clear();
+        
+        document.getElementById('member-search-input').value = '';
         const list = document.getElementById('create-trip-invite-list');
         list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => `
-            <label class="checkbox-item" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
+            <label class="checkbox-item member-checkbox-row" data-name="${m}" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
                 <span style="font-weight:bold; font-size:14px;">${m}</span><input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);">
             </label>
         `).join('');
         openModal('add-modal');
     }
 
-    function createProject() {
+    function openEditTripModal(id, e) {
+        e.stopPropagation();
+        const p = getDB().find(x => x.id === id);
+        if(!p) return;
+        
+        document.getElementById('project-modal-title').innerText = '✏️ 編輯旅程資訊';
+        document.getElementById('save-project-btn').innerText = '更新儲存';
+        document.getElementById('edit-project-id').value = p.id;
+        document.getElementById('trip-location').value = p.location;
+        document.getElementById('trip-color').value = p.color || '#FF5A5F';
+        
+        const fp = document.getElementById('trip-date-range')._flatpickr;
+        fp.setDate([p.start, p.end]);
+        
+        document.getElementById('member-search-input').value = '';
+        const list = document.getElementById('create-trip-invite-list');
+        list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => {
+            const isChecked = p.members.includes(m) ? 'checked' : '';
+            return `
+            <label class="checkbox-item member-checkbox-row" data-name="${m}" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
+                <span style="font-weight:bold; font-size:14px;">${m}</span><input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);" ${isChecked}>
+            </label>
+        `}).join('');
+        
+        openModal('add-modal');
+    }
+
+    function saveProject() {
       const loc = document.getElementById('trip-location').value; 
       const rawDate = document.getElementById('trip-date-range').value; 
+      const color = document.getElementById('trip-color').value;
+      const editId = document.getElementById('edit-project-id').value;
+      
       let dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
       
       // 修復：單日判斷防呆
       if(!loc || dates.length === 0 || dates[0] === "") return alert("請填寫完整地點與日期區間");
       if(dates.length === 1) dates.push(dates[0]); // 如果只選一天，結束也是同一天
       
-      const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value); selectedMembers.push(currentUser); 
-      const db = getDB(); db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
-      saveDB(db); closeModal('add-modal'); renderDashboard();
+      const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value); 
+      if(!selectedMembers.includes(currentUser)) selectedMembers.push(currentUser); 
+      
+      const db = getDB(); 
+      if (editId) {
+          const idx = db.findIndex(p => p.id == editId);
+          if (idx > -1) {
+              db[idx].location = loc;
+              db[idx].start = dates[0];
+              db[idx].end = dates[1];
+              db[idx].members = selectedMembers;
+              db[idx].color = color;
+          }
+      } else {
+          db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], color: color, members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
+      }
+      
+      saveDB(db); 
+      closeModal('add-modal'); 
+      renderDashboard();
+      if(editId && currentProjectId == editId) openProject(editId, true); // 如果正在編輯目前打開的專案，順便刷新
     }
 
     function renderDashboard() {
       const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
       db.filter(p => p.members && p.members.includes(currentUser)).slice().reverse().forEach((p, idx) => {
-        html += `<div class="project-card" onclick="openProject(${p.id})">
+        const pColor = p.color || 'var(--primary)';
+        html += `<div class="project-card" onclick="openProject(${p.id})" style="border-left: 6px solid ${pColor};">
+            <button class="edit-btn-card" onclick="openEditTripModal(${p.id}, event)">✏️</button>
             <button class="del-btn-card" onclick="delProject(${p.id}, event)"><span style="line-height:1;">✕</span></button>
             <div style="font-size:13px; font-weight:800; margin-bottom:6px; color:var(--secondary);">📅 ${p.start} ~ ${p.end}</div>
-            <h3 style="padding-right: 35px; font-size: 24px; font-weight:800; color:var(--text-main); margin-bottom:8px;">📍 ${p.location}</h3>
+            <h3 style="padding-right: 70px; font-size: 24px; font-weight:800; color:var(--text-main); margin-bottom:8px;">📍 ${p.location}</h3>
             <div style="font-size:12px; color:var(--text-muted); font-weight:bold; opacity:0.9;">👥 ${p.members.join(', ')}</div>
           </div>`;
       });
@@ -1049,19 +1137,21 @@
         }; reader.readAsDataURL(file);
     }
     
+    // 修復防呆後的回傳機制：回傳 true/false 讓呼叫者判斷是否成功
     function addOrUpdatePlan(placeName = null, lat = null, lng = null, overrideDay = null, overrideTime = null) {
       const time = overrideTime || document.getElementById('plan-time').value; const place = placeName || document.getElementById('plan-place').value;
       const targetDay = overrideDay !== null ? overrideDay : activeDayIndex; const editId = document.getElementById('edit-plan-id').value;
       const formLat = document.getElementById('edit-lat').value || null; const formLng = document.getElementById('edit-lng').value || null;
       const finalLat = lat || (formLat ? parseFloat(formLat) : null); const finalLng = lng || (formLng ? parseFloat(formLng) : null);
 
-      if(!place || !time) return alert("請輸入時間與景點名稱"); 
+      if(!place || !time) { alert("請輸入時間與景點名稱"); return false; }
       const p = getCurProject(); if(!p.plans) p.plans = [];
       
-      // 修復：行程時間碰撞防呆機制
+      // 修復：行程時間碰撞防呆機制，若觸發則回傳 false 中斷操作
       const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && x.id != editId);
       if (isDuplicate) {
-          return alert(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
+          alert(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
+          return false;
       }
 
       if(editId) { const idx = p.plans.findIndex(x => x.id == editId); if(idx > -1) { p.plans[idx].time = time; p.plans[idx].place = place; if (finalLat && finalLng) { p.plans[idx].lat = finalLat; p.plans[idx].lng = finalLng; } if(currentCompressedImage) p.plans[idx].image = currentCompressedImage; } cancelEditPlan(); showSync("✅ 行程已更新", 1500); } 
@@ -1069,7 +1159,10 @@
       
       updateCurProject(p); document.getElementById('plan-place').value = ''; currentCompressedImage = null; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-img-preview').style.display = 'none'; document.getElementById('plan-image-input').value = ''; document.getElementById('plan-form-card').style.display = 'none';
       renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) { switchTab('itinerary'); }
+      
+      return true; // 成功回傳 true
     }
+    
     function editPlan(id) {
         const p = getCurProject(); const plan = p.plans.find(x => x.id === id); if(!plan) return;
         document.getElementById('plan-time').value = plan.time; document.getElementById('plan-place').value = plan.place; document.getElementById('edit-plan-id').value = plan.id; document.getElementById('edit-lat').value = plan.lat || ''; document.getElementById('edit-lng').value = plan.lng || '';
@@ -1163,11 +1256,19 @@
     }
     function closeBottomSheet() { document.getElementById('map-bottom-sheet').classList.remove('active'); setTimeout(() => { document.getElementById('sheet-overlay').style.display = 'none'; }, 300); currentSheetSelection = null; }
 
+    // 修復防呆後判斷：必須加入成功，才會收起底板
     function addFromSheet() { 
         if(!currentSheetSelection) return; const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
         const day = parseInt(document.getElementById('sheet-popup-day').value); const time = document.getElementById('sheet-popup-time').value; 
-        showAddPlanForm(); addOrUpdatePlan(finalName, currentSheetSelection.lat, currentSheetSelection.lng, day, time); closeBottomSheet(); switchTab('itinerary'); 
+        showAddPlanForm(); 
+        const success = addOrUpdatePlan(finalName, currentSheetSelection.lat, currentSheetSelection.lng, day, time); 
+        
+        if (success !== false) {
+            closeBottomSheet(); 
+            switchTab('itinerary'); 
+        }
     }
+    
     function updateLocationToForm() { 
         if(!currentSheetSelection) return; const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
         document.getElementById('plan-place').value = finalName; document.getElementById('edit-lat').value = currentSheetSelection.lat; document.getElementById('edit-lng').value = currentSheetSelection.lng; 
@@ -1256,7 +1357,6 @@
             if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); } 
         });
 
-        // 取整數避免循環小數誤差
         let debtors = getTripMembers().map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
         let creditors = getTripMembers().map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
         
