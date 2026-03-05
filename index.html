@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="旅遊趣">
+  <!-- 更換為可愛旅遊柴犬 Logo -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5062/5062832.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -215,6 +216,7 @@
 
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
+      <!-- 更換為可愛旅遊柴犬 Logo，移除紅色漸層陰影 -->
       <img src="https://cdn-icons-png.flaticon.com/512/5062/5062832.png" alt="Logo" style="width: 100px; margin-bottom: 20px; filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.15));">
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
@@ -236,7 +238,7 @@
     <div class="app-header">
       <h2 style="font-weight: 800; font-size: 24px;">👋 <span id="display-name"></span></h2>
       <div style="display: flex; gap: 8px;">
-        <button class="btn-outline btn-small" onclick="syncFromCloud(true)">🔄 同步最新</button>
+        <button class="btn-outline btn-small" onclick="withLoader(() => syncFromCloud(true))">🔄 同步最新</button>
         <button class="btn-outline btn-small" onclick="handleLogout()" style="color: var(--text-muted); box-shadow:none;">登出</button>
       </div>
     </div>
@@ -252,11 +254,12 @@
   <div id="detail-view" class="view" style="padding-bottom: 20px;">
     <div class="detail-header">
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <!-- 返回列表按鈕 UI 優化 -->
         <button class="btn-small" style="background:#F1F5F9; color:var(--text-main); font-weight:800; border:none; border-radius:12px; padding:8px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'" onclick="goBackToDashboard()"><span style="font-size:16px; line-height:1; margin-bottom:2px;">←</span> 返回列表</button>
         
         <div style="display:flex; gap:8px;">
             <button class="btn-outline btn-small" style="border-radius:12px; font-weight:bold;" onclick="openManageMembersModal()">👥 成員</button>
-            <button class="btn-outline btn-small" style="border-radius:12px;" onclick="syncFromCloud(true)">🔄 同步</button>
+            <button class="btn-outline btn-small" style="border-radius:12px;" onclick="withLoader(() => syncFromCloud(true))">🔄 同步</button>
         </div>
       </div>
       <div style="margin-top: 4px; margin-bottom: 20px;">
@@ -537,7 +540,26 @@
       <input type="hidden" id="edit-project-id" value="">
       
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-          <label style="font-size:14px; font-weight:bold; color:var(--text-muted);">🎨 專案顏色:</label>
+          <label style="font-size:14px; font-weight:bold; color:var(--text-muted);">圖示:</label>
+          <!-- Emoji 改為下拉式選單 -->
+          <select id="trip-icon" class="form-control" style="width:75px; margin:0; padding:10px 4px; font-size: 20px; text-align:center; appearance:none; background-color:#FAFBFC; cursor:pointer;">
+            <option value="📍">📍</option>
+            <option value="✈️">✈️</option>
+            <option value="🚗">🚗</option>
+            <option value="🚆">🚆</option>
+            <option value="🏕️">🏕️</option>
+            <option value="🏖️">🏖️</option>
+            <option value="🎒">🎒</option>
+            <option value="🍜">🍜</option>
+            <option value="📸">📸</option>
+            <option value="🐶">🐶</option>
+            <option value="🐱">🐱</option>
+            <option value="🐻">🐻</option>
+            <option value="🌸">🌸</option>
+            <option value="⛩️">⛩️</option>
+          </select>
+          
+          <label style="font-size:14px; font-weight:bold; color:var(--text-muted); margin-left:8px;">顏色:</label>
           <input type="color" id="trip-color" value="#FF5A5F" style="border:none; width:40px; height:40px; border-radius:8px; cursor:pointer; background:transparent;">
       </div>
 
@@ -614,7 +636,16 @@
     let currentUser = null; let currentWorkspace = 'FamilyTripPro'; let currentProjectId = null; let activeDayIndex = 0;
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
-    let lastSaveTime = 0; // 存檔時間鎖機制
+    let lastSaveTime = 0; // 防呆機制：存檔時間鎖
+
+    // 全域 Loader 封裝 (強制顯示讀取圈)
+    function withLoader(actionFunc, delay = 300) {
+        document.getElementById('global-loader').classList.add('active');
+        setTimeout(() => {
+            actionFunc();
+            document.getElementById('global-loader').classList.remove('active');
+        }, delay);
+    }
 
     // 全域名單配置
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
@@ -629,6 +660,16 @@
     let authRules = { ...customUsers };
     let allMembers = Object.keys(authRules);
 
+    // 儲存全域帳號到雲端 (雙軌同步機制)
+    function saveUsersDB() {
+        localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+        const fd = new URLSearchParams();
+        fd.append('action', 'save');
+        fd.append('workspace', currentWorkspace + '_users');
+        fd.append('data', JSON.stringify(customUsers));
+        fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
+    }
+
     flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
     document.getElementById('exp-date').valueAsDate = new Date();
 
@@ -638,18 +679,61 @@
 
     function getTripMembers() { const p = getCurProject(); return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
 
+    // 同步與修復全域聯絡人機制 (解決看不到特定成員的 Bug)
+    function syncGlobalUsers(db) {
+        let updated = false;
+        db.forEach(p => {
+            // 1. 自動修復：如果有人記帳/代墊，強制將他加入專案成員名單中
+            if(!p.members) p.members = [];
+            if(p.expenses) {
+                p.expenses.forEach(e => {
+                    if(e.payer && !p.members.includes(e.payer)) {
+                        p.members.push(e.payer);
+                        updated = true;
+                    }
+                });
+            }
+            // 2. 提取所有有出現過的名稱，更新到全域聯絡簿 customUsers
+            let potentialUsers = [...p.members];
+            if(p.expenses) p.expenses.forEach(e => { if(e.excludes) potentialUsers.push(...e.excludes); });
+            potentialUsers.forEach(u => {
+                if (u && !customUsers[u]) {
+                    customUsers[u] = '1234'; // 自動加入聯絡簿並賦予預設密碼
+                    updated = true;
+                }
+            });
+        });
+
+        if (updated) {
+            localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+            authRules = { ...customUsers };
+            allMembers = Object.keys(authRules);
+            const userSelect = document.getElementById('user-select');
+            if (userSelect && !currentUser) renderUserSelect(); 
+            saveUsersDB(); // 同步到雲端
+        }
+        return updated;
+    }
+
     // 自動校正簡體字與成員名單
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
         if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
         let db = JSON.parse(raw);
         let updated = false;
+        
         db.forEach(p => {
             if(!p.members || !Array.isArray(p.members) || p.members.length === 0) {
                 p.members = ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙'];
                 updated = true;
             }
         });
+        
+        // 執行全域成員檢查與修復
+        if (syncGlobalUsers(db)) {
+            updated = true;
+        }
+
         if(updated) localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(db));
         return db; 
     }
@@ -678,7 +762,7 @@
                     <input type="text" id="admin-pwd-${m}" value="${pwd}" class="form-control" style="margin:0; padding:10px; font-size:14px;" placeholder="密碼">
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:8px;">
-                    <button class="btn-small btn-action" style="color:white !important;" onclick="adminSaveUser('${m}')">更新儲存</button>
+                    <button class="btn-small btn-action" style="color:white !important;" onclick="withLoader(() => adminSaveUser('${m}'))">更新儲存</button>
                     <button class="btn-small" style="background:#FFF0F0; color:var(--danger); border:none; font-weight:bold; cursor:pointer;" onclick="adminDelUser('${m}')">刪除帳號</button>
                 </div>
             </div>`;
@@ -695,6 +779,7 @@
             customUsers[newName] = newPwd; delete customUsers[oldName];
             localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
             authRules = { ...customUsers }; allMembers = Object.keys(authRules);
+            saveUsersDB(); // 更新到雲端
 
             let db = getDB();
             db.forEach(p => {
@@ -721,6 +806,7 @@
             if(currentUser === oldName) { currentUser = newName; localStorage.setItem('app_savedUser', newName); document.getElementById('display-name').textContent = currentUser; }
         } else {
             customUsers[oldName] = newPwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...customUsers };
+            saveUsersDB(); // 更新到雲端
         }
         renderAdminUsers(); renderUserSelect(); 
         if(currentProjectId) { openProject(currentProjectId, true); } else { renderDashboard(); }
@@ -728,9 +814,12 @@
     }
     function adminDelUser(name) {
         if(confirm(`⚠️ 確定要刪除 ${name} 嗎？這將無法復原！`)) {
-            delete customUsers[name]; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
-            authRules = { ...customUsers }; allMembers = Object.keys(authRules);
-            renderUserSelect(); renderAdminUsers(); showSync("✅ 帳號已刪除", 1500);
+            withLoader(() => {
+                delete customUsers[name]; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+                authRules = { ...customUsers }; allMembers = Object.keys(authRules);
+                saveUsersDB(); // 更新到雲端
+                renderUserSelect(); renderAdminUsers(); showSync("✅ 帳號已刪除", 1500);
+            });
         }
     }
 
@@ -799,35 +888,61 @@
 
     function syncFromCloud(showMsg = false, isBackground = false) {
       if(showMsg && !isBackground) showSync("☁️ 同步中...");
-      return fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}&t=${Date.now()}`).then(res => res.json()).then(newData => {
-            if(Array.isArray(newData)) {
+      return Promise.all([
+            fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}&t=${Date.now()}`).then(res => res.json()).catch(() => null),
+            fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}_users&t=${Date.now()}`).then(res => res.json()).catch(() => null)
+      ]).then(([newData, newUsersData]) => {
+          // 1. 處理專案資料同步
+          if(newData && Array.isArray(newData)) {
               let newDataString = JSON.stringify(newData);
               if (newDataString.includes('魏敏轩')) newDataString = newDataString.replace(/魏敏轩/g, '魏敏軒');
               
-              const oldDataString = localStorage.getItem(`app_${currentWorkspace}`); 
+              if (Date.now() - lastSaveTime >= 4000) {
+                  const oldDataString = localStorage.getItem(`app_${currentWorkspace}`); 
+                  if (oldDataString !== newDataString) {
+                      localStorage.setItem(`app_${currentWorkspace}`, newDataString);
+                      getDB(); // 確保觸發全域檢查
+                      if(currentProjectId && !isBackground) { 
+                          const p = getCurProject();
+                          if(!p || !p.id) goBackToDashboard(); else { safeRenderAll(); updateOnlineUsers(); if (document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
+                      }
+                      renderDashboard();
+                  }
+              }
+          }
+          
+          // 2. 處理全域使用者資料同步 (解決名單不同步問題)
+          if (newUsersData) {
+              let updatedUsers = false;
+              if (typeof newUsersData === 'object' && !Array.isArray(newUsersData)) {
+                  const mergedUsers = { ...baseAuthRules, ...customUsers, ...newUsersData };
+                  if (JSON.stringify(customUsers) !== JSON.stringify(mergedUsers)) {
+                      customUsers = mergedUsers;
+                      authRules = { ...customUsers };
+                      allMembers = Object.keys(authRules);
+                      localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+                      updatedUsers = true;
+                  }
+              } else if (Array.isArray(newUsersData) && newUsersData.length === 0) {
+                  // 雲端還沒有使用者名單資料，主動推上去
+                  saveUsersDB();
+              }
               
-              // 存檔鎖機制：如果最近 4 秒內剛寫入過本地（代表發送了存檔請求），先拒絕來自雲端的舊資料覆蓋
-              if (Date.now() - lastSaveTime < 4000) {
-                  return;
+              if (updatedUsers) {
+                  if (document.getElementById('user-select') && !currentUser) renderUserSelect();
+                  renderDashboard(); // 如果有新名單，可能影響顯示
+                  if(document.getElementById('admin-user-list').innerHTML !== '') renderAdminUsers(); // 更新後台畫面
               }
-
-              if (oldDataString !== newDataString) {
-                localStorage.setItem(`app_${currentWorkspace}`, newDataString);
-                if(currentProjectId && !isBackground) { 
-                  const p = getCurProject();
-                  if(!p || !p.id) goBackToDashboard(); else { safeRenderAll(); updateOnlineUsers(); if (document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
-                }
-                renderDashboard();
-              }
-              if(showMsg && !isBackground) showSync("✅ 同步完成", 1000);
-            }
-        }).catch(e => { });
+          }
+          
+          if(showMsg && !isBackground) showSync("✅ 同步完成", 1000);
+      });
     }
 
     function startAutoSync() { if(syncInterval) clearInterval(syncInterval); syncInterval = setInterval(() => { if(document.visibilityState === 'visible') syncFromCloud(false, true); }, 15000); }
 
     function saveDB(data) { 
-      lastSaveTime = Date.now(); // 寫入存檔鎖時間
+      lastSaveTime = Date.now(); // 寫入存檔鎖時間，保護資料不被吃掉
       const pIdx = data.findIndex(p => p.id === currentProjectId);
       if(pIdx > -1) { if(!data[pIdx].activeUsers) data[pIdx].activeUsers = {}; data[pIdx].activeUsers[currentUser] = Date.now(); }
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
@@ -835,7 +950,6 @@
       fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
     }
 
-    function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
     function getCurProject() { return getDB().find(p => p.id === currentProjectId) || {}; }
     function updateCurProject(updatedP) { const db = getDB(); db[db.findIndex(p => p.id === currentProjectId)] = updatedP; saveDB(db); updateOnlineUsers(); }
 
@@ -852,25 +966,26 @@
     function handleLogout() { if(confirm("確定要登出嗎？")) { currentUser = null; currentProjectId = null; localStorage.removeItem('app_savedUser'); localStorage.removeItem('app_lastProj'); if(syncInterval) clearInterval(syncInterval); switchView('login-view'); document.getElementById('password-input').value = ''; } }
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function saveNewUser() { const name = document.getElementById('new-user-name').value.trim(); const pwd = document.getElementById('new-user-pwd').value.trim(); if(!name || !pwd) return alert("請輸入完整名稱與密碼"); if(authRules[name]) return alert("此名稱已存在"); customUsers[name] = pwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...baseAuthRules, ...customUsers }; allMembers = Object.keys(authRules); renderUserSelect(); closeModal('add-user-modal'); document.getElementById('user-select').value = name; document.getElementById('password-input').value = pwd; }
+    function saveNewUser() { 
+        const name = document.getElementById('new-user-name').value.trim(); 
+        const pwd = document.getElementById('new-user-pwd').value.trim(); 
+        if(!name || !pwd) return alert("請輸入完整名稱與密碼"); 
+        if(authRules[name]) return alert("此名稱已存在"); 
+        
+        customUsers[name] = pwd; 
+        authRules = { ...baseAuthRules, ...customUsers }; 
+        allMembers = Object.keys(authRules); 
+        
+        saveUsersDB(); // 儲存並推送到雲端
+        
+        renderUserSelect(); 
+        closeModal('add-user-modal'); 
+        document.getElementById('user-select').value = name; 
+        document.getElementById('password-input').value = pwd; 
+    }
     
-    // 即時重整與讀取圈機制
-    function closeManageMembers() {
-        document.getElementById('global-loader').classList.add('active');
-        setTimeout(() => {
-            safeRenderAll();
-            closeModal('manage-members-modal');
-            document.getElementById('global-loader').classList.remove('active');
-        }, 400);
-    }
-    function closeSplitExclusion() {
-        document.getElementById('global-loader').classList.add('active');
-        setTimeout(() => {
-            renderBudget();
-            closeModal('split-exclusion-modal');
-            document.getElementById('global-loader').classList.remove('active');
-        }, 400);
-    }
+    function closeManageMembers() { withLoader(() => { safeRenderAll(); closeModal('manage-members-modal'); }); }
+    function closeSplitExclusion() { withLoader(() => { renderBudget(); closeModal('split-exclusion-modal'); }); }
     
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     
@@ -907,6 +1022,7 @@
         document.getElementById('save-project-btn').innerText = '建立';
         document.getElementById('edit-project-id').value = '';
         document.getElementById('trip-location').value = ''; 
+        document.getElementById('trip-icon').value = '📍'; 
         document.getElementById('trip-color').value = '#FF5A5F'; 
         
         const fp = document.getElementById('trip-date-range')._flatpickr;
@@ -931,6 +1047,7 @@
         document.getElementById('save-project-btn').innerText = '更新儲存';
         document.getElementById('edit-project-id').value = p.id;
         document.getElementById('trip-location').value = p.location;
+        document.getElementById('trip-icon').value = p.icon || '📍';
         document.getElementById('trip-color').value = p.color || '#FF5A5F';
         
         const fp = document.getElementById('trip-date-range')._flatpickr;
@@ -953,53 +1070,57 @@
       const loc = document.getElementById('trip-location').value; 
       const rawDate = document.getElementById('trip-date-range').value; 
       const color = document.getElementById('trip-color').value;
+      const icon = document.getElementById('trip-icon').value || '📍';
       const editId = document.getElementById('edit-project-id').value;
       
       let dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
       
-      // 修復：單日判斷防呆
       if(!loc || dates.length === 0 || dates[0] === "") return alert("請填寫完整地點與日期區間");
-      if(dates.length === 1) dates.push(dates[0]); // 如果只選一天，結束也是同一天
+      if(dates.length === 1) dates.push(dates[0]); // 修復單日建立 bug
       
       const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value); 
       if(!selectedMembers.includes(currentUser)) selectedMembers.push(currentUser); 
       
-      const db = getDB(); 
-      if (editId) {
-          const idx = db.findIndex(p => p.id == editId);
-          if (idx > -1) {
-              db[idx].location = loc;
-              db[idx].start = dates[0];
-              db[idx].end = dates[1];
-              db[idx].members = selectedMembers;
-              db[idx].color = color;
+      withLoader(() => {
+          const db = getDB(); 
+          if (editId) {
+              const idx = db.findIndex(p => p.id == editId);
+              if (idx > -1) {
+                  db[idx].location = loc;
+                  db[idx].start = dates[0];
+                  db[idx].end = dates[1];
+                  db[idx].members = selectedMembers;
+                  db[idx].icon = icon;
+                  db[idx].color = color;
+              }
+          } else {
+              db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], icon: icon, color: color, members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
           }
-      } else {
-          db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], color: color, members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
-      }
-      
-      saveDB(db); 
-      closeModal('add-modal'); 
-      renderDashboard();
-      if(editId && currentProjectId == editId) openProject(editId, true); // 如果正在編輯目前打開的專案，順便刷新
+          
+          saveDB(db); 
+          closeModal('add-modal'); 
+          renderDashboard();
+          if(editId && currentProjectId == editId) openProject(editId, true);
+      });
     }
 
     function renderDashboard() {
       const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
       db.filter(p => p.members && p.members.includes(currentUser)).slice().reverse().forEach((p, idx) => {
         const pColor = p.color || 'var(--primary)';
+        const pIcon = p.icon || '📍';
         html += `<div class="project-card" onclick="openProject(${p.id})" style="border-left: 6px solid ${pColor};">
             <button class="edit-btn-card" onclick="openEditTripModal(${p.id}, event)">✏️</button>
             <button class="del-btn-card" onclick="delProject(${p.id}, event)"><span style="line-height:1;">✕</span></button>
             <div style="font-size:13px; font-weight:800; margin-bottom:6px; color:var(--secondary);">📅 ${p.start} ~ ${p.end}</div>
-            <h3 style="padding-right: 70px; font-size: 24px; font-weight:800; color:var(--text-main); margin-bottom:8px;">📍 ${p.location}</h3>
+            <h3 style="padding-right: 70px; font-size: 24px; font-weight:800; color:var(--text-main); margin-bottom:8px;">${pIcon} ${p.location}</h3>
             <div style="font-size:12px; color:var(--text-muted); font-weight:bold; opacity:0.9;">👥 ${p.members.join(', ')}</div>
           </div>`;
       });
       grid.innerHTML = html;
     }
 
-    function delProject(id, e) { e.stopPropagation(); if(confirm("⚠️ 確定要刪除整個旅程嗎？")) { const db = getDB().filter(p => p.id !== id); saveDB(db); renderDashboard(); } }
+    function delProject(id, e) { e.stopPropagation(); if(confirm("⚠️ 確定要刪除整個旅程嗎？")) { withLoader(() => { const db = getDB().filter(p => p.id !== id); saveDB(db); renderDashboard(); }); } }
 
     function openProject(id, silent = false) {
       currentProjectId = id; activeDayIndex = localStorage.getItem('app_lastDayIdx') ? parseInt(localStorage.getItem('app_lastDayIdx')) : 0; 
@@ -1013,7 +1134,7 @@
     
     function refreshMemberDependentUIs() {
         const p = getCurProject(); const formatD = (dStr) => { const d = new Date(dStr); return `${d.getMonth()+1}/${d.getDate()}`; };
-        document.getElementById('project-title-display').innerHTML = `${p.location} <span style="font-size:15px; color:var(--text-muted); font-weight:700; margin-left:8px;">(${formatD(p.start)} - ${formatD(p.end)})</span>`;
+        document.getElementById('project-title-display').innerHTML = `${p.icon || '📍'} ${p.location} <span style="font-size:15px; color:var(--text-muted); font-weight:700; margin-left:8px;">(${formatD(p.start)} - ${formatD(p.end)})</span>`;
         document.getElementById('exp-payer').innerHTML = getTripMembers().map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
         document.getElementById('exclusion-user-select').innerHTML = `<option value="">-- 選擇人員 --</option>` + getTripMembers().map(m => `<option value="${m}">${m}</option>`).join('');
     }
@@ -1026,15 +1147,15 @@
         const nonMembers = allMembers.filter(m => !p.members.includes(m));
         if (nonMembers.length > 0) {
             html += '<h4 style="font-size:14px; color:var(--text-muted); margin-top:20px; margin-bottom:8px;">邀請其他朋友</h4>';
-            nonMembers.forEach(m => { html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #E4E8ED;"><span style="font-weight:bold;">${m}</span><button class="btn-small btn-action" style="color:white !important;" onclick="addTripMember('${m}')">加入</button></div>`; });
+            nonMembers.forEach(m => { html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #E4E8ED;"><span style="font-weight:bold;">${m}</span><button class="btn-small btn-action" style="color:white !important;" onclick="withLoader(() => addTripMember('${m}'))">加入</button></div>`; });
         }
         list.innerHTML = html;
     }
     function addTripMember(m) { const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }
-    function removeTripMember(m) { if(!confirm(`確定要將 ${m} 移出此旅程嗎？`)) return; const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }
+    function removeTripMember(m) { if(!confirm(`確定要將 ${m} 移出此旅程嗎？`)) return; withLoader(() => { const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }); }
 
     function updateOnlineUsers() { const p = getCurProject(); if(!p || !p.activeUsers) return; const now = Date.now(); const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000); document.getElementById('online-users-text').textContent = activeNames.length > 0 ? `${activeNames.join('、')} 正在協作` : `目前僅你一人在線`; }
-    function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }
+    function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; withLoader(() => { const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }); }
     function changeDayIndex(idx) { activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx); renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
     function getDistance(lat1, lon1, lat2, lon2) { if(!lat1 || !lon1 || !lat2 || !lon2) return null; const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; }
 
@@ -1115,14 +1236,16 @@
 
     function openTransitModal(planId) { document.getElementById('transit-plan-id').value = planId; document.getElementById('custom-transit-type').value = ''; document.getElementById('custom-transit-time').value = ''; openModal('transit-modal'); }
     function saveTransitMode(modeStr) {
-        const planId = document.getElementById('transit-plan-id').value; const p = getCurProject(); const plan = p.plans.find(x => x.id == planId);
-        if(!plan) return;
-        if(modeStr === 'custom') {
-            const tType = document.getElementById('custom-transit-type').value; const tTime = document.getElementById('custom-transit-time').value;
-            if(!tType || !tTime) return alert("請輸入自訂交通方式與時間！");
-            plan.transitMode = `custom:✨ ${tType} 約 ${tTime} 分鐘`;
-        } else { plan.transitMode = modeStr; }
-        updateCurProject(p); renderItinerary(); closeModal('transit-modal');
+        withLoader(() => {
+            const planId = document.getElementById('transit-plan-id').value; const p = getCurProject(); const plan = p.plans.find(x => x.id == planId);
+            if(!plan) return;
+            if(modeStr === 'custom') {
+                const tType = document.getElementById('custom-transit-type').value; const tTime = document.getElementById('custom-transit-time').value;
+                if(!tType || !tTime) return alert("請輸入自訂交通方式與時間！");
+                plan.transitMode = `custom:✨ ${tType} 約 ${tTime} 分鐘`;
+            } else { plan.transitMode = modeStr; }
+            updateCurProject(p); renderItinerary(); closeModal('transit-modal');
+        });
     }
 
     function showAddPlanForm() { document.getElementById('plan-form-card').style.display = 'block'; document.getElementById('plan-form-card').scrollIntoView({behavior: "smooth"}); }
@@ -1137,7 +1260,6 @@
         }; reader.readAsDataURL(file);
     }
     
-    // 修復防呆後的回傳機制：回傳 true/false 讓呼叫者判斷是否成功
     function addOrUpdatePlan(placeName = null, lat = null, lng = null, overrideDay = null, overrideTime = null) {
       const time = overrideTime || document.getElementById('plan-time').value; const place = placeName || document.getElementById('plan-place').value;
       const targetDay = overrideDay !== null ? overrideDay : activeDayIndex; const editId = document.getElementById('edit-plan-id').value;
@@ -1147,20 +1269,21 @@
       if(!place || !time) { alert("請輸入時間與景點名稱"); return false; }
       const p = getCurProject(); if(!p.plans) p.plans = [];
       
-      // 修復：行程時間碰撞防呆機制，若觸發則回傳 false 中斷操作
+      // 修復：行程時間碰撞防呆機制，若觸發則中斷操作
       const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && x.id != editId);
       if (isDuplicate) {
           alert(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
           return false;
       }
 
-      if(editId) { const idx = p.plans.findIndex(x => x.id == editId); if(idx > -1) { p.plans[idx].time = time; p.plans[idx].place = place; if (finalLat && finalLng) { p.plans[idx].lat = finalLat; p.plans[idx].lng = finalLng; } if(currentCompressedImage) p.plans[idx].image = currentCompressedImage; } cancelEditPlan(); showSync("✅ 行程已更新", 1500); } 
-      else { p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, lat: finalLat, lng: finalLng, image: currentCompressedImage, creator: currentUser }); showSync("✅ 已加入行程", 1500); }
-      
-      updateCurProject(p); document.getElementById('plan-place').value = ''; currentCompressedImage = null; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-img-preview').style.display = 'none'; document.getElementById('plan-image-input').value = ''; document.getElementById('plan-form-card').style.display = 'none';
-      renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) { switchTab('itinerary'); }
-      
-      return true; // 成功回傳 true
+      withLoader(() => {
+          if(editId) { const idx = p.plans.findIndex(x => x.id == editId); if(idx > -1) { p.plans[idx].time = time; p.plans[idx].place = place; if (finalLat && finalLng) { p.plans[idx].lat = finalLat; p.plans[idx].lng = finalLng; } if(currentCompressedImage) p.plans[idx].image = currentCompressedImage; } cancelEditPlan(); showSync("✅ 行程已更新", 1500); } 
+          else { p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, lat: finalLat, lng: finalLng, image: currentCompressedImage, creator: currentUser }); showSync("✅ 已加入行程", 1500); }
+          
+          updateCurProject(p); document.getElementById('plan-place').value = ''; currentCompressedImage = null; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-img-preview').style.display = 'none'; document.getElementById('plan-image-input').value = ''; document.getElementById('plan-form-card').style.display = 'none';
+          renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) { switchTab('itinerary'); }
+      });
+      return true;
     }
     
     function editPlan(id) {
@@ -1170,7 +1293,7 @@
         const card = document.getElementById('plan-form-card'); card.style.display = 'block'; card.classList.add('edit-mode-active'); card.scrollIntoView({behavior: "smooth"});
     }
     function cancelEditPlan() { document.getElementById('plan-place').value = ''; document.getElementById('edit-plan-id').value = ''; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-form-title').innerHTML = "編輯行程"; document.getElementById('save-plan-btn').innerHTML = "儲存"; document.getElementById('cancel-edit-btn').style.display = "none"; document.getElementById('plan-form-card').classList.remove('edit-mode-active'); document.getElementById('plan-form-card').style.display = 'none'; }
-    function delPlan(id) { if(confirm("確定刪除此行程？")) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); } }
+    function delPlan(id) { if(confirm("確定刪除此行程？")) { withLoader(() => { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); }); } }
     function exportItinerary() { const p = getCurProject(); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time)); if(dayPlans.length === 0) return alert("這天還沒有行程可以複製喔！"); let text = `📍 ${p.location} - 第 ${activeDayIndex + 1} 天行程\n\n`; dayPlans.forEach((plan, i) => { text += `${i+1}. [${plan.time}] ${plan.place}\n`; }); navigator.clipboard.writeText(text).then(() => showSync("📋 行程已複製", 2000)); }
 
     // --- 🗺️ 地圖核心 ---
@@ -1256,13 +1379,11 @@
     }
     function closeBottomSheet() { document.getElementById('map-bottom-sheet').classList.remove('active'); setTimeout(() => { document.getElementById('sheet-overlay').style.display = 'none'; }, 300); currentSheetSelection = null; }
 
-    // 修復防呆後判斷：必須加入成功，才會收起底板
     function addFromSheet() { 
         if(!currentSheetSelection) return; const finalName = document.getElementById('sheet-place-name-input').value || currentSheetSelection.name;
         const day = parseInt(document.getElementById('sheet-popup-day').value); const time = document.getElementById('sheet-popup-time').value; 
         showAddPlanForm(); 
         const success = addOrUpdatePlan(finalName, currentSheetSelection.lat, currentSheetSelection.lng, day, time); 
-        
         if (success !== false) {
             closeBottomSheet(); 
             switchTab('itinerary'); 
@@ -1334,7 +1455,7 @@
                         const isPaying = !(e.excludes && e.excludes.includes(m));
                         return `<label class="checkbox-item" style="padding:10px 4px; border-bottom:1px solid #E4E8ED;">
                             <span style="font-weight:bold;">${m}</span>
-                            <input type="checkbox" style="display:none;" onchange="toggleInlineExclusion(${e.id}, '${m}', this.checked)" ${isPaying ? 'checked' : ''}>
+                            <input type="checkbox" style="display:none;" onchange="withLoader(() => toggleInlineExclusion(${e.id}, '${m}', this.checked))" ${isPaying ? 'checked' : ''}>
                             <div class="toggle-switch"></div>
                         </label>`;
                     }).join('')}
@@ -1349,16 +1470,27 @@
         list.innerHTML = html;
         document.getElementById('total-expense').textContent = Math.round(total).toLocaleString(); 
         
-        let balances = {}; getTripMembers().forEach(m => balances[m] = 0); 
+        let balances = {}; 
+        getTripMembers().forEach(m => balances[m] = 0); 
+        
         p.expenses.forEach(e => { 
             const cost = parseFloat(e.cost) || 0; 
-            if(balances[e.payer] !== undefined) balances[e.payer] += cost; 
-            const excludes = e.excludes || []; const shareMembers = getTripMembers().filter(m => !excludes.includes(m)); 
-            if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); } 
+            if (balances[e.payer] === undefined) balances[e.payer] = 0;
+            balances[e.payer] += cost; 
+            
+            const excludes = e.excludes || []; 
+            const shareMembers = getTripMembers().filter(m => !excludes.includes(m)); 
+            if(shareMembers.length > 0) { 
+                const costPerPerson = cost / shareMembers.length; 
+                shareMembers.forEach(m => { 
+                    if(balances[m] === undefined) balances[m] = 0;
+                    balances[m] -= costPerPerson; 
+                }); 
+            } 
         });
 
-        let debtors = getTripMembers().map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
-        let creditors = getTripMembers().map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
+        let debtors = Object.keys(balances).map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
+        let creditors = Object.keys(balances).map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
         
         let transfers = []; let i=0, j=0; 
         while(i < debtors.length && j < creditors.length) { 
@@ -1395,10 +1527,12 @@
 
     function settleDebt(from, to, amount) {
         if(!confirm(`確定標記已還款？這將自動新增一筆「${from} 給 ${to}」的匯款紀錄，以抵銷欠款。`)) return;
-        const p = getCurProject(); if(!p.expenses) p.expenses = [];
-        const excludes = getTripMembers().filter(m => m !== to);
-        p.expenses.push({ id: Date.now(), date: new Date().toISOString().split('T')[0], item: `💸 結算匯款 (${from} ➡️ ${to})`, cost: amount, payer: from, excludes: excludes });
-        updateCurProject(p); renderBudget(); showSync("✅ 已成功記錄還款", 1500);
+        withLoader(() => {
+            const p = getCurProject(); if(!p.expenses) p.expenses = [];
+            const excludes = getTripMembers().filter(m => m !== to);
+            p.expenses.push({ id: Date.now(), date: new Date().toISOString().split('T')[0], item: `💸 結算匯款 (${from} ➡️ ${to})`, cost: amount, payer: from, excludes: excludes });
+            updateCurProject(p); renderBudget(); showSync("✅ 已成功記錄還款", 1500);
+        });
     }
 
     function openBankInfoModal() {
@@ -1420,42 +1554,64 @@
     }
     
     function saveBankInfo() {
-        const p = getCurProject(); if(!p.bankInfo) p.bankInfo = {};
-        getTripMembers().forEach(m => { p.bankInfo[m] = { bank: document.getElementById(`bank-name-${m}`).value.trim(), acc: document.getElementById(`bank-acc-${m}`).value.trim() }; });
-        updateCurProject(p); closeModal('bank-info-modal'); renderBudget(); showSync("✅ 收款帳號已更新", 1500);
+        withLoader(() => {
+            const p = getCurProject(); if(!p.bankInfo) p.bankInfo = {};
+            getTripMembers().forEach(m => { p.bankInfo[m] = { bank: document.getElementById(`bank-name-${m}`).value.trim(), acc: document.getElementById(`bank-acc-${m}`).value.trim() }; });
+            updateCurProject(p); closeModal('bank-info-modal'); renderBudget(); showSync("✅ 收款帳號已更新", 1500);
+        });
     }
 
     function addExpenseFromTop() { 
-        const btn = document.getElementById('save-exp-btn');
         const item = document.getElementById('exp-item').value; const cost = document.getElementById('exp-cost').value; const payer = document.getElementById('exp-payer').value; const expDate = document.getElementById('exp-date').value;
         if(!item || !cost) return; 
-        btn.disabled = true; btn.textContent = '儲存中...';
-        const p = getCurProject(); if(!p.expenses) p.expenses = []; 
-        p.expenses.push({ id: Date.now(), date: expDate, item, cost, payer, excludes: [] }); updateCurProject(p); 
-        setTimeout(() => { renderBudget(); document.getElementById('exp-item').value = ''; document.getElementById('exp-cost').value = ''; document.getElementById('exp-date').valueAsDate = new Date(); btn.disabled = false; btn.textContent = '儲存帳目'; showSync("✅ 帳目已建立", 1500); }, 300);
+        withLoader(() => {
+            const p = getCurProject(); if(!p.expenses) p.expenses = []; 
+            p.expenses.push({ id: Date.now(), date: expDate, item, cost, payer, excludes: [] }); updateCurProject(p); 
+            renderBudget(); document.getElementById('exp-item').value = ''; document.getElementById('exp-cost').value = ''; document.getElementById('exp-date').valueAsDate = new Date(); showSync("✅ 帳目已建立", 1500); 
+        });
     }
     
     function toggleInlineExpEdit(id) { const display = document.getElementById(`exp-display-${id}`); const editForm = document.getElementById(`exp-edit-${id}`); if(display.style.display === 'none') { display.style.display = 'block'; editForm.style.display = 'none'; } else { display.style.display = 'none'; editForm.style.display = 'block'; } }
     function toggleInlineExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); }
-    function saveInlineExp(id) { const btn = document.getElementById(`inline-save-btn-${id}`); btn.disabled = true; btn.textContent = '更新中...'; const p = getCurProject(); const exp = p.expenses.find(x => x.id === id); if(!exp) return; exp.date = document.getElementById(`inline-date-${id}`).value; exp.item = document.getElementById(`inline-item-${id}`).value; exp.cost = document.getElementById(`inline-cost-${id}`).value; exp.payer = document.getElementById(`inline-payer-${id}`).value; updateCurProject(p); setTimeout(() => { renderBudget(); showSync("✅ 帳目已更新", 1500); }, 300); }
-    function delExpense(id) { if(confirm("確定刪除這筆花費？")) { const p = getCurProject(); p.expenses = p.expenses.filter(x => x.id !== id); updateCurProject(p); renderBudget(); } }
-    function renderExclusionList() { const user = document.getElementById('exclusion-user-select').value; const container = document.getElementById('exclusion-checkboxes'); if(!user) { container.innerHTML = ''; return; } const p = getCurProject(); if(!p.expenses || p.expenses.length === 0) { container.innerHTML = '<p style="padding:10px; color:#A0A0A0; text-align:center; font-weight:bold;">目前沒有花費紀錄</p>'; return; } let html = ''; p.expenses.forEach(e => { const isPaying = !(e.excludes && e.excludes.includes(user)); html += `<label class="checkbox-item"><div style="flex:1;"><strong>${e.item}</strong> ($${e.cost}) <br><span style="font-size:11px; color:#888;">由 ${e.payer} 代墊</span></div><input type="checkbox" style="display:none;" onchange="toggleExclusion(${e.id}, '${user}', this.checked)" ${isPaying ? 'checked' : ''}><div class="toggle-switch"></div></label>`; }); container.innerHTML = html; }
+    function saveInlineExp(id) { 
+        withLoader(() => {
+            const p = getCurProject(); const exp = p.expenses.find(x => x.id === id); if(!exp) return; 
+            exp.date = document.getElementById(`inline-date-${id}`).value; exp.item = document.getElementById(`inline-item-${id}`).value; exp.cost = document.getElementById(`inline-cost-${id}`).value; exp.payer = document.getElementById(`inline-payer-${id}`).value; 
+            updateCurProject(p); renderBudget(); showSync("✅ 帳目已更新", 1500); 
+        }); 
+    }
+    function delExpense(id) { if(confirm("確定刪除這筆花費？")) { withLoader(() => { const p = getCurProject(); p.expenses = p.expenses.filter(x => x.id !== id); updateCurProject(p); renderBudget(); }); } }
+    function renderExclusionList() { const user = document.getElementById('exclusion-user-select').value; const container = document.getElementById('exclusion-checkboxes'); if(!user) { container.innerHTML = ''; return; } const p = getCurProject(); if(!p.expenses || p.expenses.length === 0) { container.innerHTML = '<p style="padding:10px; color:#A0A0A0; text-align:center; font-weight:bold;">目前沒有花費紀錄</p>'; return; } let html = ''; p.expenses.forEach(e => { const isPaying = !(e.excludes && e.excludes.includes(user)); html += `<label class="checkbox-item"><div style="flex:1;"><strong>${e.item}</strong> ($${e.cost}) <br><span style="font-size:11px; color:#888;">由 ${e.payer} 代墊</span></div><input type="checkbox" style="display:none;" onchange="withLoader(() => toggleExclusion(${e.id}, '${user}', this.checked))" ${isPaying ? 'checked' : ''}><div class="toggle-switch"></div></label>`; }); container.innerHTML = html; }
     function toggleExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); updateCurProject(p); renderBudget(); }
 
     // --- 📝 筆記 ---
     function renderNotes() { const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count'); if(!list) return; if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無任何記事</div>`; if(countBadge) countBadge.style.display = 'none'; return; } if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); }
-    function addOrUpdateNote() { const text = document.getElementById('note-text').value; const editId = document.getElementById('edit-note-id').value; if(!text) return; const p = getCurProject(); if(!p.notes) p.notes = []; if(editId) { const idx = p.notes.findIndex(x => x.id == editId); if(idx > -1) p.notes[idx].text = text; cancelEditNote(); } else p.notes.push({ id: Date.now(), text: text, creator: currentUser }); updateCurProject(p); renderNotes(); }
+    function addOrUpdateNote() { 
+        const text = document.getElementById('note-text').value; const editId = document.getElementById('edit-note-id').value; if(!text) return; 
+        withLoader(() => {
+            const p = getCurProject(); if(!p.notes) p.notes = []; 
+            if(editId) { const idx = p.notes.findIndex(x => x.id == editId); if(idx > -1) p.notes[idx].text = text; cancelEditNote(); } else p.notes.push({ id: Date.now(), text: text, creator: currentUser }); 
+            updateCurProject(p); renderNotes(); 
+        });
+    }
     function editNote(id) { const p = getCurProject(); const note = p.notes.find(x => x.id === id); if(!note) return; document.getElementById('note-text').value = note.text; document.getElementById('edit-note-id').value = note.id; document.getElementById('note-form-title').innerHTML = "✏️ 編輯記事"; document.getElementById('save-note-btn').innerHTML = "更新"; document.getElementById('cancel-note-btn').style.display = "block"; document.getElementById('note-form-card').classList.add('edit-mode-active'); }
     function cancelEditNote() { document.getElementById('note-text').value = ''; document.getElementById('edit-note-id').value = ''; document.getElementById('note-form-title').innerHTML = "新增記事"; document.getElementById('save-note-btn').innerHTML = "儲存"; document.getElementById('cancel-note-btn').style.display = "none"; document.getElementById('note-form-card').classList.remove('edit-mode-active'); }
-    function delNote(id) { if(confirm("確定刪除此記事？")) { const p = getCurProject(); p.notes = p.notes.filter(x => x.id !== id); updateCurProject(p); renderNotes(); } }
+    function delNote(id) { if(confirm("確定刪除此記事？")) { withLoader(() => { const p = getCurProject(); p.notes = p.notes.filter(x => x.id !== id); updateCurProject(p); renderNotes(); }); } }
 
     // --- 📞 工具與投票 ---
     function copyPhone(phone) { navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500)); }
     function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!list) return; if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
-    function addOrUpdateContact() { const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; const editId = document.getElementById('edit-contact-id').value; if(!name || !phone) return; const p = getCurProject(); if(!p.contacts) p.contacts = []; if(editId) { const idx = p.contacts.findIndex(x => x.id == editId); if(idx>-1) {p.contacts[idx].name=name; p.contacts[idx].phone=phone;} cancelEditContact(); } else p.contacts.push({ id: Date.now(), name, phone, creator: currentUser }); updateCurProject(p); renderContacts(); }
+    function addOrUpdateContact() { 
+        const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; const editId = document.getElementById('edit-contact-id').value; if(!name || !phone) return; 
+        withLoader(() => {
+            const p = getCurProject(); if(!p.contacts) p.contacts = []; 
+            if(editId) { const idx = p.contacts.findIndex(x => x.id == editId); if(idx>-1) {p.contacts[idx].name=name; p.contacts[idx].phone=phone;} cancelEditContact(); } else p.contacts.push({ id: Date.now(), name, phone, creator: currentUser }); 
+            updateCurProject(p); renderContacts(); 
+        });
+    }
     function editContact(id) { const p = getCurProject(); const contact = p.contacts.find(x => x.id === id); if(!contact) return; document.getElementById('contact-name').value = contact.name; document.getElementById('contact-phone').value = contact.phone; document.getElementById('edit-contact-id').value = contact.id; document.getElementById('contact-form-title').innerHTML = "✏️ 編輯聯絡人"; document.getElementById('save-contact-btn').innerHTML = "更新"; document.getElementById('cancel-contact-btn').style.display = "block"; document.getElementById('contact-form-card').classList.add('edit-mode-active'); }
     function cancelEditContact() { document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; document.getElementById('edit-contact-id').value=''; document.getElementById('contact-form-title').innerHTML = "新增聯絡人"; document.getElementById('save-contact-btn').innerHTML = "儲存"; document.getElementById('cancel-contact-btn').style.display = "none"; document.getElementById('contact-form-card').classList.remove('edit-mode-active'); }
-    function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
+    function delContact(id) { if(confirm("確定移除聯絡人？")) { withLoader(() => { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); }); } }
 
     function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()"><span style="line-height:1;">✕</span></button>`; container.appendChild(div); }
     function checkPollNotification() { 
@@ -1469,21 +1625,23 @@
         if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無投票</div>`; return; } 
         list.innerHTML = p.polls.map(poll => {
             const dateStr = poll.date ? `<div style="font-size:12px; color:var(--text-muted); font-weight:bold; margin-bottom:8px;">📅 期限: ${poll.date}</div>` : '';
-            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; cursor:pointer; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="vote(${poll.id}, ${i})"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
+            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; cursor:pointer; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="withLoader(() => vote(${poll.id}, ${i}), 200)"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
         }).join(''); 
     }
     function addOrUpdatePoll() { 
         const title = document.getElementById('poll-title').value; const editId = document.getElementById('edit-poll-id').value; const pollDate = document.getElementById('poll-date').value;
         const optInputs = document.querySelectorAll('.poll-opt-input'); const options = []; optInputs.forEach(input => { const val = input.value.trim(); if(val) options.push({ name: val, voters: [] }); });
         if(!title || options.length < 2) return alert("請輸入問題，並至少填寫兩個選項！"); 
-        const p = getCurProject(); if(!p.polls) p.polls=[]; 
-        if(editId) { const idx = p.polls.findIndex(x => x.id == editId); if(idx > -1) { const oldOptions = p.polls[idx].options; options.forEach(newOpt => { const matchedOld = oldOptions.find(o => o.name === newOpt.name); if(matchedOld) newOpt.voters = matchedOld.voters; }); p.polls[idx].title = title; p.polls[idx].date = pollDate; p.polls[idx].options = options; } cancelEditPoll(); showSync("✅ 投票已更新", 1500); } 
-        else p.polls.push({ id: Date.now(), title, date: pollDate, creator: currentUser, options }); 
-        updateCurProject(p); renderPolls(); document.getElementById('poll-form-card').style.display = 'none'; document.getElementById('show-poll-btn').style.display = 'block'; 
+        withLoader(() => {
+            const p = getCurProject(); if(!p.polls) p.polls=[]; 
+            if(editId) { const idx = p.polls.findIndex(x => x.id == editId); if(idx > -1) { const oldOptions = p.polls[idx].options; options.forEach(newOpt => { const matchedOld = oldOptions.find(o => o.name === newOpt.name); if(matchedOld) newOpt.voters = matchedOld.voters; }); p.polls[idx].title = title; p.polls[idx].date = pollDate; p.polls[idx].options = options; } cancelEditPoll(); showSync("✅ 投票已更新", 1500); } 
+            else p.polls.push({ id: Date.now(), title, date: pollDate, creator: currentUser, options }); 
+            updateCurProject(p); renderPolls(); document.getElementById('poll-form-card').style.display = 'none'; document.getElementById('show-poll-btn').style.display = 'block'; 
+        });
     }
     function editPoll(id) { const p = getCurProject(); const poll = p.polls.find(x => x.id === id); if(!poll) return; document.getElementById('poll-title').value = poll.title; document.getElementById('edit-poll-id').value = poll.id; document.getElementById('poll-date').value = poll.date || ''; const container = document.getElementById('poll-options-container'); container.innerHTML = ''; poll.options.forEach(opt => addPollOptionField(opt.name)); document.getElementById('poll-form-title').innerHTML = "✏️ 編輯投票"; document.getElementById('save-poll-btn').innerHTML = "更新"; document.getElementById('cancel-poll-btn').style.display = "block"; document.getElementById('poll-form-card').classList.add('edit-mode-active'); document.getElementById('poll-form-card').style.display = 'block'; document.getElementById('show-poll-btn').style.display = 'none'; document.getElementById('tab-more').scrollIntoView({behavior: "smooth"}); }
     function cancelEditPoll() { document.getElementById('poll-title').value = ''; document.getElementById('edit-poll-id').value = ''; document.getElementById('poll-date').value = ''; document.getElementById('poll-options-container').innerHTML = `<div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div><div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>`; document.getElementById('poll-form-title').innerHTML = "建立投票"; document.getElementById('save-poll-btn').innerHTML = "發布投票"; document.getElementById('cancel-poll-btn').style.display = "none"; document.getElementById('poll-form-card').classList.remove('edit-mode-active'); document.getElementById('poll-form-card').style.display='none'; document.getElementById('show-poll-btn').style.display='block'; }
-    function delPoll(id) { if(confirm("確定刪除此投票？")) { const p = getCurProject(); p.polls = p.polls.filter(x => x.id !== id); updateCurProject(p); renderPolls(); } }
+    function delPoll(id) { if(confirm("確定刪除此投票？")) { withLoader(() => { const p = getCurProject(); p.polls = p.polls.filter(x => x.id !== id); updateCurProject(p); renderPolls(); }); } }
     function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
 
     // --- 🎒 行李清單 (需求7: 獨立狀態與共用顯示) ---
@@ -1504,7 +1662,7 @@
                 whoCheckedText = `<div class="checked-by-tags">✅ ${c.checkedBy.join('、')} 已準備</div>`;
             }
             return `
-            <div class="checklist-item" onclick="toggleChecklist(${c.id})">
+            <div class="checklist-item" onclick="withLoader(() => toggleChecklist(${c.id}), 150)">
                 <div class="check-circle" style="${isMeDone ? 'background:var(--secondary); border-color:var(--secondary); color:white;' : ''}">${isMeDone ? '✓' : ''}</div>
                 <div style="flex:1;">
                     <div class="checklist-text" style="${isMeDone ? 'text-decoration:line-through; color:var(--text-muted); opacity:0.6;' : ''}">${c.text}</div>
@@ -1514,7 +1672,13 @@
             </div>`;
         }).join('');
     }
-    function addChecklistItem() { const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return; const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, checkedBy: [] }); updateCurProject(p); input.value = ''; renderChecklist(); }
+    function addChecklistItem() { 
+        const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return; 
+        withLoader(() => {
+            const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, checkedBy: [] }); 
+            updateCurProject(p); input.value = ''; renderChecklist(); 
+        });
+    }
     
     function toggleChecklist(id) { 
         const p = getCurProject(); const item = p.checklist.find(x => x.id === id); 
@@ -1525,7 +1689,7 @@
             updateCurProject(p); renderChecklist(); 
         } 
     }
-    function delChecklist(id, e) { e.stopPropagation(); const p = getCurProject(); p.checklist = p.checklist.filter(x => x.id !== id); updateCurProject(p); renderChecklist(); }
+    function delChecklist(id, e) { e.stopPropagation(); withLoader(() => { const p = getCurProject(); p.checklist = p.checklist.filter(x => x.id !== id); updateCurProject(p); renderChecklist(); }); }
 
   </script>
 </body>
