@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="旅遊趣">
-  <!-- 確保使用絕對路徑，絕對不會破圖 -->
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png">
+  <!-- 修正為最相容的相對路徑 -->
+  <link rel="apple-touch-icon" href="logo.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
@@ -37,15 +37,18 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: calc(var(--nav-height) + 20px); }
     
+    /* UX 優化：全域設定可點擊元素的游標樣式與基礎過渡 */
+    [onclick], button, select, .checkbox-item, .transit-block, .project-card, .create-project-card { cursor: pointer; transition: all 0.2s ease; }
+    
     .view { display: none; min-height: 100vh; padding: 20px; max-width: 600px; margin: 0 auto; }
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* 按鈕與表單 */
-    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
+    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
     .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
     .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
-    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
     
     .btn-small { padding: 10px 16px; font-size: 14px; border-radius: 12px; box-shadow: none;}
     .btn-action { background: var(--secondary); color: #ffffff !important; box-shadow: 0 4px 10px rgba(0, 166, 153, 0.2); }
@@ -54,20 +57,20 @@
     .btn-outline { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-main); box-shadow: none; }
     .btn-outline:hover { background: #F8F9FA; border-color: #CBD5E1;}
     .form-control { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; transition: 0.2s; font-weight: 500;}
-    .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); }
+    .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); box-shadow: 0 0 0 3px rgba(255,90,95,0.1);}
     
     /* 卡片與容器 */
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .create-project-card { border: 2px dashed #CBD5E1; background: transparent; padding: 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
+    .create-project-card { border: 2px dashed #CBD5E1; background: transparent; padding: 24px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
     .create-project-card:hover { border-color: var(--primary); color: var(--primary); background: rgba(255,90,95,0.02); }
     
-    .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); overflow: hidden;}
-    .project-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.02); overflow: hidden;}
+    .project-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
     
     /* 刪除與編輯專案按鈕 */
-    .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); transition: 0.2s; }
+    .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); }
     .del-btn-card:hover { transform: scale(1.15); background: #E53935; }
-    .edit-btn-card { position: absolute; top: 16px; right: 56px; background: #F1F5F9; color: var(--text-main); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s; }
+    .edit-btn-card { position: absolute; top: 16px; right: 56px; background: #F1F5F9; color: var(--text-main); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; }
     .edit-btn-card:hover { transform: scale(1.15); background: #E2E8F0; }
 
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative;}
@@ -79,7 +82,7 @@
 
     /* 底部導航 */
     .bottom-nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; height: var(--nav-height); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); border-top: 1px solid var(--border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; color: var(--text-muted); cursor: pointer; transition: 0.2s; position: relative; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; color: var(--text-muted); position: relative; }
     .nav-item:hover { color: var(--primary); }
     .nav-icon { font-size: 22px; margin-bottom: 2px; transition: 0.2s; filter: grayscale(100%) opacity(0.5); position: relative;}
     .nav-text { font-size: 11px; font-weight: 700; }
@@ -98,7 +101,7 @@
     .day-selector-container::after { content: ''; position: absolute; right: 0; top: 0; bottom: 15px; width: 40px; background: linear-gradient(to right, rgba(244, 247, 252, 0), var(--bg-color)); pointer-events: none; opacity: 1; transition: opacity 0.3s; }
     .day-selector-container.scroll-end::after { opacity: 0; }
     
-    .day-btn { display: inline-flex; align-items: center; padding: 10px 4px; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; margin-right: 20px; font-weight: 800; color: var(--text-muted); transition: 0.2s; font-size: 15px; border-radius: 0; }
+    .day-btn { display: inline-flex; align-items: center; padding: 10px 4px; background: transparent; border: none; border-bottom: 3px solid transparent; margin-right: 20px; font-weight: 800; color: var(--text-muted); font-size: 15px; border-radius: 0; }
     .day-btn:hover { color: var(--primary); }
     .day-btn.active { color: var(--text-main); border-bottom-color: var(--primary); }
     .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 11px; font-weight: bold; margin-left: 6px; line-height: 1; }
@@ -113,21 +116,21 @@
     .plan-row:last-child .plan-timeline-line { display: none; }
     .plan-dot { position: absolute; left: 49px; top: 22px; width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 2; border: 3px solid var(--secondary); }
     .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column;}
-    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
-    .plan-card:hover { border-color: rgba(0,166,153,0.3); }
+    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
+    .plan-card:hover { border-color: rgba(0,166,153,0.3); transform: translateX(2px); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
     /* 交通方式選擇區塊 */
     .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
-    .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; transition: 0.2s;}
+    .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); }
     .transit-block:hover { background: #E2E8F0; }
     .transit-block:active { transform: scale(0.95); }
-    .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center;}
+    .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; display: inline-flex; align-items: center;}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
     /* 標籤與文字 */
     .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
-    .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
+    .action-text { font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
     .action-text:hover { filter: brightness(0.95); background: #E2E8F0; }
     .edit-text { color: var(--secondary); margin-right: 6px; }
     .del-text { color: var(--danger); background: #FFF0F0;}
@@ -136,12 +139,13 @@
     .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative;}
     .map-search-bar .form-control { margin-bottom: 0; }
     .search-results-container { position: absolute; top: 60px; left: 0; right: 0; background: white; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 500; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
-    .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+    .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); }
     .search-result-item:hover { background: #F8F9FA; }
     .search-result-item:last-child { border-bottom: none; }
     .map-wrapper { position: relative; }
     #map-container { height: 500px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
-    .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s;}
+    .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); z-index: 400; }
+    .map-fab-locate:hover { background: #F8F9FA; transform: translateY(-2px); }
     
     .custom-map-pin { width: 30px; height: 30px; background: var(--primary); border: 3px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: -2px 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
     .custom-map-pin-inner { transform: rotate(45deg); color: white; font-weight: bold; font-size: 14px; }
@@ -153,7 +157,7 @@
 
     .plan-img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; display: none; border: 1px solid var(--border); margin-top: 12px; }
     .plan-img-display { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid #E4E8ED; flex-shrink: 0; }
-    .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
+    .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; margin-bottom: 12px; }
     .file-upload-label:hover { background: #F1F5F9; border-color: var(--secondary); color: var(--secondary); }
     
     /* 底部懸浮面板 */
@@ -165,11 +169,11 @@
     .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
 
     /* iOS 風格切換開關 */
-    .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
+    .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     input:checked + .toggle-switch { background: var(--secondary); }
     input:checked + .toggle-switch::after { transform: translateX(20px); }
-    .checkbox-item { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-bottom: 1px solid var(--border); cursor: pointer;}
+    .checkbox-item { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-bottom: 1px solid var(--border); }
 
     .poll-title-text { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; display: block; border-bottom: 2px solid var(--border); padding-bottom: 8px;}
     .poll-opt-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
@@ -177,30 +181,46 @@
     
     /* 工具列導航美化 */
     .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; }
-    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; position: relative; }
+    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; position: relative; }
     .sub-nav-btn.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     
     .tool-btn-wrap { display: flex; gap: 10px; margin-top: 16px; }
-    .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; display: inline-block; cursor: pointer; transition: 0.2s; box-shadow: none;}
+    .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; display: inline-block; box-shadow: none;}
     .tool-btn.call { background: #E8F4FD; color: #0284C7; }
 
     /* 行李清單 */
     .more-section { display: none; }
-    .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor:pointer;}
+    .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; font-size: 12px;}
+    .checklist-item:hover .check-circle { border-color: var(--secondary); }
     .checklist-item.done .check-circle { background: var(--secondary); border-color: var(--secondary); }
     .checklist-item.done .check-circle::after { content: '✓'; }
     .checklist-text { flex: 1; font-weight: 600; font-size: 15px; transition: 0.2s; }
     .checklist-item.done .checklist-text { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
     .checked-by-tags { font-size:10px; color:var(--secondary); background:#E6FAF8; padding:2px 6px; border-radius:8px; font-weight:bold; display:inline-block; margin-top:4px;}
 
-    #sync-status { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(26, 26, 26, 0.9); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; display: none; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.15); backdrop-filter: blur(8px); }
+    /* UX 優化：iOS 風格質感 Toast 膠囊提示 */
+    #sync-status { 
+        position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); 
+        background: rgba(255, 255, 255, 0.95); color: var(--text-main); padding: 12px 24px; 
+        border-radius: 30px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; 
+        z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.1); opacity: 0; pointer-events: none; 
+        transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid rgba(0,0,0,0.05); backdrop-filter: blur(10px);
+    }
+    #sync-status.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); padding: 20px; }
     .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
     .modal { background: var(--surface); width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 28px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
     .spinner { border: 4px solid rgba(255, 90, 95, 0.2); border-left-color: var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .edit-mode-active { background-color: #FFFDE7 !important; border-color: var(--warning) !important; box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2) !important; }
+
+    /* UX 優化：空狀態美化 Empty State */
+    .empty-state { text-align: center; padding: 40px 20px; background: rgba(0, 166, 153, 0.03); border-radius: 20px; border: 2px dashed rgba(0, 166, 153, 0.2); margin-top: 10px; }
+    .empty-state-icon { font-size: 40px; margin-bottom: 12px; filter: grayscale(50%) opacity(0.8); }
+    .empty-state-text { color: var(--text-muted); font-weight: bold; font-size: 15px; }
+
   </style>
 </head>
 <body>
@@ -225,7 +245,7 @@
     </div>
   </div>
 
-  <div id="sync-status">☁️ 雲端同步中...</div>
+  <div id="sync-status"><span id="sync-status-icon">☁️</span> <span id="sync-status-text">雲端同步中...</span></div>
 
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
@@ -234,7 +254,7 @@
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       
-      <div style="position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
+      <div style="position:absolute; top:10px; right:10px; font-size:24px; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
 
       <div class="card-panel" style="text-align: left; padding: 28px;">
         <div class="flex-row" style="margin-bottom: 12px;">
@@ -267,7 +287,7 @@
   <div id="detail-view" class="view" style="padding-bottom: 20px;">
     <div class="detail-header">
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <button class="btn-small" style="background:#F1F5F9; color:var(--text-main); font-weight:800; border:none; border-radius:12px; padding:8px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'" onclick="goBackToDashboard()"><span style="font-size:16px; line-height:1; margin-bottom:2px;">←</span> 返回列表</button>
+        <button class="btn-small" style="background:#F1F5F9; color:var(--text-main); font-weight:800; border:none; border-radius:12px; padding:8px 14px; display:inline-flex; align-items:center; gap:4px; transition:0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'" onclick="goBackToDashboard()"><span style="font-size:16px; line-height:1; margin-bottom:2px;">←</span> 返回列表</button>
         
         <div style="display:flex; gap:8px;">
             <button class="btn-outline btn-small" style="border-radius:12px; font-weight:bold;" onclick="openManageMembersModal()">👥 成員</button>
@@ -298,7 +318,7 @@
       
       <div class="itinerary-date-header">
           <span id="itinerary-date-header-text"></span>
-          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:16px; margin-right:2px; line-height:1;">+</span> 新增</button>
+          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:16px; margin-right:2px; line-height:1;">+</span> 新增</button>
       </div>
       
       <div id="plan-form-card" class="card-panel" style="padding: 20px; display: none; border: 2px solid var(--border);">
@@ -312,7 +332,7 @@
           <input type="text" id="plan-place" class="form-control" style="flex: 2; margin: 0;" placeholder="景點名稱">
         </div>
         
-        <button id="reselect-map-btn" class="btn-outline" style="width: 100%; margin-top: 12px; border-style:dashed; color:var(--secondary); border-color:var(--secondary); padding:12px; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="openMapForEdit()">📍 在地圖重新選地標</button>
+        <button id="reselect-map-btn" class="btn-outline" style="width: 100%; margin-top: 12px; border-style:dashed; color:var(--secondary); border-color:var(--secondary); padding:12px; border-radius:12px; font-weight:bold;" onclick="openMapForEdit()">📍 在地圖重新選地標</button>
         
         <label class="file-upload-label" style="margin-top: 12px;"><span>📷 附加照片 (選填)</span><input type="file" id="plan-image-input" accept="image/*" style="display: none;" onchange="previewImage(event)"></label>
         <img id="plan-img-preview" class="plan-img-preview">
@@ -326,7 +346,7 @@
       <div class="timeline-container" id="plan-list"></div>
       
       <div style="display: flex; justify-content: center; margin-top: 20px;">
-        <button class="btn-small btn-outline" style="border: 1px solid #CBD5E1; color:var(--text-main); font-weight:800; background:white; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor:pointer;" onclick="exportItinerary()">📋 複製本日行程分享</button>
+        <button class="btn-small btn-outline" style="border: 1px solid #CBD5E1; color:var(--text-main); font-weight:800; background:white; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);" onclick="exportItinerary()">📋 複製本日行程分享</button>
       </div>
     </div>
 
@@ -371,12 +391,13 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
           <h4 style="margin:0; font-size:16px;">結算建議</h4>
           <div style="display:flex; gap:8px;">
-              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openBankInfoModal()">🏦 帳號</button>
-              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
-              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
+              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openBankInfoModal()">🏦 帳號</button>
+              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
+              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
           </div>
       </div>
-      <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4;"></div>
+      
+      <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4; padding-bottom: 12px;"></div>
       
       <div id="expense-list"></div>
     </div>
@@ -475,7 +496,7 @@
                 <button class="btn btn-action" style="width:100%; color:white !important;" onclick="saveTransitMode('custom')">確定儲存</button>
             </div>
         </div>
-        <button class="btn-small" style="background:#F1F5F9; font-weight:bold; color:var(--text-muted); margin-top:20px; box-shadow:none; padding:10px 20px; border:none; border-radius:10px; cursor:pointer;" onclick="closeModal('transit-modal')">取消</button>
+        <button class="btn-small" style="background:#F1F5F9; font-weight:bold; color:var(--text-muted); margin-top:20px; box-shadow:none; padding:10px 20px; border:none; border-radius:10px;" onclick="closeModal('transit-modal')">取消</button>
     </div>
   </div>
 
@@ -509,7 +530,7 @@
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; text-align:center;">輸入大家的帳號，結算匯款更方便！</p>
       <div id="bank-info-container" style="max-height: 50vh; overflow-y: auto; padding-right:8px;"></div>
       <div style="display: flex; gap: 12px; margin-top: 24px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('bank-info-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('bank-info-modal')">取消</button>
         <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="saveBankInfo()">更新儲存</button>
       </div>
     </div>
@@ -553,7 +574,7 @@
       
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
           <label style="font-size:14px; font-weight:bold; color:var(--text-muted);">圖示:</label>
-          <select id="trip-icon" class="form-control" style="width:75px; margin:0; padding:10px 4px; font-size: 20px; text-align:center; appearance:none; background-color:#FAFBFC; cursor:pointer;">
+          <select id="trip-icon" class="form-control" style="width:75px; margin:0; padding:10px 4px; font-size: 20px; text-align:center; appearance:none; background-color:#FAFBFC;">
             <option value="📍">📍</option>
             <option value="✈️">✈️</option>
             <option value="🚗">🚗</option>
@@ -582,7 +603,7 @@
       <div id="create-trip-invite-list" style="max-height: 120px; overflow-y: auto; background:#F8F9FA; padding:8px; border-radius:12px; border:1px solid var(--border); margin-bottom: 12px;"></div>
       
       <div style="display: flex; gap: 12px; margin-top: 12px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('add-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('add-modal')">取消</button>
         <button id="save-project-btn" class="btn" style="flex:1; padding: 14px;" onclick="saveProject()">建立</button>
       </div>
     </div>
@@ -602,7 +623,7 @@
       <input type="text" id="new-user-name" class="form-control" placeholder="請輸入姓名">
       <input type="password" id="new-user-pwd" class="form-control" placeholder="設定登入密碼">
       <div style="display: flex; gap: 12px; margin-top: 24px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('add-user-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('add-user-modal')">取消</button>
         <button class="btn" style="flex:1; padding: 14px;" onclick="saveNewUser()">儲存</button>
       </div>
     </div>
@@ -614,7 +635,7 @@
       <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">請輸入管理員授權密碼</p>
       <input type="password" id="admin-pwd-input" class="form-control" placeholder="請輸入密碼">
       <div style="display: flex; gap: 12px; margin-top: 12px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('admin-login-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('admin-login-modal')">取消</button>
         <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="verifyAdmin()">驗證</button>
       </div>
     </div>
@@ -649,7 +670,32 @@
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
     let lastSaveTime = 0;
 
-    // 自訂彈窗邏輯 (防彈設計，取代原生的 alert / confirm)
+    // UX 優化：全域點擊外層(Overlay)自動關閉 Modal 機制
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                // 確保點擊的是半透明背景本身，而不是內部的白色 Modal 卡片
+                if (e.target === this) {
+                    if (this.id === 'custom-dialog-overlay') {
+                        // 警告視窗若點擊外部，視同取消
+                        const cancelBtn = document.getElementById('custom-dialog-cancel');
+                        if (cancelBtn.style.display !== 'none') {
+                            this.classList.remove('active');
+                        }
+                    } else if (this.id === 'manage-members-modal') {
+                        closeManageMembers();
+                    } else if (this.id === 'split-exclusion-modal') {
+                        closeSplitExclusion();
+                    } else if (this.id === 'sheet-overlay') {
+                        closeBottomSheet();
+                    } else if (this.id !== 'global-loader') {
+                        this.classList.remove('active');
+                    }
+                }
+            });
+        });
+    });
+
     function showCustomDialog(msg, isConfirm = false, onConfirm = null) {
         const overlay = document.getElementById('custom-dialog-overlay');
         document.getElementById('custom-dialog-msg').innerHTML = msg;
@@ -659,7 +705,7 @@
         
         if(isConfirm) {
             iconEl.innerHTML = "⚠️";
-        } else if(msg.includes("成功") || msg.includes("完成")) {
+        } else if(msg.includes("成功") || msg.includes("完成") || msg.includes("已")) {
             iconEl.innerHTML = "✅";
         } else {
             iconEl.innerHTML = "💡";
@@ -686,7 +732,25 @@
         }, delay);
     }
 
-    // 防彈安全解析 - 名單配置
+    // UX 優化：iOS 風格質感 Toast 提示
+    let syncTimeout;
+    function showSync(msg, duration = 2000) { 
+        const syncEl = document.getElementById('sync-status'); 
+        const iconEl = document.getElementById('sync-status-icon');
+        const textEl = document.getElementById('sync-status-text');
+        
+        if(msg.includes("成功") || msg.includes("完成") || msg.includes("已")) iconEl.textContent = "✅";
+        else if(msg.includes("搜尋") || msg.includes("解析")) iconEl.textContent = "🔍";
+        else if(msg.includes("同步")) iconEl.textContent = "☁️";
+        else iconEl.textContent = "💡";
+
+        textEl.textContent = msg.replace(/✅|🔍|☁️|💡|⚠️|📋|📍/g, '').trim(); 
+        
+        syncEl.classList.add('show');
+        clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(() => syncEl.classList.remove('show'), duration); 
+    }
+
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
     let customUsers = {};
     try {
@@ -720,7 +784,6 @@
         fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
     }
 
-    // 防彈安全解析 - 資料庫
     function syncGlobalUsers(db) {
         let updated = false;
         db.forEach(p => {
@@ -785,12 +848,6 @@
     };
 
     function getTripMembers() { const p = getCurProject(); return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
-
-    document.addEventListener('click', function(e) {
-        const searchBar = document.querySelector('.map-search-bar');
-        const searchResults = document.getElementById('map-search-results');
-        if (searchBar && !searchBar.contains(e.target)) { if(searchResults) searchResults.style.display = 'none'; }
-    });
 
     function openAdminLogin() { openModal('admin-login-modal'); document.getElementById('admin-pwd-input').value = ''; }
     function verifyAdmin() {
@@ -870,7 +927,6 @@
         });
     }
 
-    // 防彈初始化
     window.onload = () => { 
         try {
             if (typeof flatpickr !== 'undefined') {
@@ -924,7 +980,7 @@
             } else { switchView('login-view'); }
         } catch(err) {
             console.error("Fatal initialization error:", err);
-            switchView('login-view'); // 發生毀滅性錯誤時強制回到登入頁，避免白畫面
+            switchView('login-view'); 
             const loader = document.getElementById('global-loader');
             if(loader) loader.classList.remove('active');
         }
@@ -966,7 +1022,6 @@
             syncFromCloud(false, true); 
         }, 300);
     }
-    function showSync(msg, duration = 2000) { const syncEl = document.getElementById('sync-status'); syncEl.textContent = msg; syncEl.style.display = 'block'; setTimeout(() => syncEl.style.display = 'none', duration); }
 
     function syncFromCloud(showMsg = false, isBackground = false) {
       if(showMsg && !isBackground) showSync("☁️ 同步中...");
@@ -1130,7 +1185,7 @@
         document.getElementById('member-search-input').value = '';
         const list = document.getElementById('create-trip-invite-list');
         list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => `
-            <label class="checkbox-item member-checkbox-row" data-name="${m}" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
+            <label class="checkbox-item member-checkbox-row" data-name="${m}" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; display:flex; justify-content:space-between;">
                 <span style="font-weight:bold; font-size:14px;">${m}</span><input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);">
             </label>
         `).join('');
@@ -1159,7 +1214,7 @@
         list.innerHTML = allMembers.filter(m => m !== currentUser).map(m => {
             const isChecked = p.members.includes(m) ? 'checked' : '';
             return `
-            <label class="checkbox-item member-checkbox-row" data-name="${m}" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; cursor:pointer; display:flex; justify-content:space-between;">
+            <label class="checkbox-item member-checkbox-row" data-name="${m}" style="padding:8px 4px; border-bottom:1px solid #E4E8ED; display:flex; justify-content:space-between;">
                 <span style="font-weight:bold; font-size:14px;">${m}</span><input type="checkbox" value="${m}" class="trip-invite-checkbox" style="width:18px; height:18px; accent-color:var(--primary);" ${isChecked}>
             </label>
         `}).join('');
@@ -1304,7 +1359,9 @@
       document.getElementById('itinerary-date-header-text').innerHTML = `第 ${activeDayIndex + 1} 天 <span style="font-size:16px; font-weight:700; color:var(--text-muted); margin-left:4px;">(${dayStr})</span>`;
 
       const list = document.getElementById('plan-list'); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
-      if(dayPlans.length === 0) list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:60px 0; font-weight:bold; font-size:15px;">這天還沒有排行程喔 🏝️</div>`;
+      
+      // UX 優化：空狀態美化
+      if(dayPlans.length === 0) list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏝️</div><div class="empty-state-text">這天還沒有排行程喔</div></div>`;
       else {
           let html = '';
           dayPlans.forEach((plan, index) => {
@@ -1556,9 +1613,44 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
+    // UX 優化：匯出分帳清單到剪貼簿功能
+    function exportBudgetResult() {
+        const adviceBox = document.getElementById('split-bill-advice');
+        if(adviceBox.style.display === 'none' || adviceBox.innerHTML.includes('目前無欠款')) {
+            return showCustomDialog("目前沒有需要結算的欠款喔！");
+        }
+        
+        const p = getCurProject();
+        let text = `💰 ${p.icon || '📍'}${p.location} 旅遊結算 💰\n\n`;
+        text += `總花費：$${document.getElementById('total-expense').textContent}\n\n`;
+        text += `👇 結算明細與匯款帳號 👇\n`;
+        text += `------------------------\n`;
+        
+        // 從 DOM 中提取渲染好的轉帳資訊 (確保和畫面上看到的一模一樣)
+        const transfers = adviceBox.querySelectorAll('div[style*="justify-content:space-between"]');
+        transfers.forEach(t => {
+            const from = t.querySelector('strong[style*="color:var(--danger)"]').innerText;
+            const to = t.querySelector('strong[style*="color:var(--text-main)"]').innerText;
+            const amt = t.querySelector('span[style*="font-size:20px"]').innerText;
+            text += `🔴 ${from} ➡️ 需給 ${to} 【 ${amt} 】\n`;
+            
+            const bankInfo = (p.bankInfo && p.bankInfo[to]) ? p.bankInfo[to] : null;
+            if(bankInfo && (bankInfo.bank || bankInfo.acc)) {
+                text += `   🏦 帳號：${bankInfo.bank} ${bankInfo.acc}\n`;
+            } else {
+                text += `   🏦 帳號：尚未設定\n`;
+            }
+            text += `------------------------\n`;
+        });
+        
+        navigator.clipboard.writeText(text).then(() => showSync("📋 結算清單已複製！可以傳給 LINE 群組了", 2500));
+    }
+
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
-        if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
+        
+        // UX 優化：空狀態美化
+        if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-text">目前尚無任何花費紀錄</div></div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
         
         let html = '';
         p.expenses.forEach(e => {
@@ -1664,6 +1756,8 @@
                     </div>
                 </div>`;
             }); 
+            // 插入優化按鈕
+            html += `<button class="btn-outline" style="width:100%; border-style:dashed; margin-top:12px; padding:12px; border-radius:12px; font-weight:800;" onclick="exportBudgetResult()">📋 複製結算清單傳至群組</button>`;
             adviceBox.innerHTML = html; 
         } 
         adviceBox.style.display = 'block'; 
@@ -1708,7 +1802,7 @@
 
     function addExpenseFromTop() { 
         const item = document.getElementById('exp-item').value; const cost = document.getElementById('exp-cost').value; const payer = document.getElementById('exp-payer').value; const expDate = document.getElementById('exp-date').value;
-        if(!item || !cost) return; 
+        if(!item || !cost) return showCustomDialog("請完整填寫項目與金額！"); 
         withLoader(() => {
             const p = getCurProject(); if(!p.expenses) p.expenses = []; 
             p.expenses.push({ id: Date.now(), date: expDate, item, cost, payer, excludes: [] }); updateCurProject(p); 
@@ -1736,9 +1830,17 @@
     function renderExclusionList() { const user = document.getElementById('exclusion-user-select').value; const container = document.getElementById('exclusion-checkboxes'); if(!user) { container.innerHTML = ''; return; } const p = getCurProject(); if(!p.expenses || p.expenses.length === 0) { container.innerHTML = '<p style="padding:10px; color:#A0A0A0; text-align:center; font-weight:bold;">目前沒有花費紀錄</p>'; return; } let html = ''; p.expenses.forEach(e => { const isPaying = !(e.excludes && e.excludes.includes(user)); html += `<label class="checkbox-item"><div style="flex:1;"><strong>${e.item}</strong> ($${e.cost}) <br><span style="font-size:11px; color:#888;">由 ${e.payer} 代墊</span></div><input type="checkbox" style="display:none;" onchange="withLoader(() => toggleExclusion(${e.id}, '${user}', this.checked))" ${isPaying ? 'checked' : ''}><div class="toggle-switch"></div></label>`; }); container.innerHTML = html; }
     function toggleExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); updateCurProject(p); renderBudget(); }
 
-    function renderNotes() { const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count'); if(!list) return; if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無任何記事</div>`; if(countBadge) countBadge.style.display = 'none'; return; } if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); }
+    function renderNotes() { 
+        const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count'); if(!list) return; 
+        
+        // UX 優化：空狀態美化
+        if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">還沒有任何筆記喔，記點什麼吧！</div></div>`; if(countBadge) countBadge.style.display = 'none'; return; } 
+        
+        if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } 
+        list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); 
+    }
     function addOrUpdateNote() { 
-        const text = document.getElementById('note-text').value; const editId = document.getElementById('edit-note-id').value; if(!text) return; 
+        const text = document.getElementById('note-text').value; const editId = document.getElementById('edit-note-id').value; if(!text) return showCustomDialog("請輸入筆記內容！"); 
         withLoader(() => {
             const p = getCurProject(); if(!p.notes) p.notes = []; 
             if(editId) { const idx = p.notes.findIndex(x => x.id == editId); if(idx > -1) p.notes[idx].text = text; cancelEditNote(); } else p.notes.push({ id: Date.now(), text: text, creator: currentUser }); 
@@ -1757,9 +1859,9 @@
     }
 
     function copyPhone(phone) { navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500)); }
-    function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!list) return; if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
+    function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!list) return; if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📞</div><div class="empty-state-text">還沒有聯絡人資料</div></div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
     function addOrUpdateContact() { 
-        const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; const editId = document.getElementById('edit-contact-id').value; if(!name || !phone) return; 
+        const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; const editId = document.getElementById('edit-contact-id').value; if(!name || !phone) return showCustomDialog("請完整填寫名稱與電話！"); 
         withLoader(() => {
             const p = getCurProject(); if(!p.contacts) p.contacts = []; 
             if(editId) { const idx = p.contacts.findIndex(x => x.id == editId); if(idx>-1) {p.contacts[idx].name=name; p.contacts[idx].phone=phone;} cancelEditContact(); } else p.contacts.push({ id: Date.now(), name, phone, creator: currentUser }); 
@@ -1792,7 +1894,7 @@
     }
     function renderPolls() { 
         const p = getCurProject(); const list = document.getElementById('polls-list'); if(!list) return; checkPollNotification(); 
-        if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無投票</div>`; return; } 
+        if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🗳️</div><div class="empty-state-text">目前沒有發起的投票</div></div>`; return; } 
         list.innerHTML = p.polls.map(poll => {
             const dateStr = poll.date ? `<div style="font-size:12px; color:var(--text-muted); font-weight:bold; margin-bottom:8px;">📅 期限: ${poll.date}</div>` : '';
             return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; cursor:pointer; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="withLoader(() => vote(${poll.id}, ${i}), 200)"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
@@ -1825,7 +1927,7 @@
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
         if(!list) return;
         
-        if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:20px 0; font-weight:bold;">尚無待辦事項</div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
+        if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎒</div><div class="empty-state-text">還沒有建立待辦或行李清單</div></div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
         
         const myDoneCount = p.checklist.filter(c => c.checkedBy && c.checkedBy.includes(currentUser)).length;
         progText.textContent = `${myDoneCount} / ${p.checklist.length}`;
@@ -1849,7 +1951,7 @@
         }).join('');
     }
     function addChecklistItem() { 
-        const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return; 
+        const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return showCustomDialog("請輸入待辦事項！"); 
         withLoader(() => {
             const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, checkedBy: [] }); 
             updateCurProject(p); input.value = ''; renderChecklist(); 
