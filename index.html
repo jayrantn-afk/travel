@@ -67,11 +67,25 @@
     .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.02); overflow: hidden;}
     .project-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
     
-    /* 刪除與編輯專案按鈕 */
+    /* 專案卡片狀態標籤 (動態加碼功能) */
+    .status-badge { position: absolute; top: 16px; left: 16px; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .status-badge.upcoming { background: #FFFDE7; color: #F59E0B; border: 1px solid #FDE047;}
+    .status-badge.ongoing { background: #FEF2F2; color: var(--danger); border: 1px solid #FECACA; animation: pulseRed 2s infinite;}
+    .status-badge.past { background: #F1F5F9; color: var(--text-muted); border: 1px solid #E2E8F0;}
+    .status-badge.archived-badge { background: #E2E8F0; color: #475569; border: 1px solid #CBD5E1;}
+
+    /* 刪除、編輯與封存按鈕 */
     .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); }
     .del-btn-card:hover { transform: scale(1.15); background: #E53935; }
     .edit-btn-card { position: absolute; top: 16px; right: 56px; background: #F1F5F9; color: var(--text-main); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; }
     .edit-btn-card:hover { transform: scale(1.15); background: #E2E8F0; }
+    .archive-btn-card { position: absolute; top: 16px; right: 96px; background: #F8FAFC; color: var(--text-main); border: 1px solid #E2E8F0; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; }
+    .archive-btn-card:hover { transform: scale(1.15); background: #E2E8F0; }
+
+    /* 首頁狀態頁籤切換 */
+    .dash-tabs-container { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 4px; }
+    .dash-tab { padding: 8px 16px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; color: var(--text-muted); background: transparent; transition: 0.2s;}
+    .dash-tab.active { color: var(--primary); background: rgba(255,90,95,0.08); }
 
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative;}
     .flex-row { display: flex; gap: 12px; align-items: center; }
@@ -214,12 +228,20 @@
     .modal { background: var(--surface); width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 28px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
     .spinner { border: 4px solid rgba(255, 90, 95, 0.2); border-left-color: var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
     .edit-mode-active { background-color: #FFFDE7 !important; border-color: var(--warning) !important; box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2) !important; }
 
     /* UX 優化：空狀態美化 Empty State */
     .empty-state { text-align: center; padding: 40px 20px; background: rgba(0, 166, 153, 0.03); border-radius: 20px; border: 2px dashed rgba(0, 166, 153, 0.2); margin-top: 10px; }
     .empty-state-icon { font-size: 40px; margin-bottom: 12px; filter: grayscale(50%) opacity(0.8); }
     .empty-state-text { color: var(--text-muted); font-weight: bold; font-size: 15px; }
+
+    /* 封存唯讀模式隱藏邏輯 (Archived Mode CSS) */
+    .archived-mode .hide-in-archive { display: none !important; }
+    .archived-mode .transit-block { pointer-events: none; }
+    .archived-mode .checklist-item { pointer-events: none; cursor: default; }
+    .archived-mode .checkbox-item { pointer-events: none; }
+    .archived-mode .poll-opt-row, .archived-mode [onclick*="vote"] { pointer-events: none; opacity: 0.8; cursor: default; }
 
   </style>
 </head>
@@ -245,6 +267,34 @@
     </div>
   </div>
 
+  <!-- PWA 手機安裝教學 Modal -->
+  <div id="install-tutorial-modal" class="modal-overlay" style="z-index: 10000;">
+    <div class="modal">
+      <h2 style="margin-bottom: 8px; font-weight:800; text-align:center;">📱 將 App 加入主畫面</h2>
+      <p style="text-align:center; color:var(--text-muted); font-size:13px; font-weight:bold; margin-bottom:24px;">享受全螢幕的沉浸式操作體驗！</p>
+      
+      <div style="background:#F8F9FA; padding:16px; border-radius:16px; margin-bottom:16px; border:1px solid #E4E8ED;">
+          <h4 style="color:#007AFF; font-weight:800; margin-bottom:8px; font-size:15px;">🍎 如果您使用 iPhone (Safari)</h4>
+          <ol style="padding-left:20px; color:var(--text-main); font-size:14px; line-height:1.8; font-weight:600;">
+              <li>點擊瀏覽器正下方的 <strong>「分享」</strong> 圖示 (方塊往上箭頭)。</li>
+              <li>在選單中往下滑，找到 <strong>「加入主畫面」</strong> 並點擊。</li>
+              <li>點擊右上角的 <strong>「新增」</strong>。</li>
+          </ol>
+      </div>
+
+      <div style="background:#F8F9FA; padding:16px; border-radius:16px; border:1px solid #E4E8ED;">
+          <h4 style="color:#34A853; font-weight:800; margin-bottom:8px; font-size:15px;">🤖 如果您使用 Android (Chrome)</h4>
+          <ol style="padding-left:20px; color:var(--text-main); font-size:14px; line-height:1.8; font-weight:600;">
+              <li>點擊瀏覽器右上角的 <strong>「選單 (三個點)」</strong>。</li>
+              <li>找到 <strong>「加到主畫面」</strong> 或 <strong>「安裝應用程式」</strong>。</li>
+              <li>點擊 <strong>「新增」</strong>。</li>
+          </ol>
+      </div>
+
+      <button class="btn" style="width:100%; margin-top:24px; padding:16px; border-radius:16px;" onclick="closeModal('install-tutorial-modal')">我了解了</button>
+    </div>
+  </div>
+
   <div id="sync-status"><span id="sync-status-icon">☁️</span> <span id="sync-status-text">雲端同步中...</span></div>
 
   <div id="login-view" class="view">
@@ -254,7 +304,7 @@
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       
-      <div style="position:absolute; top:10px; right:10px; font-size:24px; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
+      <div style="position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
 
       <div class="card-panel" style="text-align: left; padding: 28px;">
         <div class="flex-row" style="margin-bottom: 12px;">
@@ -271,12 +321,18 @@
     <div class="app-header">
       <h2 style="font-weight: 800; font-size: 24px;">👋 <span id="display-name"></span></h2>
       <div style="display: flex; gap: 8px;">
-        <button class="btn-outline btn-small" onclick="withLoader(() => syncFromCloud(true))">🔄 同步最新</button>
+        <button class="btn-outline btn-small" onclick="openModal('install-tutorial-modal')">📱 安裝 App</button>
         <button class="btn-outline btn-small" onclick="handleLogout()" style="color: var(--text-muted); box-shadow:none;">登出</button>
       </div>
     </div>
+
+    <!-- 首頁狀態頁籤 -->
+    <div class="dash-tabs-container">
+        <div id="dash-tab-active" class="dash-tab active" onclick="switchDashboardTab('active')">進行中旅程</div>
+        <div id="dash-tab-archived" class="dash-tab" onclick="switchDashboardTab('archived')">已封存 📦</div>
+    </div>
     
-    <div class="create-project-card" onclick="openCreateTripModal()">
+    <div class="create-project-card" id="create-project-btn" onclick="openCreateTripModal()">
         <div style="font-size:28px; line-height:1; color:var(--primary); font-weight:bold; margin-bottom:8px;">+</div>
         <div style="font-weight: bold; color: var(--text-muted); font-size: 15px;">建立新旅程</div>
     </div>
@@ -290,16 +346,21 @@
         <button class="btn-small" style="background:#F1F5F9; color:var(--text-main); font-weight:800; border:none; border-radius:12px; padding:8px 14px; display:inline-flex; align-items:center; gap:4px; transition:0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'" onclick="goBackToDashboard()"><span style="font-size:16px; line-height:1; margin-bottom:2px;">←</span> 返回列表</button>
         
         <div style="display:flex; gap:8px;">
-            <button class="btn-outline btn-small" style="border-radius:12px; font-weight:bold;" onclick="openManageMembersModal()">👥 成員</button>
+            <button class="btn-outline btn-small hide-in-archive" style="border-radius:12px; font-weight:bold;" onclick="openManageMembersModal()">👥 成員</button>
             <button class="btn-outline btn-small" style="border-radius:12px;" onclick="withLoader(() => syncFromCloud(true))">🔄 同步</button>
         </div>
       </div>
-      <div style="margin-top: 4px; margin-bottom: 20px;">
+      <div style="margin-top: 12px; margin-bottom: 12px;">
         <h2 id="project-title-display" style="font-size: 26px; font-weight: 800; color:var(--text-main);">載入中...</h2>
         <div class="online-users-bar">
           <div class="online-dot"></div>
           <span id="online-users-text">讀取中...</span>
         </div>
+      </div>
+      
+      <!-- 唯讀模式警告橫幅 -->
+      <div id="archive-banner" style="display:none; background: #FFFDE7; color: #B45309; text-align: center; padding: 10px; font-size: 13px; font-weight: 800; border-radius: 12px; margin-bottom: 16px; border: 2px dashed #FDE047;">
+          🔒 此旅程已封存，目前為「唯讀模式」，無法新增或修改資料。
       </div>
     </div>
     
@@ -318,10 +379,10 @@
       
       <div class="itinerary-date-header">
           <span id="itinerary-date-header-text"></span>
-          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:16px; margin-right:2px; line-height:1;">+</span> 新增</button>
+          <button class="btn-small hide-in-archive" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:16px; margin-right:2px; line-height:1;">+</span> 新增</button>
       </div>
       
-      <div id="plan-form-card" class="card-panel" style="padding: 20px; display: none; border: 2px solid var(--border);">
+      <div id="plan-form-card" class="card-panel hide-in-archive" style="padding: 20px; display: none; border: 2px solid var(--border);">
         <h4 id="plan-form-title" style="margin-bottom: 16px; font-size:16px;">編輯行程</h4>
         <input type="hidden" id="edit-plan-id" value="">
         <input type="hidden" id="edit-lat" value="">
@@ -351,17 +412,17 @@
     </div>
 
     <div id="tab-map" class="module-content">
-      <div style="display:flex; gap:8px; margin-bottom: 12px;">
+      <div style="display:flex; gap:8px; margin-bottom: 12px;" class="hide-in-archive">
           <input type="text" id="map-url-input" class="form-control" style="margin-bottom:0; flex:1; border-color:var(--secondary);" placeholder="🔗 貼上 Google Maps 網址自動解析">
           <button id="map-parse-btn" class="btn btn-action" style="border-radius:14px; white-space:nowrap; padding: 14px 20px; color:white !important;" onclick="parseGoogleMapUrl()">解析</button>
       </div>
       
-      <div class="map-search-bar" style="position:relative;">
+      <div class="map-search-bar hide-in-archive" style="position:relative;">
           <input type="text" id="map-search-input" class="form-control" placeholder="輸入地標或餐廳搜尋...">
           <button class="btn" style="border-radius:14px; padding:14px 20px;" onclick="searchMap()">🔍</button>
           <div id="map-search-results" class="search-results-container"></div>
       </div>
-      <div style="font-size:11px; color:#999; margin-top:-8px; margin-bottom:12px; padding-left:4px;">找不到地標？建議貼上 Google Maps 網址來「解析」會最精準喔！</div>
+      <div class="hide-in-archive" style="font-size:11px; color:#999; margin-top:-8px; margin-bottom:12px; padding-left:4px;">找不到地標？建議貼上 Google Maps 網址來「解析」會最精準喔！</div>
       
       <div class="map-wrapper">
           <div id="map-container"></div>
@@ -374,12 +435,19 @@
     </div>
 
     <div id="tab-budget" class="module-content">
-      <div class="card-panel" style="background: linear-gradient(135deg, var(--primary), #FF7E82); color: white; border: none;">
-        <div style="font-size: 14px; font-weight: 800; opacity:0.9;">旅程總花費</div>
-        <div style="font-size: 40px; font-weight: 800; margin-top: 4px; letter-spacing: -1px;">$ <span id="total-expense">0</span></div>
+      <!-- 總花費與個人花費統計 -->
+      <div class="card-panel" style="background: linear-gradient(135deg, var(--primary), #FF7E82); color: white; border: none; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div style="font-size: 13px; font-weight: 800; opacity:0.9;">旅程總花費</div>
+            <div style="font-size: 36px; font-weight: 800; letter-spacing: -1px;">$ <span id="total-expense">0</span></div>
+        </div>
+        <div style="text-align: right; background: rgba(255,255,255,0.2); padding: 10px 14px; border-radius: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="font-size: 11px; font-weight: 800; opacity:0.9;">我的個人總開銷</div>
+            <div style="font-size: 22px; font-weight: 800;">$ <span id="my-total-expense">0</span></div>
+        </div>
       </div>
       
-      <div id="expense-form-card" class="card-panel">
+      <div id="expense-form-card" class="card-panel hide-in-archive">
         <h4 style="margin-bottom: 12px; font-size: 16px;">記一筆花費</h4>
         <input type="date" id="exp-date" class="form-control">
         <input type="text" id="exp-item" class="form-control" placeholder="花費項目 (如: 晚餐)">
@@ -390,7 +458,7 @@
       
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
           <h4 style="margin:0; font-size:16px;">結算建議</h4>
-          <div style="display:flex; gap:8px;">
+          <div style="display:flex; gap:8px;" class="hide-in-archive">
               <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openBankInfoModal()">🏦 帳號</button>
               <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
               <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
@@ -403,7 +471,7 @@
     </div>
 
     <div id="tab-notes" class="module-content">
-      <div id="note-form-card" class="card-panel">
+      <div id="note-form-card" class="card-panel hide-in-archive">
         <h4 id="note-form-title" style="margin-bottom: 12px; font-size: 16px;">新增記事</h4>
         <input type="hidden" id="edit-note-id" value="">
         <textarea id="note-text" class="form-control" placeholder="記錄重要事項、購物清單或備忘錄..." rows="4" style="resize: vertical;"></textarea>
@@ -423,7 +491,7 @@
         </div>
 
         <div id="more-contact" class="more-section" style="display:block;">
-          <div id="contact-form-card" class="card-panel">
+          <div id="contact-form-card" class="card-panel hide-in-archive">
             <h4 id="contact-form-title" style="margin-bottom: 16px; font-size: 16px;">新增聯絡人</h4>
             <input type="hidden" id="edit-contact-id" value="">
             <input type="text" id="contact-name" class="form-control" placeholder="名稱 (如: 租車公司)">
@@ -437,9 +505,9 @@
         </div>
 
         <div id="more-poll" class="more-section" style="display:none;">
-          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px; color:white !important;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
+          <button class="btn btn-action hide-in-archive" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px; color:white !important;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
           
-          <div id="poll-form-card" class="card-panel" style="display:none;">
+          <div id="poll-form-card" class="card-panel hide-in-archive" style="display:none;">
             <h4 id="poll-form-title" style="margin-bottom: 12px; font-size:16px;">建立投票</h4>
             <input type="hidden" id="edit-poll-id" value="">
             <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">📅 截止日期 (選填)</label>
@@ -461,7 +529,7 @@
         </div>
 
         <div id="more-checklist" class="more-section" style="display:none;">
-            <div class="card-panel" style="padding:16px;">
+            <div class="card-panel hide-in-archive" style="padding:16px;">
                 <div style="display:flex; gap:8px;">
                     <input type="text" id="checklist-input" class="form-control" style="margin:0;" placeholder="新增待辦或行李...">
                     <button class="btn btn-action" style="color:white !important;" onclick="addChecklistItem()">新增</button>
@@ -480,7 +548,7 @@
     </div>
   </div>
 
-  <div id="transit-modal" class="modal-overlay">
+  <div id="transit-modal" class="modal-overlay hide-in-archive">
     <div class="modal" style="text-align:center;">
         <h3 style="margin-bottom:20px; font-weight:800;">設定交通方式</h3>
         <input type="hidden" id="transit-plan-id">
@@ -500,7 +568,7 @@
     </div>
   </div>
 
-  <div id="map-bottom-sheet" class="bottom-sheet">
+  <div id="map-bottom-sheet" class="bottom-sheet hide-in-archive">
     <div class="sheet-handle"></div>
     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
         <div style="flex:1; padding-right:12px;">
@@ -522,15 +590,15 @@
         <button class="btn" style="width:100%; padding: 14px; border-radius:14px;" onclick="updateLocationToForm()">📍 確認使用此地標並返回</button>
     </div>
   </div>
-  <div id="sheet-overlay" class="modal-overlay" style="z-index: 1999; display: none;" onclick="closeBottomSheet()"></div>
+  <div id="sheet-overlay" class="modal-overlay hide-in-archive" style="z-index: 1999; display: none;" onclick="closeBottomSheet()"></div>
 
-  <div id="bank-info-modal" class="modal-overlay">
+  <div id="bank-info-modal" class="modal-overlay hide-in-archive">
     <div class="modal">
       <h3 style="margin-bottom: 16px; font-weight:800; color:var(--text-main); text-align:center;">🏦 收款帳號設定</h3>
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; text-align:center;">輸入大家的帳號，結算匯款更方便！</p>
       <div id="bank-info-container" style="max-height: 50vh; overflow-y: auto; padding-right:8px;"></div>
       <div style="display: flex; gap: 12px; margin-top: 24px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('bank-info-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('bank-info-modal')">取消</button>
         <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="saveBankInfo()">更新儲存</button>
       </div>
     </div>
@@ -603,7 +671,7 @@
       <div id="create-trip-invite-list" style="max-height: 120px; overflow-y: auto; background:#F8F9FA; padding:8px; border-radius:12px; border:1px solid var(--border); margin-bottom: 12px;"></div>
       
       <div style="display: flex; gap: 12px; margin-top: 12px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('add-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('add-modal')">取消</button>
         <button id="save-project-btn" class="btn" style="flex:1; padding: 14px;" onclick="saveProject()">建立</button>
       </div>
     </div>
@@ -623,7 +691,7 @@
       <input type="text" id="new-user-name" class="form-control" placeholder="請輸入姓名">
       <input type="password" id="new-user-pwd" class="form-control" placeholder="設定登入密碼">
       <div style="display: flex; gap: 12px; margin-top: 24px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('add-user-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('add-user-modal')">取消</button>
         <button class="btn" style="flex:1; padding: 14px;" onclick="saveNewUser()">儲存</button>
       </div>
     </div>
@@ -635,7 +703,7 @@
       <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">請輸入管理員授權密碼</p>
       <input type="password" id="admin-pwd-input" class="form-control" placeholder="請輸入密碼">
       <div style="display: flex; gap: 12px; margin-top: 12px;">
-        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold;" onclick="closeModal('admin-login-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('admin-login-modal')">取消</button>
         <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="verifyAdmin()">驗證</button>
       </div>
     </div>
@@ -650,7 +718,7 @@
     </div>
   </div>
 
-  <div id="split-exclusion-modal" class="modal-overlay">
+  <div id="split-exclusion-modal" class="modal-overlay hide-in-archive">
     <div class="modal">
       <h2 style="margin-bottom: 12px; font-weight:800;">⚙️ 人員分攤排除</h2>
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">選擇人員，並「關閉」他不需要付錢的項目。</p>
@@ -668,7 +736,7 @@
     let currentUser = null; let currentWorkspace = 'FamilyTripPro'; let currentProjectId = null; let activeDayIndex = 0;
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
-    let lastSaveTime = 0;
+    let lastSaveTime = 0; let currentDashboardTab = 'active';
 
     // UX 優化：全域點擊外層(Overlay)自動關閉 Modal 機制
     document.addEventListener('DOMContentLoaded', () => {
@@ -677,7 +745,6 @@
                 // 確保點擊的是半透明背景本身，而不是內部的白色 Modal 卡片
                 if (e.target === this) {
                     if (this.id === 'custom-dialog-overlay') {
-                        // 警告視窗若點擊外部，視同取消
                         const cancelBtn = document.getElementById('custom-dialog-cancel');
                         if (cancelBtn.style.display !== 'none') {
                             this.classList.remove('active');
@@ -834,6 +901,10 @@
         db.forEach(p => {
             if(!p.members || !Array.isArray(p.members) || p.members.length === 0) {
                 p.members = ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙'];
+                updated = true;
+            }
+            if(!p.status) {
+                p.status = 'active';
                 updated = true;
             }
         });
@@ -1161,6 +1232,20 @@
         if(targetBtn) targetBtn.classList.add('active');
     }
 
+    // UX 優化：首頁頁籤切換機制
+    function switchDashboardTab(tab) {
+        currentDashboardTab = tab;
+        document.querySelectorAll('.dash-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById(`dash-tab-${tab}`).classList.add('active');
+        
+        if(tab === 'archived') {
+            document.getElementById('create-project-btn').style.display = 'none';
+        } else {
+            document.getElementById('create-project-btn').style.display = 'block';
+        }
+        renderDashboard();
+    }
+
     function filterMembers() {
         const q = document.getElementById('member-search-input').value.toLowerCase();
         document.querySelectorAll('.member-checkbox-row').forEach(row => {
@@ -1250,7 +1335,7 @@
                   db[idx].color = color;
               }
           } else {
-              db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], icon: icon, color: color, members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
+              db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], icon: icon, color: color, status: 'active', members: selectedMembers, plans: [], expenses: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} });
           }
           
           saveDB(db); 
@@ -1260,16 +1345,64 @@
       });
     }
 
+    // UX 優化：計算旅程狀態 (倒數/進行中/已結束)
+    function getTripStatusBadge(startDate, endDate, status) {
+        if (status === 'archived') {
+            return `<div class="status-badge archived-badge">已封存歸檔</div>`;
+        }
+        
+        const now = new Date();
+        now.setHours(0,0,0,0);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        
+        if (now < start) {
+            const diff = Math.ceil((start - now) / 86400000);
+            return `<div class="status-badge upcoming">倒數 ${diff} 天</div>`;
+        } else if (now > end) {
+            return `<div class="status-badge past">已結束</div>`;
+        } else {
+            return `<div class="status-badge ongoing">旅程進行中 🚀</div>`;
+        }
+    }
+
     function renderDashboard() {
-      const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
-      db.filter(p => p.members && p.members.includes(currentUser)).slice().reverse().forEach((p, idx) => {
+      const grid = document.getElementById('projects-grid'); 
+      const db = getDB(); 
+      let html = '';
+      
+      let myProjects = db.filter(p => p.members && p.members.includes(currentUser));
+      
+      // 根據上方頁籤過濾
+      if (currentDashboardTab === 'active') {
+          myProjects = myProjects.filter(p => p.status !== 'archived');
+      } else {
+          myProjects = myProjects.filter(p => p.status === 'archived');
+      }
+      
+      if(myProjects.length === 0) {
+          const emptyMsg = currentDashboardTab === 'active' ? '目前沒有進行中的旅程喔！點擊上方按鈕建立一個吧 ✈️' : '您的封存紀錄空空如也 📦';
+          grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🌍</div><div class="empty-state-text">${emptyMsg}</div></div>`;
+          return;
+      }
+
+      myProjects.slice().reverse().forEach((p, idx) => {
         const pColor = p.color || 'var(--primary)';
         const pIcon = p.icon || '📍';
-        html += `<div class="project-card" onclick="openProject(${p.id})" style="border-left: 6px solid ${pColor};">
+        const badgeHtml = getTripStatusBadge(p.start, p.end, p.status);
+        
+        // 若為進行中，顯示封存按鈕；若為已封存，隱藏操作按鈕
+        const actionButtons = p.status === 'archived' ? '' : `
+            <button class="archive-btn-card" onclick="archiveProject(${p.id}, event)" title="封存此旅程">📦</button>
             <button class="edit-btn-card" onclick="openEditTripModal(${p.id}, event)">✏️</button>
             <button class="del-btn-card" onclick="delProject(${p.id}, event)"><span style="line-height:1;">✕</span></button>
-            <div style="font-size:13px; font-weight:800; margin-bottom:6px; color:var(--secondary);">📅 ${p.start} ~ ${p.end}</div>
-            <h3 style="padding-right: 70px; font-size: 24px; font-weight:800; color:var(--text-main); margin-bottom:8px;">${pIcon} ${p.location}</h3>
+        `;
+
+        html += `<div class="project-card" onclick="openProject(${p.id})" style="border-left: 6px solid ${pColor};">
+            ${badgeHtml}
+            ${actionButtons}
+            <div style="font-size:13px; font-weight:800; margin-bottom:6px; color:var(--secondary); margin-top:20px;">📅 ${p.start} ~ ${p.end}</div>
+            <h3 style="padding-right: 110px; font-size: 24px; font-weight:800; color:var(--text-main); margin-bottom:8px;">${pIcon} ${p.location}</h3>
             <div style="font-size:12px; color:var(--text-muted); font-weight:bold; opacity:0.9;">👥 ${p.members.join(', ')}</div>
           </div>`;
       });
@@ -1278,17 +1411,43 @@
 
     function delProject(id, e) { 
         e.stopPropagation(); 
-        showCustomDialog("⚠️ 確定要刪除整個旅程嗎？", true, () => { 
+        showCustomDialog("⚠️ 確定要刪除整個旅程嗎？這將無法復原！", true, () => { 
             withLoader(() => { 
                 const db = getDB().filter(p => p.id !== id); saveDB(db); renderDashboard(); 
             }); 
         }); 
     }
 
+    // 封存功能
+    function archiveProject(id, e) {
+        e.stopPropagation();
+        showCustomDialog("📦 確定要封存此旅程嗎？<br><br><span style='font-size:13px; color:#888;'>封存後將變為「唯讀模式」，無法再新增或修改任何內容（適合旅程結束後歸檔紀錄）。</span>", true, () => {
+            withLoader(() => {
+                const db = getDB();
+                const p = db.find(x => x.id === id);
+                if(p) {
+                    p.status = 'archived';
+                    saveDB(db);
+                    renderDashboard();
+                    showSync("✅ 旅程已封存歸檔", 1500);
+                }
+            });
+        });
+    }
+
     function openProject(id, silent = false) {
       currentProjectId = id; activeDayIndex = localStorage.getItem('app_lastDayIdx') ? parseInt(localStorage.getItem('app_lastDayIdx')) : 0; 
       const p = getCurProject(); if(!p || !p.location) return;
       localStorage.setItem('app_lastProj', id); 
+      
+      // UX 優化：判斷是否為封存模式，並套用唯讀 CSS 樣式
+      if(p.status === 'archived') {
+          document.body.classList.add('archived-mode');
+          document.getElementById('archive-banner').style.display = 'block';
+      } else {
+          document.body.classList.remove('archived-mode');
+          document.getElementById('archive-banner').style.display = 'none';
+      }
       
       refreshMemberDependentUIs();
       safeRenderAll(); updateOnlineUsers(); p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
@@ -1352,7 +1511,7 @@
       
       let daysHtml = '';
       for(let i=0; i<totalDays; i++) { const count = (p.plans || []).filter(plan => plan.dayIdx === i).length; daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}</button>`; }
-      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
+      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn hide-in-archive" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
       document.getElementById('map-day-buttons').innerHTML = daysHtml; 
       
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex); const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
@@ -1409,8 +1568,8 @@
                         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:12px;">
                             <div class="creator-badge">由 ${plan.creator || '提議者'} 新增</div>
                             <div style="display:flex; gap:6px;">
-                                <span class="action-text edit-text" onclick="editPlan(${plan.id})">✏️ 編輯</span>
-                                <span class="action-text del-text" onclick="delPlan(${plan.id})">✕ 刪除</span>
+                                <span class="action-text edit-text hide-in-archive" onclick="editPlan(${plan.id})">✏️ 編輯</span>
+                                <span class="action-text del-text hide-in-archive" onclick="delPlan(${plan.id})">✕ 刪除</span>
                             </div>
                         </div>
                     </div>
@@ -1626,7 +1785,6 @@
         text += `👇 結算明細與匯款帳號 👇\n`;
         text += `------------------------\n`;
         
-        // 從 DOM 中提取渲染好的轉帳資訊 (確保和畫面上看到的一模一樣)
         const transfers = adviceBox.querySelectorAll('div[style*="justify-content:space-between"]');
         transfers.forEach(t => {
             const from = t.querySelector('strong[style*="color:var(--danger)"]').innerText;
@@ -1650,7 +1808,13 @@
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         
         // UX 優化：空狀態美化
-        if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-text">目前尚無任何花費紀錄</div></div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
+        if(!p.expenses || p.expenses.length === 0) { 
+            list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-text">目前尚無任何花費紀錄</div></div>`; 
+            adviceBox.style.display = 'none'; 
+            document.getElementById('total-expense').textContent = "0"; 
+            document.getElementById('my-total-expense').textContent = "0";
+            return; 
+        } 
         
         let html = '';
         p.expenses.forEach(e => {
@@ -1668,7 +1832,7 @@
                     </div>
                     <div class="flex-row">
                         <span style="font-weight:800; color:var(--text-main); font-size:20px;">$${costNum}</span>
-                        <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; flex-direction:column; gap:4px;" class="hide-in-archive">
                             <span class="action-text edit-text" style="margin:0; padding:4px 8px;" onclick="toggleInlineExpEdit(${e.id})">✏️</span>
                             <span class="action-text del-text" style="margin:0; padding:4px 8px;" onclick="delExpense(${e.id})">✕</span>
                         </div>
@@ -1676,7 +1840,7 @@
                 </div>
             </div>
             
-            <div class="card-panel edit-mode-active" id="exp-edit-${e.id}" style="display:none; padding:20px; margin-bottom:12px;">
+            <div class="card-panel edit-mode-active hide-in-archive" id="exp-edit-${e.id}" style="display:none; padding:20px; margin-bottom:12px;">
                 <h4 style="margin-bottom:12px;">✏️ 修改帳目</h4>
                 <input type="date" id="inline-date-${e.id}" class="form-control" value="${e.date || ''}">
                 <input type="text" id="inline-item-${e.id}" class="form-control" value="${e.item}">
@@ -1707,6 +1871,7 @@
         document.getElementById('total-expense').textContent = Math.round(total).toLocaleString(); 
         
         let balances = {}; 
+        let myShareTotal = 0; // UX 優化：計算我的個人花費
         getTripMembers().forEach(m => balances[m] = 0); 
         
         p.expenses.forEach(e => { 
@@ -1718,12 +1883,16 @@
             const shareMembers = getTripMembers().filter(m => !excludes.includes(m)); 
             if(shareMembers.length > 0) { 
                 const costPerPerson = cost / shareMembers.length; 
+                if(shareMembers.includes(currentUser)) myShareTotal += costPerPerson; // 加總我的部分
+                
                 shareMembers.forEach(m => { 
                     if(balances[m] === undefined) balances[m] = 0;
                     balances[m] -= costPerPerson; 
                 }); 
             } 
         });
+
+        document.getElementById('my-total-expense').textContent = Math.round(myShareTotal).toLocaleString();
 
         let debtors = Object.keys(balances).map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
         let creditors = Object.keys(balances).map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
@@ -1752,12 +1921,12 @@
                     </div>
                     <div style="text-align:right;">
                         <span style="font-weight:800; color:var(--secondary); font-size:20px; display:block;">$${Math.round(t.amt)}</span>
-                        <button class="btn-small btn-action" style="margin-top:6px; padding:6px 10px; border-radius:8px; font-size:12px; color:white !important;" onclick="settleDebt('${t.from}', '${t.to}', ${Math.round(t.amt)})">✔️ 標記已還款</button>
+                        <button class="btn-small btn-action hide-in-archive" style="margin-top:6px; padding:6px 10px; border-radius:8px; font-size:12px; color:white !important;" onclick="settleDebt('${t.from}', '${t.to}', ${Math.round(t.amt)})">✔️ 標記已還款</button>
                     </div>
                 </div>`;
             }); 
-            // 插入優化按鈕
-            html += `<button class="btn-outline" style="width:100%; border-style:dashed; margin-top:12px; padding:12px; border-radius:12px; font-weight:800;" onclick="exportBudgetResult()">📋 複製結算清單傳至群組</button>`;
+            // 插入匯出優化按鈕
+            html += `<button class="btn-outline hide-in-archive" style="width:100%; border-style:dashed; margin-top:12px; padding:12px; border-radius:12px; font-weight:800;" onclick="exportBudgetResult()">📋 複製結算清單傳至群組</button>`;
             adviceBox.innerHTML = html; 
         } 
         adviceBox.style.display = 'block'; 
@@ -1837,7 +2006,7 @@
         if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">還沒有任何筆記喔，記點什麼吧！</div></div>`; if(countBadge) countBadge.style.display = 'none'; return; } 
         
         if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } 
-        list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); 
+        list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text hide-in-archive" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text hide-in-archive" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); 
     }
     function addOrUpdateNote() { 
         const text = document.getElementById('note-text').value; const editId = document.getElementById('edit-note-id').value; if(!text) return showCustomDialog("請輸入筆記內容！"); 
@@ -1859,7 +2028,7 @@
     }
 
     function copyPhone(phone) { navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500)); }
-    function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!list) return; if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📞</div><div class="empty-state-text">還沒有聯絡人資料</div></div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
+    function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!list) return; if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📞</div><div class="empty-state-text">還沒有聯絡人資料</div></div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text hide-in-archive" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text hide-in-archive" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
     function addOrUpdateContact() { 
         const name = document.getElementById('contact-name').value; const phone = document.getElementById('contact-phone').value; const editId = document.getElementById('edit-contact-id').value; if(!name || !phone) return showCustomDialog("請完整填寫名稱與電話！"); 
         withLoader(() => {
@@ -1897,7 +2066,7 @@
         if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🗳️</div><div class="empty-state-text">目前沒有發起的投票</div></div>`; return; } 
         list.innerHTML = p.polls.map(poll => {
             const dateStr = poll.date ? `<div style="font-size:12px; color:var(--text-muted); font-weight:bold; margin-bottom:8px;">📅 期限: ${poll.date}</div>` : '';
-            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; cursor:pointer; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="withLoader(() => vote(${poll.id}, ${i}), 200)"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
+            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text hide-in-archive" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text hide-in-archive" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="withLoader(() => vote(${poll.id}, ${i}), 200)"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
         }).join(''); 
     }
     function addOrUpdatePoll() { 
@@ -1921,7 +2090,11 @@
             }); 
         }); 
     }
-    function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
+    function vote(pollId, optIdx) { 
+        const p = getCurProject(); 
+        if (p.status === 'archived') return; // 唯讀防呆
+        const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); 
+    }
 
     function renderChecklist() {
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
@@ -1946,7 +2119,7 @@
                     <div class="checklist-text" style="${isMeDone ? 'text-decoration:line-through; color:var(--text-muted); opacity:0.6;' : ''}">${c.text}</div>
                     ${whoCheckedText}
                 </div>
-                <span class="action-text del-text" style="padding:4px 8px; margin:0;" onclick="delChecklist(${c.id}, event)">✕</span>
+                <span class="action-text del-text hide-in-archive" style="padding:4px 8px; margin:0;" onclick="delChecklist(${c.id}, event)">✕</span>
             </div>`;
         }).join('');
     }
@@ -1959,7 +2132,9 @@
     }
     
     function toggleChecklist(id) { 
-        const p = getCurProject(); const item = p.checklist.find(x => x.id === id); 
+        const p = getCurProject(); 
+        if (p.status === 'archived') return; // 唯讀防呆
+        const item = p.checklist.find(x => x.id === id); 
         if(item) { 
             if(!item.checkedBy) item.checkedBy = [];
             if(item.checkedBy.includes(currentUser)) item.checkedBy = item.checkedBy.filter(u => u !== currentUser);
