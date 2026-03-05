@@ -40,16 +40,19 @@
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* 按鈕與表單 */
-    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
+    /* 按鈕與表單 (電腦版 Hover 點擊回饋) */
+    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
     .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
     .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
     .btn:disabled { opacity: 0.7; cursor: not-allowed; }
     .btn-small { padding: 10px 16px; font-size: 14px; border-radius: 12px; box-shadow: none;}
     .btn-action { background: var(--secondary); box-shadow: 0 4px 10px rgba(0, 166, 153, 0.2); }
     .btn-action:hover { box-shadow: 0 6px 14px rgba(0, 166, 153, 0.3); }
-    .btn-outline { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-main); box-shadow: none; }
-    .btn-outline:hover { background: #F8F9FA; border-color: #CBD5E1;}
+    
+    /* 需求2: 修復白底按鈕的醜陋紅光陰影 */
+    .btn-outline { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-main); box-shadow: none !important; }
+    .btn-outline:hover { background: #F8F9FA; border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;}
+    
     .form-control { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; transition: 0.2s; font-weight: 500;}
     .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); }
     
@@ -57,10 +60,13 @@
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .create-project-card { border: 2px dashed #CBD5E1; background: transparent; padding: 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
     .create-project-card:hover { border-color: var(--primary); color: var(--primary); background: rgba(255,90,95,0.02); }
+    
     .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); }
     .project-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    
     .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); transition: 0.2s; }
     .del-btn-card:hover { transform: scale(1.15); background: #E53935; }
+
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative;}
     .flex-row { display: flex; gap: 12px; align-items: center; }
 
@@ -103,8 +109,8 @@
     .plan-timeline-line { position: absolute; left: 54px; top: 38px; bottom: -38px; width: 2px; background: #E4E8ED; z-index: 1; }
     .plan-row:last-child .plan-timeline-line { display: none; }
     .plan-dot { position: absolute; left: 49px; top: 22px; width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 2; border: 3px solid var(--secondary); }
-    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column;}
-    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
+    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px;}
+    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s;}
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
@@ -123,13 +129,16 @@
     .edit-text { color: var(--secondary); margin-right: 6px; }
     .del-text { color: var(--danger); background: #FFF0F0;}
     
-    /* 地圖與自訂地標 */
+    /* 地圖與自訂地標 (懸浮定位) */
     .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative;}
     .map-search-bar .form-control { margin-bottom: 0; }
+    
+    /* 需求1: 點旁邊可取消的搜尋結果選單 */
     .search-results-container { position: absolute; top: 60px; left: 0; right: 0; background: white; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 500; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
     .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
     .search-result-item:hover { background: #F8F9FA; }
     .search-result-item:last-child { border-bottom: none; }
+
     .map-wrapper { position: relative; }
     #map-container { height: 500px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
     .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s;}
@@ -155,6 +164,7 @@
     .sheet-input-title:focus { border-bottom-color: var(--primary); border-style: solid; outline:none; }
     .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
 
+    /* iOS 風格切換開關 */
     .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     input:checked + .toggle-switch { background: var(--secondary); }
@@ -165,7 +175,7 @@
     .poll-opt-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
     .poll-opt-input { background: #FAFBFC; font-size: 15px; border-radius: 12px;}
     
-    /* 工具列導航美化 (需求3: 膠囊樣式) */
+    /* 工具列導航美化 (膠囊樣式) */
     .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; }
     .sub-nav-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; position: relative; }
     .sub-nav-btn.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -205,20 +215,21 @@
   <div id="sync-status">☁️ 雲端同步中...</div>
 
   <div id="login-view" class="view">
-    <div style="margin-top: 10vh; text-align: center;">
+    <div style="margin-top: 10vh; text-align: center; position:relative;">
       <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" style="width: 90px; margin-bottom: 20px; filter: drop-shadow(0px 8px 16px rgba(255,90,95,0.3));">
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       
+      <div style="position:absolute; top:20px; right:20px; font-size:24px; cursor:pointer; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
+
       <div class="card-panel" style="text-align: left; padding: 28px;">
         <div class="flex-row" style="margin-bottom: 12px;">
           <select id="user-select" class="form-control" style="margin-bottom: 0;"></select>
-          <button class="btn btn-outline" style="padding: 14px; border-radius: 14px;" onclick="openModal('add-user-modal')" title="新增成員"><span style="font-size:18px; line-height:1;">+</span></button>
+          <button class="btn btn-outline" style="padding: 14px; border-radius: 14px;" onclick="openModal('add-user-modal')" title="新增成員"><span style="font-size:18px; line-height:1; font-weight:bold;">+</span></button>
         </div>
         <input type="password" id="password-input" class="form-control" placeholder="請輸入登入密碼">
         <button class="btn" style="width: 100%; font-size: 18px; margin-top: 12px; padding: 16px;" onclick="handleLogin()">進入系統 🚀</button>
       </div>
-      <div style="position:absolute; bottom:20px; right:20px; color:#ccc; font-size:24px; cursor:pointer; opacity:0.3;" onclick="openAdminLogin()">⚙️</div>
     </div>
   </div>
 
@@ -226,13 +237,13 @@
     <div class="app-header">
       <h2 style="font-weight: 800; font-size: 24px;">👋 <span id="display-name"></span></h2>
       <div style="display: flex; gap: 8px;">
-        <button class="btn btn-outline btn-small" onclick="syncFromCloud(true)">🔄 更新</button>
-        <button class="btn btn-outline btn-small" onclick="handleLogout()" style="color: var(--text-muted);">登出</button>
+        <button class="btn-sync btn-outline btn-small" onclick="syncFromCloud(true)">🔄 同步最新</button>
+        <button class="btn-outline btn-small" onclick="handleLogout()" style="color: var(--text-muted); box-shadow:none;">登出</button>
       </div>
     </div>
     
     <div class="create-project-card" onclick="openModal('add-modal')">
-        <div class="create-icon" style="font-size: 28px; font-weight: 800; color:var(--primary);">+</div>
+        <div class="create-icon"><span style="font-size:28px; line-height:1;">+</span></div>
         <div style="font-weight: bold; color: var(--text-muted); font-size: 15px;">建立新旅程</div>
     </div>
     
@@ -242,8 +253,8 @@
   <div id="detail-view" class="view" style="padding-bottom: 20px;">
     <div class="detail-header">
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <button class="btn btn-outline btn-small" style="border:none; padding: 8px 0; font-size:15px; cursor:pointer;" onclick="goBackToDashboard()">← 返回列表</button>
-        <button class="btn btn-outline btn-small" style="border-radius:12px;" onclick="syncFromCloud(true)">🔄 同步最新</button>
+        <button class="btn-outline btn-small" style="border:none; padding: 8px 0; font-size:15px; cursor:pointer; box-shadow:none;" onclick="goBackToDashboard()">← 返回列表</button>
+        <button class="btn-sync btn-outline btn-small" style="border-radius:12px;" onclick="syncFromCloud(true)">🔄 同步最新</button>
       </div>
       <div style="margin-top: 4px; margin-bottom: 20px;">
         <h2 id="project-title-display" style="font-size: 26px; font-weight: 800; color:var(--text-main);">載入中...</h2>
@@ -269,7 +280,7 @@
       
       <div class="itinerary-date-header">
           <span id="itinerary-date-header-text"></span>
-          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()">➕ 新增</button>
+          <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:16px; margin-right:2px; line-height:1;">+</span> 新增</button>
       </div>
       
       <div id="plan-form-card" class="card-panel" style="padding: 20px; display: none; border: 2px solid var(--border);">
@@ -283,13 +294,13 @@
           <input type="text" id="plan-place" class="form-control" style="flex: 2; margin: 0;" placeholder="景點名稱">
         </div>
         
-        <button id="reselect-map-btn" class="btn btn-outline" style="width: 100%; margin-top: 12px; border-style:dashed; color:var(--secondary); border-color:var(--secondary);" onclick="openMapForEdit()">📍 在地圖重新選地標</button>
+        <button id="reselect-map-btn" class="btn-outline" style="width: 100%; margin-top: 12px; border-style:dashed; color:var(--secondary); border-color:var(--secondary); padding:12px; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="openMapForEdit()">📍 在地圖重新選地標</button>
         
         <label class="file-upload-label" style="margin-top: 12px;"><span>📷 附加照片 (選填)</span><input type="file" id="plan-image-input" accept="image/*" style="display: none;" onchange="previewImage(event)"></label>
         <img id="plan-img-preview" class="plan-img-preview">
         
         <div style="display: flex; gap: 12px; margin-top: 16px;">
-            <button id="cancel-edit-btn" class="btn btn-outline" style="flex: 1;" onclick="cancelEditPlan()">取消</button>
+            <button id="cancel-edit-btn" class="btn-outline" style="flex: 1; padding:14px; border-radius:16px; font-weight:bold;" onclick="cancelEditPlan()">取消</button>
             <button id="save-plan-btn" class="btn" style="flex: 2;" onclick="addOrUpdatePlan()">儲存</button>
         </div>
       </div>
@@ -312,6 +323,7 @@
           <button class="btn" style="border-radius:14px; padding:14px 20px;" onclick="searchMap()">🔍</button>
           <div id="map-search-results" class="search-results-container"></div>
       </div>
+      <div style="font-size:11px; color:#999; margin-top:-8px; margin-bottom:12px; padding-left:4px;">找不到地標？建議貼上 Google Maps 網址來「解析」會最精準喔！</div>
       
       <div class="map-wrapper">
           <div id="map-container"></div>
@@ -341,8 +353,8 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
           <h4 style="margin:0; font-size:16px;">結算建議</h4>
           <div style="display:flex; gap:8px;">
-              <button class="btn-small btn-outline" style="border-radius:12px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
-              <button class="btn-small btn-outline" style="border-radius:12px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
+              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('budget-info-modal')">ℹ️ 說明</button>
+              <button class="btn-small btn-outline" style="border-radius:10px; border:none; background:#F1F5F9; font-weight:bold; cursor:pointer;" onclick="openModal('split-exclusion-modal')">⚙️ 排除設定</button>
           </div>
       </div>
       <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4;"></div>
@@ -356,7 +368,7 @@
         <input type="hidden" id="edit-note-id" value="">
         <textarea id="note-text" class="form-control" placeholder="記錄重要事項、購物清單或備忘錄..." rows="4" style="resize: vertical;"></textarea>
         <div style="display: flex; gap: 12px;">
-            <button id="cancel-note-btn" class="btn btn-outline" style="display: none; flex: 1;" onclick="cancelEditNote()">取消</button>
+            <button id="cancel-note-btn" class="btn-outline" style="display: none; flex: 1; padding:14px; border-radius:16px; font-weight:bold;" onclick="cancelEditNote()">取消</button>
             <button id="save-note-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdateNote()">儲存</button>
         </div>
       </div>
@@ -377,7 +389,7 @@
             <input type="text" id="contact-name" class="form-control" placeholder="名稱 (如: 租車公司)">
             <input type="tel" id="contact-phone" class="form-control" placeholder="電話號碼">
             <div style="display: flex; gap: 12px;">
-                <button id="cancel-contact-btn" class="btn btn-outline" style="display: none; flex: 1;" onclick="cancelEditContact()">取消</button>
+                <button id="cancel-contact-btn" class="btn-outline" style="display: none; flex: 1; padding:14px; border-radius:16px; font-weight:bold;" onclick="cancelEditContact()">取消</button>
                 <button id="save-contact-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdateContact()">儲存</button>
             </div>
           </div>
@@ -385,23 +397,27 @@
         </div>
 
         <div id="more-poll" class="more-section">
-          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';">➕ 建立新投票</button>
+          <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
           
           <div id="poll-form-card" class="card-panel" style="display:none;">
             <h4 id="poll-form-title" style="margin-bottom: 12px; font-size:16px;">建立投票</h4>
             <input type="hidden" id="edit-poll-id" value="">
+            
             <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">📅 截止日期 (選填)</label>
             <input type="date" id="poll-date" class="form-control" style="margin-bottom:12px;">
+
             <label style="font-size:12px; font-weight:bold; color:var(--primary); margin-bottom:4px; display:block;">👇 設定投票問題</label>
             <input type="text" id="poll-title" class="form-control poll-title-input" placeholder="例: 晚餐吃什麼？" style="border: 2px solid var(--primary); font-weight:800; font-size:18px;">
+            
             <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; margin-top:8px; display:block;">選項清單</label>
             <div id="poll-options-container">
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div>
                 <div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>
             </div>
-            <button class="btn btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; font-weight:bold;" onclick="addPollOptionField()">➕ 新增選項</button>
+            
+            <button class="btn-outline" style="width:100%; margin: 8px 0 16px 0; border-style:dashed; border-color:#CBD5E1; font-weight:bold; padding:14px; border-radius:16px;" onclick="addPollOptionField()"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 新增選項</button>
             <div style="display: flex; gap: 12px;">
-                <button id="cancel-poll-btn" class="btn btn-outline" style="flex: 1;" onclick="cancelEditPoll()">取消</button>
+                <button id="cancel-poll-btn" class="btn-outline" style="flex: 1; padding:14px; border-radius:16px; font-weight:bold;" onclick="cancelEditPoll()">取消</button>
                 <button id="save-poll-btn" class="btn btn-action" style="flex: 2;" onclick="addOrUpdatePoll()">發布</button>
             </div>
           </div>
@@ -433,9 +449,9 @@
         <h3 style="margin-bottom:20px; font-weight:800;">設定交通方式</h3>
         <input type="hidden" id="transit-plan-id">
         <div style="display:flex; flex-direction:column; gap:12px;">
-            <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('walking', '🚶 步行')">🚶 步行 (自動計算)</button>
-            <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('driving', '🚗 開車')">🚗 開車 (自動計算)</button>
-            <button class="btn btn-outline" style="padding:14px; font-size:16px;" onclick="saveTransitMode('transit', '🚇 大眾運輸')">🚇 大眾運輸 (自動計算)</button>
+            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('walking')">🚶 步行 (自動計算)</button>
+            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('driving')">🚗 開車 (自動計算)</button>
+            <button class="btn-outline" style="padding:14px; font-size:16px; font-weight:bold; border-radius:14px; border:1px solid var(--border);" onclick="saveTransitMode('transit')">🚇 大眾運輸 (自動計算)</button>
             
             <div style="padding:16px; background:#F8F9FA; border-radius:16px; border:1px solid #E4E8ED; text-align:left; margin-top:8px;">
                 <div style="font-weight:bold; margin-bottom:8px; color:var(--secondary);">✨ 自訂其他交通</div>
@@ -444,7 +460,7 @@
                 <button class="btn btn-action" style="width:100%;" onclick="saveTransitMode('custom')">確定儲存</button>
             </div>
         </div>
-        <button class="btn btn-small" style="background:#F1F5F9; color:var(--text-muted); margin-top:20px; box-shadow:none; padding:10px 20px;" onclick="closeModal('transit-modal')">取消</button>
+        <button class="btn-small" style="background:#F1F5F9; font-weight:bold; color:var(--text-muted); margin-top:20px; box-shadow:none; padding:10px 20px; border:none; border-radius:10px; cursor:pointer;" onclick="closeModal('transit-modal')">取消</button>
     </div>
   </div>
 
@@ -480,10 +496,10 @@
           <p>系統使用的是「最少轉帳次數」的最佳化演算法。它不會讓大家互相轉來轉去（例如 A 轉給 B，A 又轉給 C），而是算出每個人「總共該付多少」和「總共代墊多少」，最後再把「欠錢的人」跟「該收錢的人」配對，把轉帳次數降到最低。</p>
           
           <h4 style="margin-top:16px; color:var(--text-main);">📌 第一步：各項目分攤</h4>
-          <p>系統會根據每一筆花費，自動扣除「不參與分攤」的人，由剩下的人平分。</p>
+          <p>系統會根據每一筆花費，自動扣除「排除名單」裡的人，由剩下的人平分。</p>
           <ul style="padding-left:20px;">
-              <li>晚餐拉麵 ($580)：5人平分，每人 $116。</li>
-              <li>博物館門票 ($1800)：若勾選2人不參與，由剩下3人平分，每人 $600。</li>
+              <li>晚餐 ($580)：5人平分，每人 $116。</li>
+              <li>門票 ($1800)：若勾選2人不參與，由剩下3人平分，每人 $600。</li>
           </ul>
 
           <h4 style="margin-top:16px; color:var(--text-main);">📌 第二步：計算「總共該出多少錢」</h4>
@@ -492,8 +508,8 @@
           <h4 style="margin-top:16px; color:var(--text-main);">📌 第三步：計算「誰欠錢」跟「誰該收錢」</h4>
           <p><strong>自己先代墊的錢 - 自己應該出的錢 = 最終結算金額</strong></p>
           <ul style="padding-left:20px;">
-              <li>負數：代表要拿錢給別人（欠款組）</li>
-              <li>正數：代表要向別人收錢（收錢組）</li>
+              <li><strong style="color:var(--danger)">負數</strong>：代表要拿錢給別人（欠款組）</li>
+              <li><strong style="color:var(--secondary)">正數</strong>：代表要向別人收錢（收錢組）</li>
           </ul>
 
           <h4 style="margin-top:16px; color:var(--text-main);">📌 第四步：結算建議出爐！</h4>
@@ -509,7 +525,7 @@
       <input type="text" id="trip-location" class="form-control" placeholder="📍 目的地 (如: 日本福岡)">
       <input type="text" id="trip-date-range" class="form-control" placeholder="📅 點擊選擇日期區間" readonly>
       <div style="display: flex; gap: 12px; margin-top: 24px;">
-        <button class="btn btn-outline" style="flex:1; padding: 14px;" onclick="closeModal('add-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('add-modal')">取消</button>
         <button class="btn" style="flex:1; padding: 14px;" onclick="createProject()">建立</button>
       </div>
     </div>
@@ -521,7 +537,7 @@
       <input type="text" id="new-user-name" class="form-control" placeholder="請輸入姓名">
       <input type="password" id="new-user-pwd" class="form-control" placeholder="設定登入密碼">
       <div style="display: flex; gap: 12px; margin-top: 24px;">
-        <button class="btn btn-outline" style="flex:1; padding: 14px;" onclick="closeModal('add-user-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('add-user-modal')">取消</button>
         <button class="btn" style="flex:1; padding: 14px;" onclick="saveNewUser()">儲存</button>
       </div>
     </div>
@@ -533,7 +549,7 @@
       <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">請輸入管理員授權密碼</p>
       <input type="password" id="admin-pwd-input" class="form-control" placeholder="請輸入密碼">
       <div style="display: flex; gap: 12px; margin-top: 12px;">
-        <button class="btn btn-outline" style="flex:1; padding: 14px;" onclick="closeModal('admin-login-modal')">取消</button>
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('admin-login-modal')">取消</button>
         <button class="btn btn-action" style="flex:1; padding: 14px;" onclick="verifyAdmin()">驗證</button>
       </div>
     </div>
@@ -542,9 +558,9 @@
   <div id="admin-dashboard-modal" class="modal-overlay">
     <div class="modal">
       <h2 style="margin-bottom: 16px; font-weight:800; color:var(--primary);">👑 系統管理台</h2>
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">在這裡修改的密碼將會直接覆蓋雲端與所有設備的設定。</p>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; font-weight:bold;">您可以在此修改所有人的名稱與密碼，系統會自動更新所有歷史紀錄（行程、分帳、投票等）。</p>
       
-      <div id="admin-user-list" style="max-height: 40vh; overflow-y: auto; background:#F8F9FA; padding:12px; border-radius:12px; margin-bottom:20px;">
+      <div id="admin-user-list" style="max-height: 45vh; overflow-y: auto; background:#F8F9FA; padding:12px; border-radius:16px; margin-bottom:20px; border:1px solid #E4E8ED;">
           </div>
       
       <button class="btn" style="width:100%; padding: 16px;" onclick="closeModal('admin-dashboard-modal')">完成並關閉</button>
@@ -572,8 +588,14 @@
 
     // 錯字修復
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
-    let customUsers = JSON.parse(localStorage.getItem(`app_users_${currentWorkspace}`) || '{}');
-    let authRules = { ...baseAuthRules, ...customUsers };
+    
+    // 需求4: 讓 customUsers 主導全域名單，方便管理員改名
+    let customUsers = JSON.parse(localStorage.getItem(`app_users_${currentWorkspace}`));
+    if(!customUsers) {
+        customUsers = { ...baseAuthRules };
+        localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+    }
+    let authRules = { ...customUsers };
     let allMembers = Object.keys(authRules);
 
     flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
@@ -590,7 +612,16 @@
         return JSON.parse(raw); 
     }
 
-    // --- 需求2: 管理員權限 ---
+    // --- 需求1: 點擊空白處關閉搜尋選單 ---
+    document.addEventListener('click', function(e) {
+        const searchBar = document.querySelector('.map-search-bar');
+        const searchResults = document.getElementById('map-search-results');
+        if (searchBar && !searchBar.contains(e.target)) {
+            if(searchResults) searchResults.style.display = 'none';
+        }
+    });
+
+    // --- 需求2 & 5: 管理員權限與全域改名邏輯 ---
     function openAdminLogin() { openModal('admin-login-modal'); document.getElementById('admin-pwd-input').value = ''; }
     function verifyAdmin() {
         if(document.getElementById('admin-pwd-input').value === 'jo4aup3vm0') {
@@ -600,33 +631,75 @@
     function renderAdminUsers() {
         const list = document.getElementById('admin-user-list'); let html = '';
         allMembers.forEach(m => {
-            const isBase = baseAuthRules[m] !== undefined;
-            const pwd = customUsers[m] || baseAuthRules[m];
+            const pwd = customUsers[m] || '';
             html += `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #E4E8ED;">
-                <div style="font-weight:bold;">${m} ${isBase ? '<span style="font-size:10px; color:#aaa;">(預設)</span>' : ''}</div>
-                <div style="display:flex; gap:6px;">
-                    <input type="text" id="admin-pwd-${m}" value="${pwd}" class="form-control" style="margin:0; padding:6px 10px; width:100px; font-size:14px;">
-                    <button class="btn-small btn-action" onclick="adminSaveUser('${m}')">修改</button>
-                    ${!isBase ? `<button class="btn-small" style="background:#FFF0F0; color:red;" onclick="adminDelUser('${m}')">刪</button>` : ''}
+            <div style="padding:16px 0; border-bottom:1px solid #E4E8ED;">
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
+                    <input type="text" id="admin-name-${m}" value="${m}" class="form-control" style="margin:0; padding:10px; font-size:14px; font-weight:bold; color:var(--primary);" placeholder="名稱">
+                    <input type="text" id="admin-pwd-${m}" value="${pwd}" class="form-control" style="margin:0; padding:10px; font-size:14px;" placeholder="密碼">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button class="btn-small btn-action" onclick="adminSaveUser('${m}')">更新儲存</button>
+                    <button class="btn-small" style="background:#FFF0F0; color:var(--danger); border:none; font-weight:bold; cursor:pointer;" onclick="adminDelUser('${m}')">刪除帳號</button>
                 </div>
             </div>`;
         });
         list.innerHTML = html;
     }
-    function adminSaveUser(name) {
-        const newPwd = document.getElementById(`admin-pwd-${name}`).value.trim();
-        if(!newPwd) return alert("密碼不能為空");
-        customUsers[name] = newPwd;
-        localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
-        authRules = { ...baseAuthRules, ...customUsers };
-        showSync("✅ 密碼已更新", 1500);
+    function adminSaveUser(oldName) {
+        const newName = document.getElementById(`admin-name-${oldName}`).value.trim();
+        const newPwd = document.getElementById(`admin-pwd-${oldName}`).value.trim();
+        if(!newName || !newPwd) return alert("名稱與密碼不能為空");
+        if(newName !== oldName && authRules[newName]) return alert("新名稱已存在！");
+
+        if (newName !== oldName) {
+            // 更名邏輯
+            customUsers[newName] = newPwd;
+            delete customUsers[oldName];
+            localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+            authRules = { ...customUsers }; allMembers = Object.keys(authRules);
+
+            // 更新全域資料庫
+            let db = getDB();
+            db.forEach(p => {
+                if(p.activeUsers && p.activeUsers[oldName]) { p.activeUsers[newName] = p.activeUsers[oldName]; delete p.activeUsers[oldName]; }
+                if(p.plans) p.plans.forEach(x => { if(x.creator === oldName) x.creator = newName; });
+                if(p.expenses) p.expenses.forEach(x => {
+                    if(x.payer === oldName) x.payer = newName;
+                    if(x.excludes && x.excludes.includes(oldName)) { x.excludes = x.excludes.filter(u=>u!==oldName); x.excludes.push(newName); }
+                });
+                if(p.polls) p.polls.forEach(x => {
+                    if(x.creator === oldName) x.creator = newName;
+                    if(x.options) x.options.forEach(opt => {
+                        if(opt.voters.includes(oldName)) { opt.voters = opt.voters.filter(u=>u!==oldName); opt.voters.push(newName); }
+                    });
+                });
+                if(p.contacts) p.contacts.forEach(x => { if(x.creator === oldName) x.creator = newName; });
+                if(p.notes) p.notes.forEach(x => { if(x.creator === oldName) x.creator = newName; });
+                if(p.checklist) p.checklist.forEach(x => {
+                    if(x.checkedBy && x.checkedBy.includes(oldName)) { x.checkedBy = x.checkedBy.filter(u=>u!==oldName); x.checkedBy.push(newName); }
+                });
+            });
+            saveDB(db);
+            
+            // 如果改到自己，更新狀態
+            if(currentUser === oldName) { currentUser = newName; localStorage.setItem('app_savedUser', newName); document.getElementById('display-name').textContent = currentUser; }
+        } else {
+            // 僅改密碼
+            customUsers[oldName] = newPwd;
+            localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+            authRules = { ...customUsers };
+        }
+
+        renderAdminUsers(); renderUserSelect();
+        if(currentProjectId) { openProject(currentProjectId, true); }
+        showSync("✅ 帳號資料已全域更新", 1500);
     }
     function adminDelUser(name) {
-        if(confirm(`確定要刪除 ${name} 嗎？`)) {
+        if(confirm(`⚠️ 確定要刪除 ${name} 嗎？這將無法復原！`)) {
             delete customUsers[name];
             localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
-            authRules = { ...baseAuthRules, ...customUsers }; allMembers = Object.keys(authRules);
+            authRules = { ...customUsers }; allMembers = Object.keys(authRules);
             renderUserSelect(); renderAdminUsers(); showSync("✅ 帳號已刪除", 1500);
         }
     }
@@ -721,6 +794,7 @@
       fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
     }
 
+    function getDB() { return JSON.parse(localStorage.getItem(`app_${currentWorkspace}`) || '[]'); }
     function getCurProject() { return getDB().find(p => p.id === currentProjectId) || {}; }
     function updateCurProject(updatedP) { const db = getDB(); db[db.findIndex(p => p.id === currentProjectId)] = updatedP; saveDB(db); updateOnlineUsers(); }
 
@@ -736,7 +810,7 @@
     function handleLogout() { if(confirm("確定要登出嗎？")) { currentUser = null; currentProjectId = null; localStorage.removeItem('app_savedUser'); localStorage.removeItem('app_lastProj'); if(syncInterval) clearInterval(syncInterval); switchView('login-view'); document.getElementById('password-input').value = ''; } }
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function saveNewUser() { const name = document.getElementById('new-user-name').value.trim(); const pwd = document.getElementById('new-user-pwd').value.trim(); if(!name || !pwd) return alert("請輸入完整名稱與密碼"); if(authRules[name]) return alert("此名稱已存在"); customUsers[name] = pwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...baseAuthRules, ...customUsers }; allMembers = Object.keys(authRules); renderUserSelect(); closeModal('add-user-modal'); document.getElementById('user-select').value = name; document.getElementById('password-input').value = pwd; }
+    function saveNewUser() { const name = document.getElementById('new-user-name').value.trim(); const pwd = document.getElementById('new-user-pwd').value.trim(); if(!name || !pwd) return alert("請輸入完整名稱與密碼"); if(authRules[name]) return alert("此名稱已存在"); customUsers[name] = pwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...customUsers }; allMembers = Object.keys(authRules); renderUserSelect(); closeModal('add-user-modal'); document.getElementById('user-select').value = name; document.getElementById('password-input').value = pwd; }
     
     function switchView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     
@@ -751,7 +825,6 @@
       if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
     }
     
-    // 需求3: 膠囊 UI 切換邏輯
     function switchMoreTab(sectionId) {
         document.querySelectorAll('.more-section').forEach(s => s.style.display = 'none');
         document.querySelectorAll('.sub-nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -772,7 +845,7 @@
       const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
       db.slice().reverse().forEach((p, idx) => {
         html += `<div class="project-card" onclick="openProject(${p.id})">
-            <button class="del-btn-card" onclick="delProject(${p.id}, event)">✕</button>
+            <button class="del-btn-card" onclick="delProject(${p.id}, event)"><span style="line-height:1;">✕</span></button>
             <div style="font-size:13px; font-weight:800; margin-bottom:6px; color:var(--secondary);">📅 ${p.start} ~ ${p.end}</div>
             <h3 style="padding-right: 35px; font-size: 24px; font-weight:800; color:var(--text-main);">📍 ${p.location}</h3>
           </div>`;
@@ -819,7 +892,7 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; 
     }
 
-    // --- 📅 行程核心邏輯 ---
+    // --- 📅 行程核心邏輯 (交通 4 選項修復 + 排版修復) ---
     function renderItinerary() {
       const p = getCurProject(); if(!p.start) return; 
       const start = new Date(p.start); const end = new Date(p.end);
@@ -833,7 +906,7 @@
           第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}
         </button>`;
       }
-      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()">+ 延一天</button>`;
+      document.getElementById('day-buttons').innerHTML = daysHtml + `<button class="day-btn day-add-btn" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
       document.getElementById('map-day-buttons').innerHTML = daysHtml; 
       
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex);
@@ -858,12 +931,13 @@
                  let modeStr = plan.transitMode || 'driving'; 
                  let timeStr = ""; let travelModeParam = modeStr;
 
+                 // 需求2: 支援自訂交通工具文字
                  if(plan.transitMode && plan.transitMode.startsWith('custom:')) {
                      timeStr = plan.transitMode.replace('custom:', ''); travelModeParam = 'transit';
                  } else {
                      if (dist !== null) {
-                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 3) * 60))} 分鐘`; travelModeParam = 'walking'; }
-                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸約 ${Math.round((dist / 15) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
+                         if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelModeParam = 'walking'; }
+                         else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸估 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
                          else { timeStr = `🚗 開車約 ${Math.round((dist / 35) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
                      } else { timeStr = `📍 點擊設定交通`; }
                  }
@@ -871,7 +945,7 @@
                  // 需求1: 路線導航修復 (官方 API)
                  const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
 
-                 // 需求4: 排版不歪掉 (Flexbox)
+                 // 需求3: 排版不歪掉 (Flexbox)
                  transitHtml = `
                  <div class="transit-container">
                     <div class="transit-block" onclick="openTransitModal(${plan.id})">${timeStr}</div>
@@ -961,7 +1035,7 @@
     function delPlan(id) { if(confirm("確定刪除此行程？")) { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); } }
     function exportItinerary() { const p = getCurProject(); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time)); if(dayPlans.length === 0) return alert("這天還沒有行程可以複製喔！"); let text = `📍 ${p.location} - 第 ${activeDayIndex + 1} 天行程\n\n`; dayPlans.forEach((plan, i) => { text += `${i+1}. [${plan.time}] ${plan.place}\n`; }); navigator.clipboard.writeText(text).then(() => showSync("📋 行程已複製", 2000)); }
 
-    // --- 🗺️ 地圖核心 ---
+    // --- 🗺️ 地圖核心 (需求1: 點旁邊取消、需求5: Google 網址解析) ---
     function initMap() {
       if (!map) {
         map = L.map('map-container', {zoomControl: false}).setView([23.6978, 120.9605], 7); 
@@ -969,7 +1043,6 @@
         map.on('click', function(e) {
             showSync("📍 解析地標中...");
             if(activeClickMarker) map.removeLayer(activeClickMarker); activeClickMarker = L.marker(e.latlng, {icon: createCustomMapIcon()}).addTo(map);
-            // 需求5: 強制中文參數
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}&zoom=18&addressdetails=1&accept-language=zh-TW`).then(res => res.json())
                 .then(data => { let placeName = data.name || (data.address && (data.address.road || data.address.suburb || data.address.city)) || "自選地點"; if(placeName === "自選地點" && data.display_name) placeName = data.display_name.split(',')[0]; openBottomSheet(placeName, data.display_name || '無詳細地址', e.latlng.lat, e.latlng.lng); })
                 .catch(() => { openBottomSheet("自選地點", "經緯度：" + e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4), e.latlng.lat, e.latlng.lng); });
@@ -1004,7 +1077,7 @@
                 showSync("📍 請從選單中選擇精確地點", 1500);
             } else {
                 resultsContainer.style.display = 'none';
-                alert("找不到該地點，請換個關鍵字");
+                alert("找不到該地點，建議貼上 Google Maps 網址來解析");
             }
         }).catch(() => alert("搜尋失敗，請檢查網路"));
     }
@@ -1083,7 +1156,6 @@
       dayPlans.forEach((plan, index) => {
         const pt = [plan.lat, plan.lng]; latlngs.push(pt);
         const marker = L.marker(pt, {icon: createCustomMapIcon(index + 1, true)}).addTo(map);
-        // 需求5: 地標加上地點名稱
         marker.bindTooltip(`<div class="day-tooltip-title">第 ${activeDayIndex + 1} 天</div><div class="day-tooltip-place">${plan.place}</div>`, {permanent: true, direction: "top", offset: [0, -35], className: "day-tooltip"});
         marker.bindPopup(`<b>${index+1}. ${plan.place}</b><br>時間: ${plan.time}`); mapMarkers.push(marker);
       });
@@ -1091,7 +1163,7 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // --- 💰 分帳邏輯 (需求1: 精準修復小數點算法 + 修復不互欠邏輯) ---
+    // --- 💰 分帳邏輯 (需求5: 精準小數點與安全保護) ---
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
@@ -1153,16 +1225,12 @@
         let balances = {}; allMembers.forEach(m => balances[m] = 0); 
         p.expenses.forEach(e => { 
             const cost = parseFloat(e.cost) || 0; 
-            if(balances[e.payer] !== undefined) balances[e.payer] += cost; // 代墊者加錢
-            
+            if(balances[e.payer] !== undefined) balances[e.payer] += cost; 
             const excludes = e.excludes || []; const shareMembers = allMembers.filter(m => !excludes.includes(m)); 
-            if(shareMembers.length > 0) { 
-                const costPerPerson = cost / shareMembers.length; 
-                shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); // 要付錢的扣錢
-            } 
+            if(shareMembers.length > 0) { const costPerPerson = cost / shareMembers.length; shareMembers.forEach(m => { if(balances[m] !== undefined) balances[m] -= costPerPerson; }); } 
         });
 
-        // 取整數，消除 JS 浮點數微小誤差
+        // 精準小數點四捨五入防呆
         let debtors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance <= -1).sort((a,b) => a.balance - b.balance); 
         let creditors = allMembers.map(m => ({ name: m, balance: Math.round(balances[m]) })).filter(b => b.balance >= 1).sort((a,b) => b.balance - a.balance); 
         
@@ -1175,8 +1243,9 @@
         } 
         
         if(transfers.length === 0) adviceBox.innerHTML = `<div style="text-align:center; font-weight:800; color:var(--secondary); font-size:16px;">🎉 帳目已結清！</div>`; 
-        else { let html = ``; transfers.forEach(t => html += `<div class="flex-row" style="justify-content:space-between; background:white; padding:14px 16px; border-radius:12px; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.02);"><span><strong style="color:var(--danger);">${t.from}</strong> 需給 <strong style="color:var(--text-main);">${t.to}</strong></span><span style="font-weight:800; color:var(--secondary); font-size:18px;">$${Math.round(t.amt)}</span></div>`); adviceBox.innerHTML = html; } 
+        else { let html = ``; transfers.forEach(t => html += `<div class="flex-row" style="justify-content:space-between; background:white; padding:14px 16px; border-radius:12px; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.02);"><span><strong style="color:var(--danger);">${t.from}</strong> 給 <strong style="color:var(--text-main);">${t.to}</strong></span><span style="font-weight:800; color:var(--secondary); font-size:18px;">$${Math.round(t.amt)}</span></div>`); adviceBox.innerHTML = html; } 
         adviceBox.style.display = 'block'; 
+        if(document.getElementById('split-exclusion-modal').classList.contains('active')) renderExclusionList();
     }
 
     function addExpenseFromTop() { 
@@ -1211,7 +1280,7 @@
     function cancelEditContact() { document.getElementById('contact-name').value=''; document.getElementById('contact-phone').value=''; document.getElementById('edit-contact-id').value=''; document.getElementById('contact-form-title').innerHTML = "新增聯絡人"; document.getElementById('save-contact-btn').innerHTML = "儲存"; document.getElementById('cancel-contact-btn').style.display = "none"; document.getElementById('contact-form-card').classList.remove('edit-mode-active'); }
     function delContact(id) { if(confirm("確定移除聯絡人？")) { const p = getCurProject(); p.contacts = p.contacts.filter(x => x.id !== id); updateCurProject(p); renderContacts(); } }
 
-    function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()">✕</button>`; container.appendChild(div); }
+    function addPollOptionField(val = "") { const container = document.getElementById('poll-options-container'); const count = container.querySelectorAll('.poll-opt-row').length + 1; const div = document.createElement('div'); div.className = 'poll-opt-row'; div.innerHTML = `<input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 ${count}" value="${val}"><button class="remove-opt-btn" onclick="this.parentElement.remove()"><span style="line-height:1;">✕</span></button>`; container.appendChild(div); }
     function checkPollNotification() { 
         const p = getCurProject(); const dot = document.getElementById('more-poll-dot'); const innerDot = document.getElementById('inner-poll-dot');
         if(!p || !p.polls || p.polls.length === 0) { if(dot) dot.style.display = 'none'; if(innerDot) innerDot.style.display = 'none'; return; } 
@@ -1240,14 +1309,17 @@
     function delPoll(id) { if(confirm("確定刪除此投票？")) { const p = getCurProject(); p.polls = p.polls.filter(x => x.id !== id); updateCurProject(p); renderPolls(); } }
     function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
 
-    // --- 🎒 需求7: 行李清單 (個人獨立打勾修復) ---
+    // --- 🎒 需求7: 行李清單 ---
     function renderChecklist() {
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
         if(!list) return;
         
+        if(p.checklist && p.checklist.length > 0) {
+            p.checklist.forEach(c => { if(c.done === true && !c.checkedBy) c.checkedBy = [c.creator || currentUser]; if(!c.checkedBy) c.checkedBy = []; });
+        }
+
         if(!p.checklist || p.checklist.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:20px 0; font-weight:bold;">尚無待辦事項</div>`; progText.textContent = "0 / 0"; progBar.style.width = "0%"; return; }
         
-        // 精準計算「自己」完成的數量
         const myDoneCount = p.checklist.filter(c => c.checkedBy && c.checkedBy.includes(currentUser)).length;
         progText.textContent = `${myDoneCount} / ${p.checklist.length}`;
         progBar.style.width = `${(myDoneCount / p.checklist.length) * 100}%`;
@@ -1270,8 +1342,6 @@
         }).join('');
     }
     function addChecklistItem() { const input = document.getElementById('checklist-input'); const text = input.value.trim(); if(!text) return; const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, checkedBy: [] }); updateCurProject(p); input.value = ''; renderChecklist(); }
-    
-    // 獨立記錄打勾狀態，不干擾別人
     function toggleChecklist(id) { 
         const p = getCurProject(); const item = p.checklist.find(x => x.id === id); 
         if(item) { 
