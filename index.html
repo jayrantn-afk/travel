@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="旅遊趣">
-  <!-- 修正為最相容的相對路徑 -->
   <link rel="apple-touch-icon" href="logo.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -67,7 +66,7 @@
     .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.02); overflow: hidden;}
     .project-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
     
-    /* 專案卡片狀態標籤 (動態加碼功能) */
+    /* 專案卡片狀態標籤 */
     .status-badge { position: absolute; top: 16px; left: 16px; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
     .status-badge.upcoming { background: #FFFDE7; color: #F59E0B; border: 1px solid #FDE047;}
     .status-badge.ongoing { background: #FEF2F2; color: var(--danger); border: 1px solid #FECACA; animation: pulseRed 2s infinite;}
@@ -254,7 +253,7 @@
     </div>
   </div>
 
-  <!-- 自訂提示視窗 (取代原生的 alert/confirm，解決 iframe 被阻擋問題) -->
+  <!-- 自訂提示視窗 -->
   <div id="custom-dialog-overlay" class="modal-overlay" style="z-index: 10001;">
     <div class="modal" style="max-width: 320px; text-align: center; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
         <div id="custom-dialog-icon" style="font-size: 40px; margin-bottom: 12px;">💡</div>
@@ -738,11 +737,9 @@
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
     let lastSaveTime = 0; let currentDashboardTab = 'active';
 
-    // UX 優化：全域點擊外層(Overlay)自動關閉 Modal 機制
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
-                // 確保點擊的是半透明背景本身，而不是內部的白色 Modal 卡片
                 if (e.target === this) {
                     if (this.id === 'custom-dialog-overlay') {
                         const cancelBtn = document.getElementById('custom-dialog-cancel');
@@ -799,7 +796,6 @@
         }, delay);
     }
 
-    // UX 優化：iOS 風格質感 Toast 提示
     let syncTimeout;
     function showSync(msg, duration = 2000) { 
         const syncEl = document.getElementById('sync-status'); 
@@ -842,13 +838,47 @@
     let authRules = { ...customUsers };
     let allMembers = Object.keys(authRules);
 
-    function saveUsersDB() {
-        localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+    let saveQueue = [];
+    let isSaving = false;
+
+    function enqueueSave(workspace, dataString) {
+        const existingIdx = saveQueue.findIndex(item => item.workspace === workspace);
+        if (existingIdx > -1) {
+            saveQueue[existingIdx].dataString = dataString; 
+        } else {
+            saveQueue.push({ workspace, dataString });
+        }
+        processSaveQueue();
+    }
+
+    function processSaveQueue() {
+        if (isSaving || saveQueue.length === 0) return;
+        
+        isSaving = true;
+        lastSaveTime = Date.now();
+        const { workspace, dataString } = saveQueue.shift();
+
         const fd = new URLSearchParams();
         fd.append('action', 'save');
-        fd.append('workspace', currentWorkspace + '_users');
-        fd.append('data', JSON.stringify(customUsers));
-        fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
+        fd.append('workspace', workspace);
+        fd.append('data', dataString);
+
+        fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+        .then(() => {
+            isSaving = false;
+            lastSaveTime = Date.now(); 
+            processSaveQueue(); 
+        })
+        .catch((e) => {
+            console.error("Save failed", e);
+            isSaving = false;
+            processSaveQueue(); 
+        });
+    }
+
+    function saveUsersDB() {
+        localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+        enqueueSave(currentWorkspace + '_users', JSON.stringify(customUsers));
     }
 
     function syncGlobalUsers(db) {
@@ -886,8 +916,6 @@
 
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
-        if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
-        
         let db = [];
         try {
             db = JSON.parse(raw);
@@ -1091,10 +1119,12 @@
             localStorage.removeItem('app_lastProj'); 
             switchView('dashboard-view'); 
             syncFromCloud(false, true); 
-        }, 300);
+        }, 150);
     }
 
     function syncFromCloud(showMsg = false, isBackground = false) {
+      if (isSaving) return Promise.resolve(); // 🔒 正在儲存中，嚴格禁止雲端覆蓋！
+      
       if(showMsg && !isBackground) showSync("☁️ 同步中...");
       return Promise.all([
             fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}&t=${Date.now()}`).then(res => res.text()).catch(() => null),
@@ -1108,9 +1138,9 @@
 
           if(newData && Array.isArray(newData)) {
               let newDataString = JSON.stringify(newData);
-              if (newDataString.includes('魏敏轩')) newDataString = newDataString.replace(/魏敏轩/g, '魏敏軒');
               
-              if (Date.now() - lastSaveTime >= 4000) {
+              // 延長鎖定時間為 15 秒，徹底解決 Google 雲端處理延遲導致的資料被吃掉問題
+              if (Date.now() - lastSaveTime >= 15000) {
                   const oldDataString = localStorage.getItem(`app_${currentWorkspace}`); 
                   if (oldDataString !== newDataString) {
                       localStorage.setItem(`app_${currentWorkspace}`, newDataString);
@@ -1157,8 +1187,8 @@
       const pIdx = data.findIndex(p => p.id === currentProjectId);
       if(pIdx > -1) { if(!data[pIdx].activeUsers) data[pIdx].activeUsers = {}; data[pIdx].activeUsers[currentUser] = Date.now(); }
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
-      const fd = new URLSearchParams(); fd.append('action', 'save'); fd.append('workspace', currentWorkspace); fd.append('data', JSON.stringify(data));
-      fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
+      
+      enqueueSave(currentWorkspace, JSON.stringify(data));
     }
 
     function getCurProject() { return getDB().find(p => p.id === currentProjectId) || {}; }
@@ -1221,7 +1251,7 @@
           if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
           
           syncFromCloud(false, true); 
-      }, 200);
+      }, 150);
     }
     
     function switchMoreTab(sectionId) {
@@ -1232,7 +1262,6 @@
         if(targetBtn) targetBtn.classList.add('active');
     }
 
-    // UX 優化：首頁頁籤切換機制
     function switchDashboardTab(tab) {
         currentDashboardTab = tab;
         document.querySelectorAll('.dash-tab').forEach(el => el.classList.remove('active'));
@@ -1345,7 +1374,6 @@
       });
     }
 
-    // UX 優化：計算旅程狀態 (倒數/進行中/已結束)
     function getTripStatusBadge(startDate, endDate, status) {
         if (status === 'archived') {
             return `<div class="status-badge archived-badge">已封存歸檔</div>`;
@@ -1373,7 +1401,6 @@
       
       let myProjects = db.filter(p => p.members && p.members.includes(currentUser));
       
-      // 根據上方頁籤過濾
       if (currentDashboardTab === 'active') {
           myProjects = myProjects.filter(p => p.status !== 'archived');
       } else {
@@ -1391,7 +1418,6 @@
         const pIcon = p.icon || '📍';
         const badgeHtml = getTripStatusBadge(p.start, p.end, p.status);
         
-        // 若為進行中，顯示封存按鈕；若為已封存，隱藏操作按鈕
         const actionButtons = p.status === 'archived' ? '' : `
             <button class="archive-btn-card" onclick="archiveProject(${p.id}, event)" title="封存此旅程">📦</button>
             <button class="edit-btn-card" onclick="openEditTripModal(${p.id}, event)">✏️</button>
@@ -1418,7 +1444,6 @@
         }); 
     }
 
-    // 封存功能
     function archiveProject(id, e) {
         e.stopPropagation();
         showCustomDialog("📦 確定要封存此旅程嗎？<br><br><span style='font-size:13px; color:#888;'>封存後將變為「唯讀模式」，無法再新增或修改任何內容（適合旅程結束後歸檔紀錄）。</span>", true, () => {
@@ -1440,7 +1465,6 @@
       const p = getCurProject(); if(!p || !p.location) return;
       localStorage.setItem('app_lastProj', id); 
       
-      // UX 優化：判斷是否為封存模式，並套用唯讀 CSS 樣式
       if(p.status === 'archived') {
           document.body.classList.add('archived-mode');
           document.getElementById('archive-banner').style.display = 'block';
@@ -1501,7 +1525,7 @@
             renderItinerary(); 
             if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); 
             syncFromCloud(false, true); 
-        }, 300);
+        }, 150);
     }
     
     function getDistance(lat1, lon1, lat2, lon2) { if(!lat1 || !lon1 || !lat2 || !lon2) return null; const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; }
@@ -1519,7 +1543,6 @@
 
       const list = document.getElementById('plan-list'); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
       
-      // UX 優化：空狀態美化
       if(dayPlans.length === 0) list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏝️</div><div class="empty-state-text">這天還沒有排行程喔</div></div>`;
       else {
           let html = '';
@@ -1615,15 +1638,16 @@
       const finalLat = lat || (formLat ? parseFloat(formLat) : null); const finalLng = lng || (formLng ? parseFloat(formLng) : null);
 
       if(!place || !time) { showCustomDialog("請輸入時間與景點名稱"); return false; }
-      const p = getCurProject(); if(!p.plans) p.plans = [];
-      
-      const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && x.id != editId);
-      if (isDuplicate) {
-          showCustomDialog(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
-          return false;
-      }
 
       withLoader(() => {
+          const p = getCurProject(); if(!p.plans) p.plans = [];
+          
+          const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && x.id != editId);
+          if (isDuplicate) {
+              showCustomDialog(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
+              return;
+          }
+
           if(editId) { const idx = p.plans.findIndex(x => x.id == editId); if(idx > -1) { p.plans[idx].time = time; p.plans[idx].place = place; if (finalLat && finalLng) { p.plans[idx].lat = finalLat; p.plans[idx].lng = finalLng; } if(currentCompressedImage) p.plans[idx].image = currentCompressedImage; } cancelEditPlan(); showSync("✅ 行程已更新", 1500); } 
           else { p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, lat: finalLat, lng: finalLng, image: currentCompressedImage, creator: currentUser }); showSync("✅ 已加入行程", 1500); }
           
@@ -1772,7 +1796,6 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // UX 優化：匯出分帳清單到剪貼簿功能
     function exportBudgetResult() {
         const adviceBox = document.getElementById('split-bill-advice');
         if(adviceBox.style.display === 'none' || adviceBox.innerHTML.includes('目前無欠款')) {
@@ -1807,7 +1830,6 @@
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         
-        // UX 優化：空狀態美化
         if(!p.expenses || p.expenses.length === 0) { 
             list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-text">目前尚無任何花費紀錄</div></div>`; 
             adviceBox.style.display = 'none'; 
@@ -1855,7 +1877,7 @@
                         const isPaying = !(e.excludes && e.excludes.includes(m));
                         return `<label class="checkbox-item" style="padding:10px 4px; border-bottom:1px solid #E4E8ED;">
                             <span style="font-weight:bold;">${m}</span>
-                            <input type="checkbox" style="display:none;" onchange="withLoader(() => toggleInlineExclusion(${e.id}, '${m}', this.checked))" ${isPaying ? 'checked' : ''}>
+                            <input type="checkbox" class="inline-exclude-cb-${e.id}" data-user="${m}" style="display:none;" ${isPaying ? 'checked' : ''}>
                             <div class="toggle-switch"></div>
                         </label>`;
                     }).join('')}
@@ -1863,7 +1885,7 @@
                 </div>
                 <div style="display:flex; gap:8px;">
                     <button class="btn btn-outline" style="flex:1; padding:12px;" onclick="toggleInlineExpEdit(${e.id})">取消</button>
-                    <button class="btn btn-action" id="inline-save-btn-${e.id}" style="flex:2; padding:12px; color:white !important;" onclick="saveInlineExp(${e.id})">更新儲存</button>
+                    <button class="btn btn-action" style="flex:2; padding:12px; color:white !important;" onclick="saveInlineExp(${e.id})">更新儲存</button>
                 </div>
             </div>`;
         });
@@ -1871,7 +1893,7 @@
         document.getElementById('total-expense').textContent = Math.round(total).toLocaleString(); 
         
         let balances = {}; 
-        let myShareTotal = 0; // UX 優化：計算我的個人花費
+        let myShareTotal = 0; 
         getTripMembers().forEach(m => balances[m] = 0); 
         
         p.expenses.forEach(e => { 
@@ -1883,7 +1905,7 @@
             const shareMembers = getTripMembers().filter(m => !excludes.includes(m)); 
             if(shareMembers.length > 0) { 
                 const costPerPerson = cost / shareMembers.length; 
-                if(shareMembers.includes(currentUser)) myShareTotal += costPerPerson; // 加總我的部分
+                if(shareMembers.includes(currentUser)) myShareTotal += costPerPerson; 
                 
                 shareMembers.forEach(m => { 
                     if(balances[m] === undefined) balances[m] = 0;
@@ -1925,7 +1947,6 @@
                     </div>
                 </div>`;
             }); 
-            // 插入匯出優化按鈕
             html += `<button class="btn-outline hide-in-archive" style="width:100%; border-style:dashed; margin-top:12px; padding:12px; border-radius:12px; font-weight:800;" onclick="exportBudgetResult()">📋 複製結算清單傳至群組</button>`;
             adviceBox.innerHTML = html; 
         } 
@@ -1972,22 +1993,38 @@
     function addExpenseFromTop() { 
         const item = document.getElementById('exp-item').value; const cost = document.getElementById('exp-cost').value; const payer = document.getElementById('exp-payer').value; const expDate = document.getElementById('exp-date').value;
         if(!item || !cost) return showCustomDialog("請完整填寫項目與金額！"); 
+        
         withLoader(() => {
             const p = getCurProject(); if(!p.expenses) p.expenses = []; 
-            p.expenses.push({ id: Date.now(), date: expDate, item, cost, payer, excludes: [] }); updateCurProject(p); 
+            p.expenses.push({ id: Date.now(), date: expDate, item, cost, payer, excludes: [] }); 
+            updateCurProject(p); 
             renderBudget(); document.getElementById('exp-item').value = ''; document.getElementById('exp-cost').value = ''; document.getElementById('exp-date').valueAsDate = new Date(); showSync("✅ 帳目已建立", 1500); 
         });
     }
     
     function toggleInlineExpEdit(id) { const display = document.getElementById(`exp-display-${id}`); const editForm = document.getElementById(`exp-edit-${id}`); if(display.style.display === 'none') { display.style.display = 'block'; editForm.style.display = 'none'; } else { display.style.display = 'none'; editForm.style.display = 'block'; } }
-    function toggleInlineExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); }
+    
     function saveInlineExp(id) { 
         withLoader(() => {
             const p = getCurProject(); const exp = p.expenses.find(x => x.id === id); if(!exp) return; 
-            exp.date = document.getElementById(`inline-date-${id}`).value; exp.item = document.getElementById(`inline-item-${id}`).value; exp.cost = document.getElementById(`inline-cost-${id}`).value; exp.payer = document.getElementById(`inline-payer-${id}`).value; 
+            exp.date = document.getElementById(`inline-date-${id}`).value; 
+            exp.item = document.getElementById(`inline-item-${id}`).value; 
+            exp.cost = document.getElementById(`inline-cost-${id}`).value; 
+            exp.payer = document.getElementById(`inline-payer-${id}`).value; 
+            
+            const excludes = [];
+            document.querySelectorAll(`.inline-exclude-cb-${id}`).forEach(cb => {
+                if (!cb.checked) {
+                    const user = cb.getAttribute('data-user');
+                    if (user) excludes.push(user);
+                }
+            });
+            exp.excludes = excludes;
+
             updateCurProject(p); renderBudget(); showSync("✅ 帳目已更新", 1500); 
         }); 
     }
+    
     function delExpense(id) { 
         showCustomDialog("確定刪除這筆花費？", true, () => { 
             withLoader(() => { 
@@ -1996,13 +2033,13 @@
             }); 
         }); 
     }
-    function renderExclusionList() { const user = document.getElementById('exclusion-user-select').value; const container = document.getElementById('exclusion-checkboxes'); if(!user) { container.innerHTML = ''; return; } const p = getCurProject(); if(!p.expenses || p.expenses.length === 0) { container.innerHTML = '<p style="padding:10px; color:#A0A0A0; text-align:center; font-weight:bold;">目前沒有花費紀錄</p>'; return; } let html = ''; p.expenses.forEach(e => { const isPaying = !(e.excludes && e.excludes.includes(user)); html += `<label class="checkbox-item"><div style="flex:1;"><strong>${e.item}</strong> ($${e.cost}) <br><span style="font-size:11px; color:#888;">由 ${e.payer} 代墊</span></div><input type="checkbox" style="display:none;" onchange="withLoader(() => toggleExclusion(${e.id}, '${user}', this.checked))" ${isPaying ? 'checked' : ''}><div class="toggle-switch"></div></label>`; }); container.innerHTML = html; }
+    
+    function renderExclusionList() { const user = document.getElementById('exclusion-user-select').value; const container = document.getElementById('exclusion-checkboxes'); if(!user) { container.innerHTML = ''; return; } const p = getCurProject(); if(!p.expenses || p.expenses.length === 0) { container.innerHTML = '<p style="padding:10px; color:#A0A0A0; text-align:center; font-weight:bold;">目前沒有花費紀錄</p>'; return; } let html = ''; p.expenses.forEach(e => { const isPaying = !(e.excludes && e.excludes.includes(user)); html += `<label class="checkbox-item"><div style="flex:1;"><strong>${e.item}</strong> ($${e.cost}) <br><span style="font-size:11px; color:#888;">由 ${e.payer} 代墊</span></div><input type="checkbox" style="display:none;" onchange="toggleExclusion(${e.id}, '${user}', this.checked)" ${isPaying ? 'checked' : ''}><div class="toggle-switch"></div></label>`; }); container.innerHTML = html; }
     function toggleExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); updateCurProject(p); renderBudget(); }
 
     function renderNotes() { 
         const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count'); if(!list) return; 
         
-        // UX 優化：空狀態美化
         if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">還沒有任何筆記喔，記點什麼吧！</div></div>`; if(countBadge) countBadge.style.display = 'none'; return; } 
         
         if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } 
@@ -2066,7 +2103,7 @@
         if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🗳️</div><div class="empty-state-text">目前沒有發起的投票</div></div>`; return; } 
         list.innerHTML = p.polls.map(poll => {
             const dateStr = poll.date ? `<div style="font-size:12px; color:var(--text-muted); font-weight:bold; margin-bottom:8px;">📅 期限: ${poll.date}</div>` : '';
-            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text hide-in-archive" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text hide-in-archive" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="withLoader(() => vote(${poll.id}, ${i}), 200)"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
+            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text hide-in-archive" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text hide-in-archive" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="vote(${poll.id}, ${i})"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
         }).join(''); 
     }
     function addOrUpdatePoll() { 
@@ -2090,9 +2127,10 @@
             }); 
         }); 
     }
+    
     function vote(pollId, optIdx) { 
         const p = getCurProject(); 
-        if (p.status === 'archived') return; // 唯讀防呆
+        if (p.status === 'archived') return; 
         const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); 
     }
 
@@ -2113,7 +2151,7 @@
                 whoCheckedText = `<div class="checked-by-tags">✅ ${c.checkedBy.join('、')} 已準備</div>`;
             }
             return `
-            <div class="checklist-item" onclick="withLoader(() => toggleChecklist(${c.id}), 150)">
+            <div class="checklist-item" onclick="toggleChecklist(${c.id})">
                 <div class="check-circle" style="${isMeDone ? 'background:var(--secondary); border-color:var(--secondary); color:white;' : ''}">${isMeDone ? '✓' : ''}</div>
                 <div style="flex:1;">
                     <div class="checklist-text" style="${isMeDone ? 'text-decoration:line-through; color:var(--text-muted); opacity:0.6;' : ''}">${c.text}</div>
@@ -2133,7 +2171,7 @@
     
     function toggleChecklist(id) { 
         const p = getCurProject(); 
-        if (p.status === 'archived') return; // 唯讀防呆
+        if (p.status === 'archived') return; 
         const item = p.checklist.find(x => x.id === id); 
         if(item) { 
             if(!item.checkedBy) item.checkedBy = [];
