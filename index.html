@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="旅遊趣">
-  <!-- 使用 GitHub 相對路徑讀取自訂的 logo -->
-  <link rel="apple-touch-icon" href="./logo.png">
+  <!-- 確保使用絕對路徑，絕對不會破圖 -->
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
@@ -229,8 +229,8 @@
 
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
-      <!-- 修改為使用相對路徑的 logo.png -->
-      <img src="./logo.png" alt="Logo" style="width: 110px; height: 110px; object-fit: cover; border-radius: 28px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);">
+      <!-- 使用絕對路徑 + 去除矩形外框的 drop-shadow 陰影設定 -->
+      <img src="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png" alt="Logo" style="width: 110px; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.15));">
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       
@@ -647,9 +647,9 @@
     let currentUser = null; let currentWorkspace = 'FamilyTripPro'; let currentProjectId = null; let activeDayIndex = 0;
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
-    let lastSaveTime = 0; // 防呆機制：存檔時間鎖
+    let lastSaveTime = 0;
 
-    // 自訂彈窗邏輯 (取代瀏覽器原生的 alert / confirm，解決 iframe 阻擋問題)
+    // 自訂彈窗邏輯 (防彈設計，取代原生的 alert / confirm)
     function showCustomDialog(msg, isConfirm = false, onConfirm = null) {
         const overlay = document.getElementById('custom-dialog-overlay');
         document.getElementById('custom-dialog-msg').innerHTML = msg;
@@ -677,19 +677,31 @@
         }
     }
 
-    // 全域 Loader 封裝 (強制顯示讀取圈)
     function withLoader(actionFunc, delay = 300) {
-        document.getElementById('global-loader').classList.add('active');
+        const loader = document.getElementById('global-loader');
+        if(loader) loader.classList.add('active');
         setTimeout(() => {
-            actionFunc();
-            document.getElementById('global-loader').classList.remove('active');
+            try { actionFunc(); } catch(e) { console.error(e); }
+            if(loader) loader.classList.remove('active');
         }, delay);
     }
 
-    // 全域名單配置
+    // 防彈安全解析 - 名單配置
     const baseAuthRules = { '魏嘉宏': '35195', '魏卉姍': '35195', '魏敏軒': '35195', '魏珮芯': '35195', '陳筱雙': '1206' };
-    let customUsers = JSON.parse(localStorage.getItem(`app_users_${currentWorkspace}`));
-    if(!customUsers || Object.keys(customUsers).length === 0) {
+    let customUsers = {};
+    try {
+        const rawUsers = localStorage.getItem(`app_users_${currentWorkspace}`);
+        if (rawUsers) {
+            const parsed = JSON.parse(rawUsers);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                customUsers = parsed;
+            }
+        }
+    } catch(e) {
+        console.warn('使用者名單快取異常，重置名單');
+    }
+
+    if(Object.keys(customUsers).length === 0) {
         customUsers = { ...baseAuthRules };
         localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
     } else {
@@ -699,7 +711,6 @@
     let authRules = { ...customUsers };
     let allMembers = Object.keys(authRules);
 
-    // 儲存全域帳號到雲端 (雙軌同步機制)
     function saveUsersDB() {
         localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
         const fd = new URLSearchParams();
@@ -709,20 +720,10 @@
         fetch(GAS_URL, { method: 'POST', body: fd.toString(), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).catch(() => {});
     }
 
-    flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
-    document.getElementById('exp-date').valueAsDate = new Date();
-
-    const createCustomMapIcon = (number = '', isBlue = false) => {
-        return L.divIcon({ className: 'custom-leaflet-icon', html: `<div class="custom-map-pin ${isBlue ? 'pin-blue' : ''}"><div class="custom-map-pin-inner">${number}</div></div>`, iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -35] });
-    };
-
-    function getTripMembers() { const p = getCurProject(); return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
-
-    // 同步與修復全域聯絡人機制 (解決看不到特定成員的 Bug)
+    // 防彈安全解析 - 資料庫
     function syncGlobalUsers(db) {
         let updated = false;
         db.forEach(p => {
-            // 1. 自動修復：如果有人記帳/代墊，強制將他加入專案成員名單中
             if(!p.members) p.members = [];
             if(p.expenses) {
                 p.expenses.forEach(e => {
@@ -732,12 +733,11 @@
                     }
                 });
             }
-            // 2. 提取所有有出現過的名稱，更新到全域聯絡簿 customUsers
             let potentialUsers = [...p.members];
             if(p.expenses) p.expenses.forEach(e => { if(e.excludes) potentialUsers.push(...e.excludes); });
             potentialUsers.forEach(u => {
                 if (u && !customUsers[u]) {
-                    customUsers[u] = '1234'; // 自動加入聯絡簿並賦予預設密碼
+                    customUsers[u] = '1234'; 
                     updated = true;
                 }
             });
@@ -749,18 +749,25 @@
             allMembers = Object.keys(authRules);
             const userSelect = document.getElementById('user-select');
             if (userSelect && !currentUser) renderUserSelect(); 
-            saveUsersDB(); // 同步到雲端
+            saveUsersDB(); 
         }
         return updated;
     }
 
-    // 自動校正簡體字與成員名單
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
         if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
-        let db = JSON.parse(raw);
-        let updated = false;
         
+        let db = [];
+        try {
+            db = JSON.parse(raw);
+            if (!Array.isArray(db)) db = [];
+        } catch(e) {
+            console.warn('本機行程資料異常，自動清空並準備從雲端重新下載');
+            db = [];
+        }
+
+        let updated = false;
         db.forEach(p => {
             if(!p.members || !Array.isArray(p.members) || p.members.length === 0) {
                 p.members = ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙'];
@@ -768,14 +775,16 @@
             }
         });
         
-        // 執行全域成員檢查與修復
-        if (syncGlobalUsers(db)) {
-            updated = true;
-        }
-
+        if (syncGlobalUsers(db)) updated = true;
         if(updated) localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(db));
         return db; 
     }
+
+    const createCustomMapIcon = (number = '', isBlue = false) => {
+        return L.divIcon({ className: 'custom-leaflet-icon', html: `<div class="custom-map-pin ${isBlue ? 'pin-blue' : ''}"><div class="custom-map-pin-inner">${number}</div></div>`, iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -35] });
+    };
+
+    function getTripMembers() { const p = getCurProject(); return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
 
     document.addEventListener('click', function(e) {
         const searchBar = document.querySelector('.map-search-bar');
@@ -783,7 +792,6 @@
         if (searchBar && !searchBar.contains(e.target)) { if(searchResults) searchResults.style.display = 'none'; }
     });
 
-    // --- 管理員系統 ---
     function openAdminLogin() { openModal('admin-login-modal'); document.getElementById('admin-pwd-input').value = ''; }
     function verifyAdmin() {
         if(document.getElementById('admin-pwd-input').value === 'jo4aup3vm0') {
@@ -818,7 +826,7 @@
             customUsers[newName] = newPwd; delete customUsers[oldName];
             localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
             authRules = { ...customUsers }; allMembers = Object.keys(authRules);
-            saveUsersDB(); // 更新到雲端
+            saveUsersDB();
 
             let db = getDB();
             db.forEach(p => {
@@ -845,7 +853,7 @@
             if(currentUser === oldName) { currentUser = newName; localStorage.setItem('app_savedUser', newName); document.getElementById('display-name').textContent = currentUser; }
         } else {
             customUsers[oldName] = newPwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...customUsers };
-            saveUsersDB(); // 更新到雲端
+            saveUsersDB();
         }
         renderAdminUsers(); renderUserSelect(); 
         if(currentProjectId) { openProject(currentProjectId, true); } else { renderDashboard(); }
@@ -856,55 +864,70 @@
             withLoader(() => {
                 delete customUsers[name]; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
                 authRules = { ...customUsers }; allMembers = Object.keys(authRules);
-                saveUsersDB(); // 更新到雲端
+                saveUsersDB();
                 renderUserSelect(); renderAdminUsers(); showSync("✅ 帳號已刪除", 1500);
             });
         });
     }
 
+    // 防彈初始化
     window.onload = () => { 
-        renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
-        
-        // 在登入畫面就先向雲端拉取最新全域名單
-        fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}_users&t=${Date.now()}`)
-            .then(res => res.json())
-            .then(newUsersData => {
-                if (newUsersData && typeof newUsersData === 'object' && !Array.isArray(newUsersData)) {
-                    customUsers = { ...baseAuthRules, ...customUsers, ...newUsersData };
-                    authRules = { ...customUsers };
-                    allMembers = Object.keys(authRules);
-                    localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
-                    if (!currentUser) renderUserSelect(); // 若停留在登入畫面，立刻刷新下拉選單！
-                }
-            }).catch(() => {});
+        try {
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr("#trip-date-range", { mode: "range", minDate: "today", locale: "zh_tw" });
+            }
+            const expDateEl = document.getElementById('exp-date');
+            if (expDateEl) expDateEl.valueAsDate = new Date();
+        } catch(e) { console.warn("UI init issue", e); }
 
-        const savedUser = localStorage.getItem('app_savedUser');
-        if(savedUser && authRules[savedUser]) {
-            currentUser = savedUser; document.getElementById('display-name').textContent = currentUser;
-            document.getElementById('global-loader').classList.add('active'); 
+        try {
+            renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
             
-            const savedProjectId = localStorage.getItem('app_lastProj'); 
-            const savedTabId = localStorage.getItem('app_lastTab') || 'itinerary';
-            const savedDayIdx = localStorage.getItem('app_lastDayIdx');
-            if(savedDayIdx !== null && !isNaN(savedDayIdx)) activeDayIndex = parseInt(savedDayIdx);
-            
-            if(getDB().length > 0) {
-                if(savedProjectId && getDB().find(p => p.id == savedProjectId)) { 
-                    switchView('detail-view'); openProject(parseInt(savedProjectId), true); 
-                    setTimeout(() => switchTab(savedTabId), 50); 
-                } else {
-                    renderDashboard(); switchView('dashboard-view');
-                }
-                document.getElementById('global-loader').classList.remove('active');
-            } else { switchView('dashboard-view'); document.getElementById('global-loader').classList.remove('active'); }
+            fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}_users&t=${Date.now()}`)
+                .then(res => res.json())
+                .then(newUsersData => {
+                    if (newUsersData && typeof newUsersData === 'object' && !Array.isArray(newUsersData)) {
+                        customUsers = { ...baseAuthRules, ...customUsers, ...newUsersData };
+                        authRules = { ...customUsers };
+                        allMembers = Object.keys(authRules);
+                        localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
+                        if (!currentUser) renderUserSelect(); 
+                    }
+                }).catch(() => {});
 
-            syncFromCloud(false, true).then(() => {
-                if(currentProjectId) { safeRenderAll(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
-                else { renderDashboard(); }
-                document.getElementById('global-loader').classList.remove('active');
-            });
-            startAutoSync();
-        } else { switchView('login-view'); }
+            const savedUser = localStorage.getItem('app_savedUser');
+            if(savedUser && authRules[savedUser]) {
+                currentUser = savedUser; document.getElementById('display-name').textContent = currentUser;
+                document.getElementById('global-loader').classList.add('active'); 
+                
+                const savedProjectId = localStorage.getItem('app_lastProj'); 
+                const savedTabId = localStorage.getItem('app_lastTab') || 'itinerary';
+                const savedDayIdx = localStorage.getItem('app_lastDayIdx');
+                if(savedDayIdx !== null && !isNaN(savedDayIdx)) activeDayIndex = parseInt(savedDayIdx);
+                
+                if(getDB().length > 0) {
+                    if(savedProjectId && getDB().find(p => p.id == savedProjectId)) { 
+                        switchView('detail-view'); openProject(parseInt(savedProjectId), true); 
+                        setTimeout(() => switchTab(savedTabId), 50); 
+                    } else {
+                        renderDashboard(); switchView('dashboard-view');
+                    }
+                    document.getElementById('global-loader').classList.remove('active');
+                } else { switchView('dashboard-view'); document.getElementById('global-loader').classList.remove('active'); }
+
+                syncFromCloud(false, true).then(() => {
+                    if(currentProjectId) { safeRenderAll(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
+                    else { renderDashboard(); }
+                    document.getElementById('global-loader').classList.remove('active');
+                });
+                startAutoSync();
+            } else { switchView('login-view'); }
+        } catch(err) {
+            console.error("Fatal initialization error:", err);
+            switchView('login-view'); // 發生毀滅性錯誤時強制回到登入頁，避免白畫面
+            const loader = document.getElementById('global-loader');
+            if(loader) loader.classList.remove('active');
+        }
     };
 
     function safeRenderAll() {
@@ -940,7 +963,7 @@
         withLoader(() => {
             localStorage.removeItem('app_lastProj'); 
             switchView('dashboard-view'); 
-            syncFromCloud(false, true); // 返回列表時自動更新清單
+            syncFromCloud(false, true); 
         }, 300);
     }
     function showSync(msg, duration = 2000) { const syncEl = document.getElementById('sync-status'); syncEl.textContent = msg; syncEl.style.display = 'block'; setTimeout(() => syncEl.style.display = 'none', duration); }
@@ -948,10 +971,15 @@
     function syncFromCloud(showMsg = false, isBackground = false) {
       if(showMsg && !isBackground) showSync("☁️ 同步中...");
       return Promise.all([
-            fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}&t=${Date.now()}`).then(res => res.json()).catch(() => null),
-            fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}_users&t=${Date.now()}`).then(res => res.json()).catch(() => null)
-      ]).then(([newData, newUsersData]) => {
-          // 1. 處理專案資料同步
+            fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}&t=${Date.now()}`).then(res => res.text()).catch(() => null),
+            fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}_users&t=${Date.now()}`).then(res => res.text()).catch(() => null)
+      ]).then(([rawNewData, rawNewUsersData]) => {
+          let newData = null;
+          try { if (rawNewData) newData = JSON.parse(rawNewData); } catch(e) {}
+          
+          let newUsersData = null;
+          try { if (rawNewUsersData) newUsersData = JSON.parse(rawNewUsersData); } catch(e) {}
+
           if(newData && Array.isArray(newData)) {
               let newDataString = JSON.stringify(newData);
               if (newDataString.includes('魏敏轩')) newDataString = newDataString.replace(/魏敏轩/g, '魏敏軒');
@@ -960,7 +988,7 @@
                   const oldDataString = localStorage.getItem(`app_${currentWorkspace}`); 
                   if (oldDataString !== newDataString) {
                       localStorage.setItem(`app_${currentWorkspace}`, newDataString);
-                      getDB(); // 確保觸發全域檢查
+                      getDB(); 
                       if(currentProjectId && !isBackground) { 
                           const p = getCurProject();
                           if(!p || !p.id) goBackToDashboard(); else { safeRenderAll(); updateOnlineUsers(); if (document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
@@ -970,7 +998,6 @@
               }
           }
           
-          // 2. 處理全域使用者資料同步 (解決名單不同步問題)
           if (newUsersData) {
               let updatedUsers = false;
               if (typeof newUsersData === 'object' && !Array.isArray(newUsersData)) {
@@ -983,14 +1010,13 @@
                       updatedUsers = true;
                   }
               } else if (Array.isArray(newUsersData) && newUsersData.length === 0) {
-                  // 雲端還沒有使用者名單資料，主動推上去
                   saveUsersDB();
               }
               
               if (updatedUsers) {
                   if (document.getElementById('user-select') && !currentUser) renderUserSelect();
-                  renderDashboard(); // 如果有新名單，可能影響顯示
-                  if(document.getElementById('admin-user-list').innerHTML !== '') renderAdminUsers(); // 更新後台畫面
+                  renderDashboard(); 
+                  if(document.getElementById('admin-user-list').innerHTML !== '') renderAdminUsers(); 
               }
           }
           
@@ -1001,7 +1027,7 @@
     function startAutoSync() { if(syncInterval) clearInterval(syncInterval); syncInterval = setInterval(() => { if(document.visibilityState === 'visible') syncFromCloud(false, true); }, 15000); }
 
     function saveDB(data) { 
-      lastSaveTime = Date.now(); // 寫入存檔鎖時間，保護資料不被吃掉
+      lastSaveTime = Date.now(); 
       const pIdx = data.findIndex(p => p.id === currentProjectId);
       if(pIdx > -1) { if(!data[pIdx].activeUsers) data[pIdx].activeUsers = {}; data[pIdx].activeUsers[currentUser] = Date.now(); }
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
@@ -1045,8 +1071,7 @@
         authRules = { ...baseAuthRules, ...customUsers }; 
         allMembers = Object.keys(authRules); 
         
-        saveUsersDB(); // 儲存並推送到雲端
-        
+        saveUsersDB(); 
         renderUserSelect(); 
         closeModal('add-user-modal'); 
         document.getElementById('user-select').value = name; 
@@ -1069,7 +1094,7 @@
           localStorage.setItem('app_lastTab', tabId); 
           if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
           
-          syncFromCloud(false, true); // 點擊頁籤時自動在背景重整最新資料
+          syncFromCloud(false, true); 
       }, 200);
     }
     
@@ -1081,7 +1106,6 @@
         if(targetBtn) targetBtn.classList.add('active');
     }
 
-    // 專案搜尋人員
     function filterMembers() {
         const q = document.getElementById('member-search-input').value.toLowerCase();
         document.querySelectorAll('.member-checkbox-row').forEach(row => {
@@ -1098,8 +1122,10 @@
         document.getElementById('trip-icon').value = '📍'; 
         document.getElementById('trip-color').value = '#FF5A5F'; 
         
-        const fp = document.getElementById('trip-date-range')._flatpickr;
-        fp.clear();
+        try {
+            const fp = document.getElementById('trip-date-range')._flatpickr;
+            if(fp) fp.clear();
+        } catch(e) {}
         
         document.getElementById('member-search-input').value = '';
         const list = document.getElementById('create-trip-invite-list');
@@ -1123,8 +1149,10 @@
         document.getElementById('trip-icon').value = p.icon || '📍';
         document.getElementById('trip-color').value = p.color || '#FF5A5F';
         
-        const fp = document.getElementById('trip-date-range')._flatpickr;
-        fp.setDate([p.start, p.end]);
+        try {
+            const fp = document.getElementById('trip-date-range')._flatpickr;
+            if(fp) fp.setDate([p.start, p.end]);
+        } catch(e) {}
         
         document.getElementById('member-search-input').value = '';
         const list = document.getElementById('create-trip-invite-list');
@@ -1149,7 +1177,7 @@
       let dates = rawDate.split(rawDate.includes('至') ? ' 至 ' : ' to ');
       
       if(!loc || dates.length === 0 || dates[0] === "") return showCustomDialog("請填寫完整地點與日期區間");
-      if(dates.length === 1) dates.push(dates[0]); // 修復單日建立 bug
+      if(dates.length === 1) dates.push(dates[0]); 
       
       const selectedMembers = Array.from(document.querySelectorAll('.trip-invite-checkbox:checked')).map(cb => cb.value); 
       if(!selectedMembers.includes(currentUser)) selectedMembers.push(currentUser); 
@@ -1258,13 +1286,12 @@
             localStorage.setItem('app_lastDayIdx', idx); 
             renderItinerary(); 
             if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); 
-            syncFromCloud(false, true); // 切換天數時背景自動抓取最新資料
+            syncFromCloud(false, true); 
         }, 300);
     }
     
     function getDistance(lat1, lon1, lat2, lon2) { if(!lat1 || !lon1 || !lat2 || !lon2) return null; const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; }
 
-    // --- 📅 行程核心 ---
     function renderItinerary() {
       const p = getCurProject(); if(!p.start) return; const start = new Date(p.start); const end = new Date(p.end); const totalDays = Math.floor((end - start) / 86400000) + 1; const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
       
@@ -1374,7 +1401,6 @@
       if(!place || !time) { showCustomDialog("請輸入時間與景點名稱"); return false; }
       const p = getCurProject(); if(!p.plans) p.plans = [];
       
-      // 修復：行程時間碰撞防呆機制，若觸發則中斷操作
       const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && x.id != editId);
       if (isDuplicate) {
           showCustomDialog(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
@@ -1416,7 +1442,6 @@
         navigator.clipboard.writeText(text).then(() => showSync("📋 行程已複製", 2000)); 
     }
 
-    // --- 🗺️ 地圖核心 ---
     function initMap() {
       if (!map) {
         map = L.map('map-container', {zoomControl: false}).setView([23.6978, 120.9605], 7); 
@@ -1531,7 +1556,6 @@
       map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
     }
 
-    // --- 💰 分帳邏輯 ---
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         if(!p.expenses || p.expenses.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無花費紀錄</div>`; adviceBox.style.display = 'none'; document.getElementById('total-expense').textContent = "0"; return; } 
@@ -1712,7 +1736,6 @@
     function renderExclusionList() { const user = document.getElementById('exclusion-user-select').value; const container = document.getElementById('exclusion-checkboxes'); if(!user) { container.innerHTML = ''; return; } const p = getCurProject(); if(!p.expenses || p.expenses.length === 0) { container.innerHTML = '<p style="padding:10px; color:#A0A0A0; text-align:center; font-weight:bold;">目前沒有花費紀錄</p>'; return; } let html = ''; p.expenses.forEach(e => { const isPaying = !(e.excludes && e.excludes.includes(user)); html += `<label class="checkbox-item"><div style="flex:1;"><strong>${e.item}</strong> ($${e.cost}) <br><span style="font-size:11px; color:#888;">由 ${e.payer} 代墊</span></div><input type="checkbox" style="display:none;" onchange="withLoader(() => toggleExclusion(${e.id}, '${user}', this.checked))" ${isPaying ? 'checked' : ''}><div class="toggle-switch"></div></label>`; }); container.innerHTML = html; }
     function toggleExclusion(expId, user, isPaying) { const p = getCurProject(); const exp = p.expenses.find(x => x.id === expId); if(!exp) return; if(!exp.excludes) exp.excludes = []; if(isPaying) exp.excludes = exp.excludes.filter(u => u !== user); else if(!exp.excludes.includes(user)) exp.excludes.push(user); updateCurProject(p); renderBudget(); }
 
-    // --- 📝 筆記 ---
     function renderNotes() { const p = getCurProject(); const list = document.getElementById('notes-list'); const countBadge = document.getElementById('note-count'); if(!list) return; if(!p.notes || p.notes.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">尚無任何記事</div>`; if(countBadge) countBadge.style.display = 'none'; return; } if(countBadge) { countBadge.textContent = p.notes.length; countBadge.style.display = 'flex'; } list.innerHTML = p.notes.map(n => `<div class="card-panel" style="padding:20px; background:#FFFDE7; border-left: 6px solid var(--warning);"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div style="white-space: pre-wrap; font-size:15px; flex:1; font-weight:500;">${n.text}</div><div style="display:flex; flex-direction:column; gap:6px;"><span class="action-text edit-text" style="margin:0; padding:6px 10px;" onclick="editNote(${n.id})">✏️</span><span class="action-text del-text" style="margin:0; padding:6px 10px;" onclick="delNote(${n.id})">✕</span></div></div><div class="creator-badge" style="background:rgba(255, 193, 7, 0.2); color:#A67B00;">由 ${n.creator} 記錄</div></div>`).join(''); }
     function addOrUpdateNote() { 
         const text = document.getElementById('note-text').value; const editId = document.getElementById('edit-note-id').value; if(!text) return; 
@@ -1733,7 +1756,6 @@
         }); 
     }
 
-    // --- 📞 工具與投票 ---
     function copyPhone(phone) { navigator.clipboard.writeText(phone).then(() => showSync("📋 電話已複製", 1500)); }
     function renderContacts() { const p = getCurProject(); const list = document.getElementById('contacts-list'); if(!list) return; if(!p.contacts || p.contacts.length === 0) { list.innerHTML = `<div style="text-align:center; color:#A0A0A0; padding:40px 0; font-weight:bold;">無聯絡人紀錄</div>`; return; } list.innerHTML = p.contacts.map(c => `<div class="card-panel" style="padding:20px;"><div style="display:flex; justify-content:space-between;"><strong style="font-size:18px;">${c.name}</strong><div><span class="action-text edit-text" onclick="editContact(${c.id})">✏️</span><span class="action-text del-text" style="margin:0;" onclick="delContact(${c.id})">✕</span></div></div><div style="font-size:16px; color:var(--text-muted); font-weight:bold; margin: 8px 0;">${c.phone}</div><div class="tool-btn-wrap"><button class="tool-btn" onclick="copyPhone('${c.phone}')">📋 複製</button><a href="tel:${c.phone}" class="tool-btn call">📞 撥打</a></div></div>`).join(''); }
     function addOrUpdateContact() { 
@@ -1799,7 +1821,6 @@
     }
     function vote(pollId, optIdx) { const p = getCurProject(); const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); }
 
-    // --- 🎒 行李清單 (需求7: 獨立狀態與共用顯示) ---
     function renderChecklist() {
         const p = getCurProject(); const list = document.getElementById('checklist-container'); const progText = document.getElementById('checklist-progress-text'); const progBar = document.getElementById('checklist-progress-bar');
         if(!list) return;
