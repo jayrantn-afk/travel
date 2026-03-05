@@ -18,6 +18,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
+    /* 乾淨高質感配色 */
     :root {
       --primary: #FF5A5F; 
       --primary-hover: #E35156; 
@@ -54,12 +55,11 @@
     .form-control { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; transition: 0.2s; font-weight: 500;}
     .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); }
     
-    /* 首頁與卡片 */
+    /* 卡片與容器 */
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .create-project-card { background: var(--surface); padding: 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--primary); font-weight: 800; font-size: 16px; }
     .create-project-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(255,90,95,0.15); }
     
-    /* 需求2: 漸層暈染背景，不干擾黑字閱讀 */
     .project-card { position: relative; padding: 24px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 16px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.05); overflow: hidden;}
     .project-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
     
@@ -107,7 +107,7 @@
     .day-btn.active { color: var(--text-main); border-bottom-color: var(--primary); }
     .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 11px; font-weight: bold; margin-left: 6px; line-height: 1; }
 
-    /* 時間軸 */
+    /* 時間軸設計 */
     .itinerary-date-header { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;}
     .timeline-container { padding-top: 10px; }
     .plan-row { display: flex; position: relative; }
@@ -125,7 +125,7 @@
     .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); cursor: pointer; transition: 0.2s;}
     .transit-block:hover { background: #E2E8F0; }
     .transit-block:active { transform: scale(0.95); }
-    .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+    .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; transition: 0.2s; display: inline-flex; align-items: center;}
     .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
 
     .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
@@ -138,12 +138,9 @@
     /* 地圖與自訂地標 */
     .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative;}
     .map-search-bar .form-control { margin-bottom: 0; }
-    
     .search-results-container { position: absolute; top: 60px; left: 0; right: 0; background: white; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 500; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
     .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
     .search-result-item:hover { background: #F8F9FA; }
-    .search-result-item:last-child { border-bottom: none; }
-
     .map-wrapper { position: relative; }
     #map-container { height: 500px; width: 100%; border-radius: 20px; z-index: 1; border: 1px solid var(--border); }
     .map-fab-locate { position: absolute; bottom: 20px; right: 20px; padding: 0 16px; height: 46px; background: var(--surface); border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s;}
@@ -159,6 +156,7 @@
     .plan-img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; display: none; border: 1px solid var(--border); margin-top: 12px; }
     .plan-img-display { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid #E4E8ED; flex-shrink: 0; }
     .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
+    .file-upload-label:hover { background: #F1F5F9; border-color: var(--secondary); color: var(--secondary); }
     
     /* 底部懸浮面板 */
     .bottom-sheet { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); z-index: 2000; transition: bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -168,6 +166,7 @@
     .sheet-input-title:focus { border-bottom-color: var(--primary); border-style: solid; outline:none; }
     .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
 
+    /* iOS 風格切換開關 */
     .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     input:checked + .toggle-switch { background: var(--secondary); }
@@ -290,7 +289,7 @@
       <div class="itinerary-date-header">
           <span id="itinerary-date-header-text"></span>
           <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:12px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> 新增
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> 新增
           </button>
       </div>
       
@@ -410,7 +409,7 @@
 
         <div id="more-poll" class="more-section" style="display:none;">
           <button class="btn btn-action" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> 建立新投票
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> 建立新投票
           </button>
           
           <div id="poll-form-card" class="card-panel" style="display:none;">
@@ -634,6 +633,7 @@
 
     function getTripMembers() { const p = getCurProject(); if(!p) return allMembers; return p.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
 
+    // 自動校正簡體字與成員名單
     function getDB() { 
         let raw = localStorage.getItem(`app_${currentWorkspace}`) || '[]';
         if (raw.includes('魏敏轩')) { raw = raw.replace(/魏敏轩/g, '魏敏軒'); localStorage.setItem(`app_${currentWorkspace}`, raw); }
@@ -649,13 +649,14 @@
         return db; 
     }
 
+    // 點擊空白處取消搜尋結果 
     document.addEventListener('click', function(e) {
         const searchBar = document.querySelector('.map-search-bar');
         const searchResults = document.getElementById('map-search-results');
         if (searchBar && !searchBar.contains(e.target)) { if(searchResults) searchResults.style.display = 'none'; }
     });
 
-    // 需求6: 防卡死與全域儲存過場工具
+    // --- 防卡死工具 ---
     function showActionLoader(msg = "資料儲存中...") {
         const loader = document.getElementById('global-loader');
         if(loader) {
@@ -671,7 +672,7 @@
         }
     }
 
-    // --- 管理員系統 ---
+    // --- 管理員系統 (支援改名、同步雲端) ---
     function openAdminLogin() { openModal('admin-login-modal'); document.getElementById('admin-pwd-input').value = ''; }
     function verifyAdmin() {
         if(document.getElementById('admin-pwd-input').value === 'jo4aup3vm0') {
@@ -758,7 +759,7 @@
         }
     }
 
-    // --- 重新整理防呆 (加入強制取消 Loader) ---
+    // --- 重新整理防呆 (絕對不會卡死) ---
     window.onload = () => { 
         renderUserSelect(); bindEnterEvents(); enableDragToScroll(); 
         
@@ -799,13 +800,11 @@
             syncFromCloud(false, true).then(() => {
                 if(currentProjectId) { safeRenderAll(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
                 else { renderDashboard(); }
-            }).catch(e => console.error(e)).finally(() => {
-                hideLoader();
-            });
+            }).catch(e => console.error(e)).finally(() => { hideLoader(); });
             startAutoSync();
         } else { switchView('login-view'); }
 
-        // 終極保險：如果任何原因導致讀取框卡住，3秒後強制關閉
+        // 終極保險：3秒後絕對強制關閉遮罩
         setTimeout(hideLoader, 3000);
     };
 
@@ -818,7 +817,14 @@
         try { renderChecklist(); } catch(e){ console.error("Checklist Error", e); }
     }
 
-    function renderUserSelect() { const select = document.getElementById('user-select'); select.innerHTML = allMembers.map(m => `<option value="${m}">👤 ${m}</option>`).join(''); }
+    // 需求2: 下拉選單加入防呆預設選項
+    function renderUserSelect() { 
+        const select = document.getElementById('user-select'); 
+        let html = '<option value="" disabled selected>👤 請選擇登入帳號...</option>';
+        html += allMembers.map(m => `<option value="${m}">👤 ${m}</option>`).join('');
+        select.innerHTML = html; 
+    }
+
     function bindEnterEvents() { const bind = (id, func) => { document.getElementById(id).addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); func(); } }); }; bind('password-input', handleLogin); bind('map-search-input', searchMap); }
     function enableDragToScroll() { 
         ['day-buttons', 'map-day-buttons'].forEach(id => {
@@ -843,6 +849,7 @@
       const p2 = fetch(`${GAS_URL}?action=get&workspace=${currentWorkspace}_Users&t=${Date.now()}`).then(res => res.json()).catch(() => ({}));
 
       return Promise.all([p1, p2]).then(([newData, remoteUsers]) => {
+            // 雙向合併名單 (防消失)
             if (remoteUsers && typeof remoteUsers === 'object' && !Array.isArray(remoteUsers) && Object.keys(remoteUsers).length > 0) {
                 const localUsersStr = localStorage.getItem(`app_users_${currentWorkspace}`);
                 const remoteUsersStr = JSON.stringify(remoteUsers);
@@ -851,7 +858,7 @@
                     localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers));
                     authRules = { ...baseAuthRules, ...customUsers };
                     allMembers = Object.keys(authRules);
-                    renderUserSelect();
+                    if (!currentUser) renderUserSelect(); // 只有在沒登入時才重繪選單，避免干擾使用
                     if(document.getElementById('manage-members-modal').classList.contains('active')) renderManageMembers();
                 }
             }
@@ -888,7 +895,9 @@
     function updateCurProject(updatedP) { const db = getDB(); db[db.findIndex(p => p.id === currentProjectId)] = updatedP; saveDB(db); updateOnlineUsers(); }
 
     function handleLogin() {
-      const u = document.getElementById('user-select').value; const p = document.getElementById('password-input').value;
+      const u = document.getElementById('user-select').value; 
+      const p = document.getElementById('password-input').value;
+      if (!u) return alert("請先選擇登入帳號！");
       if (authRules[u] === p) {
         currentUser = u; localStorage.setItem('app_savedUser', currentUser); document.getElementById('display-name').textContent = currentUser;
         document.getElementById('global-loader').classList.add('active'); 
@@ -896,7 +905,7 @@
       } else alert("密碼錯誤，請重新輸入！");
     }
     
-    function handleLogout() { if(confirm("確定要登出嗎？")) { currentUser = null; currentProjectId = null; localStorage.removeItem('app_savedUser'); localStorage.removeItem('app_lastProj'); if(syncInterval) clearInterval(syncInterval); switchView('login-view'); document.getElementById('password-input').value = ''; } }
+    function handleLogout() { if(confirm("確定要登出嗎？")) { currentUser = null; currentProjectId = null; localStorage.removeItem('app_savedUser'); localStorage.removeItem('app_lastProj'); if(syncInterval) clearInterval(syncInterval); renderUserSelect(); switchView('login-view'); document.getElementById('password-input').value = ''; } }
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     function saveNewUser() { 
@@ -934,7 +943,6 @@
         if(targetBtn) targetBtn.classList.add('active');
     }
 
-    // 需求3: 編輯旅程 (支援改名、顏色、日期)
     let editProjectId = null;
     function openCreateTripModal() {
         try {
@@ -1013,7 +1021,6 @@
       const grid = document.getElementById('projects-grid'); const db = getDB(); let html = '';
       db.filter(p => p.members && p.members.includes(currentUser)).slice().reverse().forEach((p) => {
         const themeColor = p.themeColor || '#FF5A5F';
-        // 需求2: 柔和漸層背景
         html += `<div class="project-card" style="border-top: 6px solid ${themeColor}; background: linear-gradient(180deg, ${themeColor}15 0%, #ffffff 50%);" onclick="openProject(${p.id})">
             <div class="project-card-actions">
                 <button class="card-icon-btn btn-edit-trip" onclick="openEditTripModal(${p.id}, event)">✏️</button>
@@ -1045,7 +1052,10 @@
     
     function refreshMemberDependentUIs() {
         const p = getCurProject();
-        const formatD = (dStr) => { const d = new Date(dStr); return `${d.getMonth()+1}/${d.getDate()}`; };
+        const formatD = (dStr) => { 
+            if(!dStr) return '';
+            try { const d = new Date(dStr); if(isNaN(d.getTime())) return ''; return `${d.getMonth()+1}/${d.getDate()}`; } catch(e) { return ''; }
+        };
         document.getElementById('project-title-display').innerHTML = `${p.location} <span style="font-size:15px; color:var(--text-muted); font-weight:700; margin-left:8px;">(${formatD(p.start)} - ${formatD(p.end)})</span>`;
         document.getElementById('exp-payer').innerHTML = getTripMembers().map(m => `<option value="${m}">${m} 先代墊</option>`).join('');
         document.getElementById('exclusion-user-select').innerHTML = `<option value="">-- 選擇人員 --</option>` + getTripMembers().map(m => `<option value="${m}">${m}</option>`).join('');
@@ -1066,35 +1076,12 @@
         }
         list.innerHTML = html;
     }
-    
-    function addTripMember(m) { 
-        showActionLoader("更新成員中...");
-        setTimeout(() => {
-            const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); 
-            updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); hideLoader();
-        }, 400);
-    }
-    function removeTripMember(m) { 
-        if(!confirm(`確定要將 ${m} 移出此旅程嗎？`)) return; 
-        showActionLoader("更新成員中...");
-        setTimeout(() => {
-            const p = getCurProject(); p.members = p.members.filter(user => user !== m); 
-            updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); hideLoader();
-        }, 400);
-    }
+    function addTripMember(m) { showActionLoader("更新成員中..."); setTimeout(() => { const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); hideLoader(); }, 400); }
+    function removeTripMember(m) { if(!confirm(`確定要將 ${m} 移出此旅程嗎？`)) return; showActionLoader("更新成員中..."); setTimeout(() => { const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); hideLoader(); }, 400); }
 
-    function updateOnlineUsers() {
-        const p = getCurProject(); if(!p || !p.activeUsers) return;
-        const now = Date.now(); const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000);
-        document.getElementById('online-users-text').textContent = activeNames.length > 0 ? `${activeNames.join('、')} 正在協作` : `目前僅你一人在線`;
-    }
-
+    function updateOnlineUsers() { const p = getCurProject(); if(!p || !p.activeUsers) return; const now = Date.now(); const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000); document.getElementById('online-users-text').textContent = activeNames.length > 0 ? `${activeNames.join('、')} 正在協作` : `目前僅你一人在線`; }
     function addOneDay() { if(!confirm("確定要將旅程延長一天嗎？")) return; const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }
-
-    function changeDayIndex(idx) {
-        activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx);
-        renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute();
-    }
+    function changeDayIndex(idx) { activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx); renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) renderMapRoute(); }
 
     function getDistance(lat1, lon1, lat2, lon2) {
         if(!lat1 || !lon1 || !lat2 || !lon2) return null;
@@ -1103,6 +1090,7 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1.35; 
     }
 
+    // --- 📅 行程核心 ---
     function renderItinerary() {
       const p = getCurProject(); if(!p.start) return; 
       const start = new Date(p.start); const end = new Date(p.end);
@@ -1221,8 +1209,6 @@
             }; img.src = e.target.result;
         }; reader.readAsDataURL(file);
     }
-    
-    // 需求5: 同時段防呆 (防蓋台)
     function addOrUpdatePlan(placeName = null, lat = null, lng = null, overrideDay = null, overrideTime = null) {
       let time = overrideTime || document.getElementById('plan-time').value; 
       const place = placeName || document.getElementById('plan-place').value;
@@ -1477,6 +1463,7 @@
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:2px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> 尚未設定收款帳號
                 </div>`;
 
+                // 需求4: 標記已還款純白 SVG
                 html += `
                 <div style="background:white; padding:16px; border-radius:12px; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.02); display:flex; justify-content:space-between; align-items:center;">
                     <div>
@@ -1485,8 +1472,8 @@
                     </div>
                     <div style="text-align:right;">
                         <span style="font-weight:800; color:var(--secondary); font-size:20px; display:block;">$${Math.round(t.amt)}</span>
-                        <button class="btn-small btn-action" style="margin-top:6px; padding:6px 10px; border-radius:8px; font-size:12px; color:white !important;" onclick="settleDebt('${t.from}', '${t.to}', ${Math.round(t.amt)})">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:2px;"><polyline points="20 6 9 17 4 12"></polyline></svg> 標記已還款
+                        <button class="btn-small btn-action" style="margin-top:6px; padding:6px 10px; border-radius:8px; font-size:12px; color:white !important; display:inline-flex; align-items:center;" onclick="settleDebt('${t.from}', '${t.to}', ${Math.round(t.amt)})">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> 標記已還款
                         </button>
                     </div>
                 </div>`;
