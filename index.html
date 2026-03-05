@@ -8,8 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="旅遊趣">
-  <!-- 修正為最相容的相對路徑 -->
-  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
@@ -130,23 +129,79 @@
     .plan-row:last-child .plan-timeline-line { display: none; }
     .plan-dot { position: absolute; left: 49px; top: 22px; width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 2; border: 3px solid var(--secondary); }
     .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column;}
-    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
+    .plan-card { background: var(--surface); padding: 18px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; transition: 0.2s;}
     .plan-card:hover { border-color: rgba(0,166,153,0.3); transform: translateX(2px); }
     .plan-number-badge { position: absolute; top: -8px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
     
-    /* 交通方式選擇區塊 */
+    /* 交通方式與導航按鈕 UX 極致優化 */
     .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 54px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
-    /* 新增 click-hint 動畫，提示使用者可點擊 */
-    @keyframes pulse-border {
-        0% { box-shadow: 0 0 0 0 rgba(0, 166, 153, 0.4); }
-        70% { box-shadow: 0 0 0 6px rgba(0, 166, 153, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(0, 166, 153, 0); }
+    
+    .transit-block { 
+        padding: 4px 10px; 
+        background: #ffffff; 
+        border: 2px solid var(--secondary); 
+        border-radius: 16px; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 6px; 
+        font-size: 12px; 
+        font-weight: 800; 
+        color: var(--secondary); 
+        cursor: pointer; 
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0, 166, 153, 0.15);
     }
-    .transit-block { padding: 8px 14px; background: #F1F5F9; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; color: var(--secondary); animation: pulse-border 2s infinite; }
-    .transit-block:hover { background: #E2E8F0; animation: none;}
+    .transit-block:hover { 
+        background: var(--secondary); 
+        color: #ffffff; 
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 166, 153, 0.3);
+    }
     .transit-block:active { transform: scale(0.95); }
-    .gmaps-link-btn { background: white; color: var(--secondary); padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight:bold; text-decoration: none; border: 1.5px solid #CBD5E1; display: inline-flex; align-items: center;}
-    .gmaps-link-btn:hover { background: #F8F9FA; border-color: var(--secondary); }
+    .transit-block::after {
+        content: '⚙️ 修改';
+        font-size: 10px;
+        font-weight: 800;
+        background: rgba(0,0,0,0.08);
+        padding: 2px 6px;
+        border-radius: 10px;
+        margin-left: 4px;
+        transition: 0.2s;
+    }
+    .transit-block:hover::after { background: rgba(255,255,255,0.2); color: white; }
+
+    .gmaps-link-btn { 
+        background: #4285F4; 
+        color: #ffffff !important; 
+        padding: 4px 12px; 
+        border-radius: 16px; 
+        font-size: 12px; 
+        font-weight: 800; 
+        text-decoration: none; 
+        border: none; 
+        display: inline-flex; 
+        align-items: center; 
+        box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3); 
+        transition: all 0.2s ease;
+    }
+    .gmaps-link-btn:hover { 
+        background: #3367D6; 
+        transform: translateY(-2px); 
+        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4); 
+    }
+    .gmaps-link-btn:active { transform: scale(0.95); }
+    .gmaps-link-btn::after {
+        content: '👆 點擊開啟';
+        font-size: 10px;
+        font-weight: 800;
+        background: rgba(255,255,255,0.25);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 10px;
+        margin-left: 6px;
+        transition: 0.2s;
+    }
+    .gmaps-link-btn:hover::after { background: rgba(255,255,255,0.4); }
 
     /* 標籤與文字 */
     .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
@@ -447,8 +502,9 @@
             <div style="font-size: 13px; font-weight: 800; opacity:0.9;">旅程總花費</div>
             <div style="font-size: 36px; font-weight: 800; letter-spacing: -1px;">$ <span id="total-expense">0</span></div>
         </div>
-        <div style="text-align: right; background: rgba(255,255,255,0.2); padding: 10px 14px; border-radius: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
-            <div style="font-size: 11px; font-weight: 800; opacity:0.9;">我的個人總開銷</div>
+        <!-- UX 優化：將個人總開銷變為可點擊的區塊，並加入彩蛋提示 -->
+        <div style="text-align: right; background: rgba(255,255,255,0.2); padding: 10px 14px; border-radius: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;" onclick="showMyExpenseDetails()" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'" title="點擊查看明細與算法">
+            <div style="font-size: 11px; font-weight: 800; opacity:0.9;">我的個人總開銷 🔍</div>
             <div style="font-size: 22px; font-weight: 800;">$ <span id="my-total-expense">0</span></div>
         </div>
       </div>
@@ -516,8 +572,22 @@
           <div id="poll-form-card" class="card-panel hide-in-archive" style="display:none;">
             <h4 id="poll-form-title" style="margin-bottom: 12px; font-size:16px;">建立投票</h4>
             <input type="hidden" id="edit-poll-id" value="">
-            <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">📅 截止日期 (選填)</label>
-            <input type="date" id="poll-date" class="form-control" style="margin-bottom:12px;">
+            
+            <!-- 加入投票類型選擇 -->
+            <div class="flex-row" style="margin-bottom:12px; align-items:flex-start;">
+                <div style="flex:1;">
+                    <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">📅 截止日期 (選填)</label>
+                    <input type="date" id="poll-date" class="form-control" style="margin:0;">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">⚙️ 投票類型</label>
+                    <select id="poll-type" class="form-control" style="margin:0; appearance:none; background-color:#FAFBFC; cursor:pointer;">
+                        <option value="multiple">☑️ 複選</option>
+                        <option value="single">🔘 單選</option>
+                    </select>
+                </div>
+            </div>
+
             <label style="font-size:12px; font-weight:bold; color:var(--primary); margin-bottom:4px; display:block;">👇 設定投票問題</label>
             <input type="text" id="poll-title" class="form-control poll-title-input" placeholder="例: 晚餐吃什麼？" style="border: 2px solid var(--primary); font-weight:800; font-size:18px;">
             <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; margin-top:8px; display:block;">選項清單</label>
@@ -638,6 +708,25 @@
           <p>系統會自動將「欠款組」的錢，大筆大筆地直接補給「收錢組」。這樣一來，所有人都不互欠，而且只需要最少次數的轉帳就能解決複雜的拆帳問題！</p>
       </div>
       <button class="btn" style="width:100%; margin-top:24px;" onclick="closeModal('budget-info-modal')">我懂了</button>
+    </div>
+  </div>
+
+  <!-- 新增：我的個人花費明細彩蛋 Modal -->
+  <div id="my-expense-details-modal" class="modal-overlay">
+    <div class="modal">
+      <h3 style="margin-bottom: 12px; font-weight:800; color:var(--primary); text-align:center;">🕵️ 我的專屬帳單</h3>
+      <div style="background: #FFFDE7; border: 1px solid #FDE047; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; color: #B45309; line-height: 1.5; font-weight: 600;">
+          <strong>這筆錢怎麼來的？</strong><br>
+          不用懷疑，這絕對不是亂算的！系統自動幫你把「你有參與分攤」的項目，依人數除以總額後加總起來。來看看你到底花了什麼吧 👇
+      </div>
+      <div id="my-expense-details-list" style="max-height: 45vh; overflow-y: auto; padding-right:8px; border-bottom: 1px solid var(--border); margin-bottom: 16px;">
+          <!-- 明細將由 JS 動態生成 -->
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 18px; color: var(--text-main); margin-bottom: 24px;">
+          <span>總計：</span>
+          <span id="my-expense-details-total">$0</span>
+      </div>
+      <button class="btn" style="width:100%;" onclick="closeModal('my-expense-details-modal')">確認無誤 💸</button>
     </div>
   </div>
 
@@ -1568,7 +1657,7 @@
                          if (modeStr === 'walking') { timeStr = `🚶 步行約 ${Math.max(1, Math.round((dist / 4) * 60))} 分鐘`; travelModeParam = 'walking'; }
                          else if (modeStr === 'transit') { timeStr = `🚇 大眾運輸估 ${Math.round((dist / 20) * 60) + 10} 分鐘`; travelModeParam = 'transit'; }
                          else { timeStr = `🚗 開車約 ${Math.round((dist / 35) * 60) + 5} 分鐘 (${dist.toFixed(1)} km)`; travelModeParam = 'driving'; }
-                     } else { timeStr = `📍 尚未設定`; }
+                     } else { timeStr = `📍 點擊設定交通`; }
                  }
                  
                  const dirUrl = (plan.lat && nextPlan.lat) ? `https://www.google.com/maps/dir/?api=1&origin=${plan.lat},${plan.lng}&destination=${nextPlan.lat},${nextPlan.lng}&travelmode=${travelModeParam}` : '';
@@ -1591,7 +1680,7 @@
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
                             <div style="flex:1;">
                                 <strong style="font-size:18px; display:block;">${plan.place}</strong>
-                                ${finalGmapsUrl && index === dayPlans.length - 1 ? `<a href="${finalGmapsUrl}" target="_blank" style="display:inline-block; margin-top:6px; font-size:13px; color:var(--secondary); text-decoration:none; font-weight:800;">📍 Google Maps 導航</a>` : ''}
+                                ${finalGmapsUrl && index === dayPlans.length - 1 ? `<a href="${finalGmapsUrl}" target="_blank" class="gmaps-link-btn" style="margin-top:8px;">📍 Google Maps 導航</a>` : ''}
                             </div>
                             ${plan.image ? `<img src="${plan.image}" class="plan-img-display">` : ''}
                         </div>
@@ -1960,6 +2049,50 @@
         adviceBox.style.display = 'block'; 
     }
 
+    function showMyExpenseDetails() {
+        const p = getCurProject();
+        if (!p || !p.expenses || p.expenses.length === 0) {
+            return showCustomDialog("目前還沒有任何花費紀錄喔！");
+        }
+
+        const listContainer = document.getElementById('my-expense-details-list');
+        let html = '';
+        let myTotal = 0;
+
+        p.expenses.forEach(e => {
+            const cost = parseFloat(e.cost) || 0;
+            const excludes = e.excludes || [];
+            const shareMembers = getTripMembers().filter(m => !excludes.includes(m));
+            
+            if (shareMembers.includes(currentUser) && shareMembers.length > 0) {
+                const costPerPerson = cost / shareMembers.length;
+                myTotal += costPerPerson;
+                
+                html += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--border);">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; font-size: 15px; color: var(--text-main);">${e.item}</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                            總額 $${cost} ÷ ${shareMembers.length} 人 (${e.payer} 代墊)
+                        </div>
+                    </div>
+                    <div style="font-weight: 800; font-size: 16px; color: var(--secondary);">
+                        $${Math.round(costPerPerson)}
+                    </div>
+                </div>`;
+            }
+        });
+
+        if (html === '') {
+            html = `<div style="text-align:center; color:var(--text-muted); padding:20px 0; font-weight:bold;">你這趟旅程目前完全沒花到錢喔！厲害！</div>`;
+        }
+
+        listContainer.innerHTML = html;
+        document.getElementById('my-expense-details-total').textContent = `$${Math.round(myTotal).toLocaleString()}`;
+        
+        openModal('my-expense-details-modal');
+    }
+
     function settleDebt(from, to, amount) {
         showCustomDialog(`確定標記已還款？這將自動新增一筆「${from} 給 ${to}」的匯款紀錄，以抵銷欠款。`, true, () => {
             withLoader(() => {
@@ -2105,27 +2238,34 @@
         const hasUnvoted = p.polls.some(poll => !poll.options.some(opt => opt.voters.includes(currentUser))); 
         if(dot) dot.style.display = hasUnvoted ? 'block' : 'none'; if(innerDot) innerDot.style.display = hasUnvoted ? 'block' : 'none'; 
     }
+    
     function renderPolls() { 
         const p = getCurProject(); const list = document.getElementById('polls-list'); if(!list) return; checkPollNotification(); 
         if(!p.polls || p.polls.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🗳️</div><div class="empty-state-text">目前沒有發起的投票</div></div>`; return; } 
         list.innerHTML = p.polls.map(poll => {
             const dateStr = poll.date ? `<div style="font-size:12px; color:var(--text-muted); font-weight:bold; margin-bottom:8px;">📅 期限: ${poll.date}</div>` : '';
-            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title}</h4><div><span class="action-text edit-text hide-in-archive" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text hide-in-archive" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="vote(${poll.id}, ${i})"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge">發布者: ${poll.creator}</div></div>`;
+            const typeStr = poll.isMultipleChoice === false ? '🔘 單選' : '☑️ 複選';
+            return `<div class="card-panel">${dateStr}<div class="flex-row" style="justify-content:space-between; margin-bottom:16px;"><h4 style="margin:0; font-size:18px; color:var(--text-main); font-weight:800;">📋 ${poll.title} <span style="font-size:11px; background:#E4E8ED; padding:4px 8px; border-radius:8px; color:var(--text-muted); vertical-align:middle; font-weight:bold; margin-left:6px;">${typeStr}</span></h4><div><span class="action-text edit-text hide-in-archive" onclick="editPoll(${poll.id})">✏️</span><span class="action-text del-text hide-in-archive" style="margin:0;" onclick="delPoll(${poll.id})">✕</span></div></div>${poll.options.map((opt, i) => { const isVoted = opt.voters.includes(currentUser); return `<div style="display:flex; justify-content:space-between; align-items:center; padding:16px; background:${isVoted ? '#E8F4FD' : '#FAFBFC'}; margin-top:8px; border-radius:12px; cursor:pointer; border: 2px solid ${isVoted ? '#0284C7' : 'transparent'}; transition:0.2s;" onclick="vote(${poll.id}, ${i})"><span style="font-weight:bold; color:${isVoted ? '#0284C7' : 'var(--text-main)'};">${opt.name}</span><span style="background:${isVoted ? '#0284C7' : '#E5E5EA'}; color:${isVoted ? 'white' : 'var(--text-muted)'}; padding:4px 12px; border-radius:10px; font-size:13px; font-weight:bold;">${opt.voters.length} 票</span></div>${opt.voters.length > 0 ? `<div style="font-size:12px; color:#888; margin: 6px 0 0 16px; font-weight:bold;">已投: ${opt.voters.join(', ')}</div>` : ''}`; }).join('')}<div class="creator-badge" style="margin-top:12px;">發布者: ${poll.creator}</div></div>`;
         }).join(''); 
     }
+    
     function addOrUpdatePoll() { 
         const title = document.getElementById('poll-title').value; const editId = document.getElementById('edit-poll-id').value; const pollDate = document.getElementById('poll-date').value;
+        const isMultipleChoice = document.getElementById('poll-type').value === 'multiple';
         const optInputs = document.querySelectorAll('.poll-opt-input'); const options = []; optInputs.forEach(input => { const val = input.value.trim(); if(val) options.push({ name: val, voters: [] }); });
         if(!title || options.length < 2) return showCustomDialog("請輸入問題，並至少填寫兩個選項！"); 
         withLoader(() => {
             const p = getCurProject(); if(!p.polls) p.polls=[]; 
-            if(editId) { const idx = p.polls.findIndex(x => x.id == editId); if(idx > -1) { const oldOptions = p.polls[idx].options; options.forEach(newOpt => { const matchedOld = oldOptions.find(o => o.name === newOpt.name); if(matchedOld) newOpt.voters = matchedOld.voters; }); p.polls[idx].title = title; p.polls[idx].date = pollDate; p.polls[idx].options = options; } cancelEditPoll(); showSync("✅ 投票已更新", 1500); } 
-            else p.polls.push({ id: Date.now(), title, date: pollDate, creator: currentUser, options }); 
+            if(editId) { const idx = p.polls.findIndex(x => x.id == editId); if(idx > -1) { const oldOptions = p.polls[idx].options; options.forEach(newOpt => { const matchedOld = oldOptions.find(o => o.name === newOpt.name); if(matchedOld) newOpt.voters = matchedOld.voters; }); p.polls[idx].title = title; p.polls[idx].date = pollDate; p.polls[idx].isMultipleChoice = isMultipleChoice; p.polls[idx].options = options; } cancelEditPoll(); showSync("✅ 投票已更新", 1500); } 
+            else p.polls.push({ id: Date.now(), title, date: pollDate, isMultipleChoice, creator: currentUser, options }); 
             updateCurProject(p); renderPolls(); document.getElementById('poll-form-card').style.display = 'none'; document.getElementById('show-poll-btn').style.display = 'block'; 
         });
     }
-    function editPoll(id) { const p = getCurProject(); const poll = p.polls.find(x => x.id === id); if(!poll) return; document.getElementById('poll-title').value = poll.title; document.getElementById('edit-poll-id').value = poll.id; document.getElementById('poll-date').value = poll.date || ''; const container = document.getElementById('poll-options-container'); container.innerHTML = ''; poll.options.forEach(opt => addPollOptionField(opt.name)); document.getElementById('poll-form-title').innerHTML = "✏️ 編輯投票"; document.getElementById('save-poll-btn').innerHTML = "更新"; document.getElementById('cancel-poll-btn').style.display = "block"; document.getElementById('poll-form-card').classList.add('edit-mode-active'); document.getElementById('poll-form-card').style.display = 'block'; document.getElementById('show-poll-btn').style.display = 'none'; document.getElementById('tab-more').scrollIntoView({behavior: "smooth"}); }
-    function cancelEditPoll() { document.getElementById('poll-title').value = ''; document.getElementById('edit-poll-id').value = ''; document.getElementById('poll-date').value = ''; document.getElementById('poll-options-container').innerHTML = `<div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div><div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>`; document.getElementById('poll-form-title').innerHTML = "建立投票"; document.getElementById('save-poll-btn').innerHTML = "發布投票"; document.getElementById('cancel-poll-btn').style.display = "none"; document.getElementById('poll-form-card').classList.remove('edit-mode-active'); document.getElementById('poll-form-card').style.display='none'; document.getElementById('show-poll-btn').style.display='block'; }
+    
+    function editPoll(id) { const p = getCurProject(); const poll = p.polls.find(x => x.id === id); if(!poll) return; document.getElementById('poll-title').value = poll.title; document.getElementById('edit-poll-id').value = poll.id; document.getElementById('poll-date').value = poll.date || ''; document.getElementById('poll-type').value = poll.isMultipleChoice === false ? 'single' : 'multiple'; const container = document.getElementById('poll-options-container'); container.innerHTML = ''; poll.options.forEach(opt => addPollOptionField(opt.name)); document.getElementById('poll-form-title').innerHTML = "✏️ 編輯投票"; document.getElementById('save-poll-btn').innerHTML = "更新"; document.getElementById('cancel-poll-btn').style.display = "block"; document.getElementById('poll-form-card').classList.add('edit-mode-active'); document.getElementById('poll-form-card').style.display = 'block'; document.getElementById('show-poll-btn').style.display = 'none'; document.getElementById('tab-more').scrollIntoView({behavior: "smooth"}); }
+    
+    function cancelEditPoll() { document.getElementById('poll-title').value = ''; document.getElementById('edit-poll-id').value = ''; document.getElementById('poll-date').value = ''; document.getElementById('poll-type').value = 'multiple'; document.getElementById('poll-options-container').innerHTML = `<div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 1"></div><div class="poll-opt-row"><input type="text" class="form-control poll-opt-input" style="margin:0;" placeholder="選項 2"></div>`; document.getElementById('poll-form-title').innerHTML = "建立投票"; document.getElementById('save-poll-btn').innerHTML = "發布投票"; document.getElementById('cancel-poll-btn').style.display = "none"; document.getElementById('poll-form-card').classList.remove('edit-mode-active'); document.getElementById('poll-form-card').style.display='none'; document.getElementById('show-poll-btn').style.display='block'; }
+    
     function delPoll(id) { 
         showCustomDialog("確定刪除此投票？", true, () => { 
             withLoader(() => { 
@@ -2138,7 +2278,28 @@
     function vote(pollId, optIdx) { 
         const p = getCurProject(); 
         if (p.status === 'archived') return; 
-        const poll = p.polls.find(x => x.id === pollId); poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); }); poll.options[optIdx].voters.push(currentUser); updateCurProject(p); renderPolls(); 
+        const poll = p.polls.find(x => x.id === pollId); 
+        const isMultipleChoice = poll.isMultipleChoice !== false; // 預設或 true 皆為複選
+        const opt = poll.options[optIdx];
+        const hasVotedThis = opt.voters.includes(currentUser);
+
+        if (isMultipleChoice) {
+            // 複選：直接切換該選項的狀態
+            if (hasVotedThis) {
+                opt.voters = opt.voters.filter(v => v !== currentUser);
+            } else {
+                opt.voters.push(currentUser);
+            }
+        } else {
+            // 單選：若已投則取消，若未投則先清除其他選項再加入
+            if (hasVotedThis) {
+                opt.voters = opt.voters.filter(v => v !== currentUser);
+            } else {
+                poll.options.forEach(o => { o.voters = o.voters.filter(v => v !== currentUser); });
+                opt.voters.push(currentUser);
+            }
+        }
+        updateCurProject(p); renderPolls(); 
     }
 
     function renderChecklist() {
