@@ -67,9 +67,7 @@
     .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative; }
     .flex-row { display: flex; gap: 12px; align-items: center; }
 
-    .online-users-bar { background: rgba(0, 166, 153, 0.1); border: 1px solid rgba(0,166,153,0.2); color: #008075; padding: 6px 14px; border-radius: 20px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; margin-top: 8px; }
-    .online-dot { width: 8px; height: 8px; background: var(--secondary); border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 153, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 166, 153, 0); } }
+    .online-users-bar { background: rgba(0, 166, 153, 0.05); border: 1px solid rgba(0,166,153,0.1); color: #008075; padding: 8px 16px; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 4px; }
 
     .bottom-nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; height: calc(var(--nav-height) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); border-top: 1px solid var(--border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; color: var(--text-muted); position: relative; height: 100%; }
@@ -81,7 +79,6 @@
     .module-content { display: none; }
     .module-content.active { display: block; animation: fadeIn 0.2s; }
     
-    /* 完美紅點置中與橢圓形 */
     .notification-dot { display: none; position: absolute; top: -4px; right: -10px; min-width: 18px; height: 18px; padding: 0 4px; background: var(--danger); color: white; border-radius: 10px; font-size: 10px; font-weight: bold; align-items: center; justify-content: center; border: 2px solid white; animation: pulseRed 2s infinite; z-index: 10; display: flex; }
     @keyframes pulseRed { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); } }
 
@@ -89,17 +86,13 @@
     .day-selector { padding: 0 20px 10px 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; cursor: grab; border-bottom: 1px solid var(--border); }
     .day-selector::-webkit-scrollbar { display: none; }
     
-    /* 地圖浮動膠囊天數選擇器 */
     #map-day-container { position: absolute; top: 12px; left: 12px; right: 12px; background: transparent; z-index: 500; margin: 0; padding: 0; }
     #map-day-container .day-selector { padding: 0; border: none; margin: 0; display: flex; gap: 8px; align-items: center; }
     #map-day-container .day-btn { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.1); border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 800; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 0; flex-shrink: 0; }
     #map-day-container .day-btn.active { background: var(--primary); color: white; border: none; }
-    #map-day-container .day-badge { background: var(--danger); color: white; }
-    #map-day-container .day-btn.active .day-badge { background: white; color: var(--primary); }
 
     .day-btn { display: inline-flex; align-items: center; padding: 10px 4px; background: transparent; border: none; border-bottom: 3px solid transparent; margin-right: 20px; font-weight: 800; color: var(--text-muted); font-size: 15px; }
     .day-btn.active { color: var(--text-main); border-bottom-color: var(--primary); }
-    .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 11px; font-weight: bold; margin-left: 6px; line-height: 1; }
 
     .duty-roster-bar { background: #FFFDE7; border: 1px solid #FDE047; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 13px; font-weight: 800; color: #B45309; }
     .duty-roster-select { border: none; background: transparent; font-weight: 800; color: var(--primary); outline: none; margin-left: 4px; border-bottom: 1px dashed var(--primary); }
@@ -156,8 +149,8 @@
     .bottom-sheet { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); z-index: 2000; transition: bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .bottom-sheet.active { bottom: 0; }
     .sheet-handle { width: 40px; height: 5px; background: #E4E8ED; border-radius: 10px; margin: 0 auto 16px auto; }
-    .sheet-input-title { font-size:22px; font-weight:800; color:var(--text-main); border:none; border-bottom: 2px dashed #CBD5E1; width:100%; margin-bottom:6px; padding:4px 0; background:transparent; }
-    .sheet-input-title:focus { border-bottom-color: var(--primary); border-style: solid; outline:none; }
+    .sheet-input-title { font-size:20px; font-weight:800; color:var(--text-main); width:100%; padding:8px; background:#FAFBFC; border: 2px dashed #CBD5E1; border-radius:8px; transition:0.2s; }
+    .sheet-input-title:focus { border-color: var(--primary); border-style: solid; outline:none; background: #FFF9F9; }
     .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; }
 
     .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer;}
@@ -206,7 +199,6 @@
     .archived-mode .drag-handle { display: none; }
     .archived-mode .plan-card { padding-left: 16px; }
 
-    /* 分帳九宮格網格樣式 */
     .expense-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
     .expense-square { background: var(--surface); padding: 16px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; aspect-ratio: 1 / 1; position: relative; transition: 0.2s;}
     .expense-square:hover { transform: translateY(-2px); border-color: rgba(0,166,153,0.3); }
@@ -235,7 +227,7 @@
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
       <img src="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png" alt="Logo" style="width: 110px; height: 110px; object-fit: contain; margin-bottom: 20px;">
-      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣 Pro</h1>
+      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       <div style="position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
       <div class="card-panel" style="text-align: left; padding: 28px;">
@@ -282,7 +274,8 @@
           </div>
           <div style="margin-top: 12px; margin-bottom: 12px;">
             <h2 id="project-title-display" style="font-size: 26px; font-weight: 800; color:var(--text-main);">載入中...</h2>
-            <div class="online-users-bar hide-in-export"><div class="online-dot"></div><span id="online-users-text">讀取中...</span></div>
+            <!-- 修復3：更明顯的在線協作顯示 -->
+            <div class="online-users-bar hide-in-export" id="online-users-text">讀取中...</div>
           </div>
           <div id="archive-banner" class="hide-in-export" style="display:none; background: #FFFDE7; color: #B45309; text-align: center; padding: 10px; font-size: 13px; font-weight: 800; border-radius: 12px; margin-bottom: 16px; border: 2px dashed #FDE047;">🔒 此旅程已封存，目前為「唯讀模式」，無法新增或修改資料。</div>
         </div>
@@ -365,6 +358,7 @@
                 <div style="font-size: 13px; font-weight: 800; opacity:0.9;">總花費 (TWD)</div>
                 <div style="font-size: 36px; font-weight: 800; letter-spacing: -1px;">$ <span id="total-expense">0</span></div>
             </div>
+            <!-- 個人總開銷觸發按鈕 -->
             <div style="text-align: right; background: rgba(255,255,255,0.2); padding: 10px 14px; border-radius: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;" onclick="showMyExpenseDetails()" title="點擊查看明細">
                 <div style="font-size: 11px; font-weight: 800; opacity:0.9;">我的個人總開銷 🔍</div>
                 <div style="font-size: 22px; font-weight: 800;">$ <span id="my-total-expense">0</span></div>
@@ -388,6 +382,9 @@
             </div>
             <div id="exp-cost-hint" style="font-size:13px; color:var(--secondary); font-weight:bold; margin-bottom:12px; text-align:right; display:none;">= 換算台幣 $0</div>
 
+            <!-- 修復3：新增幣別設定提示 -->
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; text-align:center;">💡 找不到需要的幣別？請點擊上方「💱 幣別設定」新增</div>
+
             <button id="save-exp-btn" class="btn btn-action" style="width: 100%; margin-top:8px; color:white !important;" onclick="addExpenseFromTop()">新增儲存</button>
           </div>
           
@@ -403,6 +400,8 @@
           <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4; padding-bottom: 12px;"></div>
           
           <h4 style="margin:20px 0 8px 4px; font-size:14px; color:var(--text-muted);">花費明細</h4>
+          
+          <!-- 分帳明細九宮格 -->
           <div id="expense-list" class="expense-grid"></div>
 
           <div id="repayment-section" style="display:none;">
@@ -494,7 +493,7 @@
       </div>
   </div> 
 
-  <!-- 💡 Modal 彈跳視窗集合 (已完全清理重複的 HTML) -->
+  <!-- 💡 Modal 彈跳視窗集合 -->
   
   <div id="custom-dialog-overlay" class="modal-overlay" style="z-index: 10001;">
     <div class="modal" style="max-width: 320px; text-align: center; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);" onclick="event.stopPropagation()">
@@ -627,8 +626,12 @@
   <div id="exchange-rate-modal" class="modal-overlay">
       <div class="modal" onclick="event.stopPropagation()">
           <h3 style="margin-bottom: 16px; font-weight:800; color:var(--secondary); text-align:center;">💱 啟用的外幣</h3>
-          <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; text-align:center;">勾選旅程中會用到的外幣，系統將自動抓取全球即時匯率！</p>
-          <div id="currency-selection-list" style="max-height: 50vh; overflow-y: auto; padding-right:8px; margin-bottom:16px;"></div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px; text-align:center;">勾選旅程中會用到的外幣，系統將自動抓取全球即時匯率！</p>
+          
+          <!-- 修復4：新增搜尋框 -->
+          <input type="text" id="currency-search-input" class="form-control" placeholder="🔍 搜尋幣別 (如: 澳幣, AUD)..." onkeyup="filterCurrencies()" style="margin-bottom: 16px; padding: 12px; border-radius: 12px;">
+          
+          <div id="currency-selection-list" style="max-height: 40vh; overflow-y: auto; padding-right:8px; margin-bottom:16px;"></div>
           <div style="text-align:right; margin-top:-4px; margin-bottom:20px;">
               <a href="https://www.xe.com/currencyconverter/" target="_blank" style="font-size:12px; color:var(--secondary); font-weight:bold; text-decoration:none;">🔗 點此參考 XE.com 即時全球匯率</a>
           </div>
@@ -674,12 +677,19 @@
 
   <div id="map-bottom-sheet" class="bottom-sheet">
     <div class="sheet-handle"></div>
-    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
         <div style="flex:1; padding-right:12px;">
-            <input type="text" id="sheet-place-name-input" class="sheet-input-title" placeholder="景點/餐廳名稱">
+            <input type="text" id="sheet-place-name-input" class="sheet-input-title" placeholder="景點/餐廳名稱" style="border-bottom: 2px solid var(--primary); background: rgba(255,90,95,0.05); border-radius: 8px 8px 0 0; padding: 8px;">
         </div>
-        <span class="action-text" style="background:#F1F5F9; margin:0;" onclick="closeBottomSheet()">✕ 關閉</span>
+        <span class="action-text" style="background:#F1F5F9; margin:0; flex-shrink: 0;" onclick="closeBottomSheet()">✕ 關閉</span>
     </div>
+    
+    <!-- 修復1：標記此處地名自動解析提示 -->
+    <div style="font-size: 12px; color: #D97706; background: #FEF3C7; padding: 6px 10px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 16px;">✏️</span>
+        <span>系統為自動翻譯，<strong>請點擊上方框框</strong>修改為自己好記的名稱！</span>
+    </div>
+    
     <input type="text" id="sheet-place-address-input" class="sheet-input-desc" placeholder="地址或備註">
     
     <div id="sheet-normal-action">
@@ -740,6 +750,7 @@
     </div>
   </div>
 
+  <!-- Core Scripts -->
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzXyfuSTyLZXBTQqcMjHglTu00nH2hua6uYKXNQWUbZB1BneeYGu52T56KFUCgJvR0/exec"; 
     
@@ -748,13 +759,18 @@
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
     let lastSaveTime = 0; let sortableInstance = null; let currentMapMode = 'single'; let currentDashboardTab = 'active';
 
+    // 修復4：擴充更多世界主流與亞洲貨幣
     const CURRENCY_MAP = {
         'JPY': { name: '日圓', flag: '🇯🇵' }, 'KRW': { name: '韓元', flag: '🇰🇷' }, 'THB': { name: '泰銖', flag: '🇹🇭' },
         'USD': { name: '美金', flag: '🇺🇸' }, 'EUR': { name: '歐元', flag: '🇪🇺' }, 'GBP': { name: '英鎊', flag: '🇬🇧' },
-        'CNY': { name: '人民幣', flag: '🇨🇳' }, 'HKD': { name: '港幣', flag: '🇭🇰' }
+        'CNY': { name: '人民幣', flag: '🇨🇳' }, 'HKD': { name: '港幣', flag: '🇭🇰' },
+        'AUD': { name: '澳幣', flag: '🇦🇺' }, 'CAD': { name: '加幣', flag: '🇨🇦' }, 'SGD': { name: '新加坡幣', flag: '🇸🇬' },
+        'CHF': { name: '瑞士法郎', flag: '🇨🇭' }, 'MYR': { name: '馬來西亞令吉', flag: '🇲🇾' }, 'PHP': { name: '菲律賓披索', flag: '🇵🇭' },
+        'IDR': { name: '印尼盾', flag: '🇮🇩' }, 'VND': { name: '越南盾', flag: '🇻🇳' }, 'NZD': { name: '紐西蘭幣', flag: '🇳🇿' },
+        'MOP': { name: '澳門幣', flag: '🇲🇴' }
     };
-    let liveRates = { JPY: 0.215, KRW: 0.023, THB: 0.94, USD: 32.5, EUR: 34.8, GBP: 41.5, CNY: 4.45, HKD: 4.15 }; 
-    const defaultExchangeRates = { 'TWD': 1, 'JPY': 0.215, 'KRW': 0.023, 'THB:': 0.94, 'USD': 32.5, 'EUR': 34.8, 'GBP': 41.5, 'CNY': 4.45, 'HKD': 4.15 };
+    let liveRates = { JPY: 0.215, KRW: 0.023, THB: 0.94, USD: 32.5, EUR: 34.8, GBP: 41.5, CNY: 4.45, HKD: 4.15, AUD: 21.0, CAD: 24.0, SGD: 24.2, CHF: 37.0, MYR: 6.8, PHP: 0.58, IDR: 0.002, VND: 0.0013, NZD: 19.8, MOP: 4.0 }; 
+    const defaultExchangeRates = { 'TWD': 1, 'JPY': 0.215, 'KRW': 0.023, 'THB': 0.94, 'USD': 32.5, 'EUR': 34.8, 'GBP': 41.5, 'CNY': 4.45, 'HKD': 4.15, 'AUD': 21.0, 'CAD': 24.0, 'SGD': 24.2, 'CHF': 37.0, 'MYR': 6.8, 'PHP': 0.58, 'IDR': 0.002, 'VND': 0.0013, 'NZD': 19.8, 'MOP': 4.0 };
 
     function updateLiveRates() {
         fetch('https://open.er-api.com/v6/latest/TWD').then(res => res.json()).then(data => {
@@ -766,7 +782,6 @@
         return L.divIcon({ className: 'custom-map-icon', html: `<div class="custom-map-pin ${colorClass}"><div class="custom-map-pin-inner">${num}</div></div>`, iconSize: [30, 30], iconAnchor: [15, 30] });
     }
 
-    // 支援點擊背景關閉 Modal
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal-overlay') && e.target.id !== 'global-loader') e.target.classList.remove('active');
     });
@@ -976,11 +991,16 @@
       });
     }
 
-    function startAutoSync() { if(syncInterval) clearInterval(syncInterval); syncInterval = setInterval(() => { if(document.visibilityState === 'visible' && currentUser) { syncFromCloud(false, true); } }, 15000); }
+    // 修復3：5秒即時同步，打造 Excel 級協作體驗
+    function startAutoSync() { if(syncInterval) clearInterval(syncInterval); syncInterval = setInterval(() => { if(document.visibilityState === 'visible' && currentUser) { syncFromCloud(false, true); } }, 5000); }
 
     function saveDB(data) { 
       lastSaveTime = Date.now(); const pIdx = data.findIndex(p => p.id === currentProjectId);
-      if(pIdx > -1) { if(!data[pIdx].activeUsers) data[pIdx].activeUsers = {}; data[pIdx].activeUsers[currentUser] = Date.now(); }
+      if(pIdx > -1) { 
+          if(!data[pIdx].activeUsers) data[pIdx].activeUsers = {}; 
+          const currentTab = localStorage.getItem('app_lastTab') || 'itinerary';
+          data[pIdx].activeUsers[currentUser] = { time: Date.now(), tab: currentTab }; 
+      }
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); enqueueSave(currentWorkspace, JSON.stringify(data)); syncFromCloud(false, true);
     }
 
@@ -1020,6 +1040,16 @@
         
         localStorage.setItem('app_lastTab', tabId); 
         if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
+        
+        // 切換 Tab 時同步更新線上狀態
+        if (currentProjectId) {
+            const db = getDB(); const pIdx = db.findIndex(p => p.id === currentProjectId);
+            if(pIdx > -1) {
+                if(!db[pIdx].activeUsers) db[pIdx].activeUsers = {};
+                db[pIdx].activeUsers[currentUser] = { time: Date.now(), tab: tabId };
+                localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(db)); enqueueSave(currentWorkspace, JSON.stringify(db));
+            }
+        }
         syncFromCloud(false, true); 
     }
     
@@ -1101,7 +1131,11 @@
       const p = getCurProject(); if(!p || !p.location) return; localStorage.setItem('app_lastProj', id); 
       const archiveBanner = document.getElementById('archive-banner');
       if(p.status === 'archived') { document.body.classList.add('archived-mode'); if(archiveBanner) archiveBanner.style.display = 'block'; } else { document.body.classList.remove('archived-mode'); if(archiveBanner) archiveBanner.style.display = 'none'; }
-      refreshMemberDependentUIs(); safeRenderAll(); updateOnlineUsers(); p.activeUsers = p.activeUsers || {}; p.activeUsers[currentUser] = Date.now(); updateCurProject(p);
+      refreshMemberDependentUIs(); safeRenderAll(); updateOnlineUsers(); 
+      p.activeUsers = p.activeUsers || {}; 
+      const currentTab = localStorage.getItem('app_lastTab') || 'itinerary';
+      p.activeUsers[currentUser] = { time: Date.now(), tab: currentTab }; 
+      updateCurProject(p);
       if(!silent) { switchView('detail-view'); switchTab('itinerary'); }
     }
     
@@ -1122,7 +1156,6 @@
         const p = getCurProject(); 
         if(!p) return; 
         
-        // 防呆保護：確保陣列存在不當機
         if(!Array.isArray(p.members)) p.members = [];
         
         const list = document.getElementById('manage-members-list'); 
@@ -1136,7 +1169,38 @@
     function addTripMember(m) { const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }
     function removeTripMember(m) { showCustomDialog(`確定要將 ${m} 移出此旅程嗎？`, true, () => { withLoader(() => { const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }); }); }
 
-    function updateOnlineUsers() { const p = getCurProject(); if(!p || !p.activeUsers) return; const now = Date.now(); const activeNames = Object.keys(p.activeUsers).filter(name => (now - p.activeUsers[name]) < 5 * 60 * 1000); const el = document.getElementById('online-users-text'); if(el) el.textContent = activeNames.length > 0 ? `${activeNames.join('、')} 正在協作` : `目前僅你一人在線`; }
+    // 修復3：詳細追蹤每個人在看哪一個畫面
+    function updateOnlineUsers() { 
+        const p = getCurProject(); if(!p || !p.activeUsers) return; 
+        const now = Date.now(); 
+        const tabNames = { itinerary: '📅 行程', map: '🗺️ 地圖', budget: '💰 分帳', notes: '📝 記事', more: '⚙️ 更多' };
+        
+        let onlineTexts = [];
+        Object.keys(p.activeUsers).forEach(name => {
+            const userData = p.activeUsers[name];
+            let time = 0; let tabStr = '';
+            
+            if (typeof userData === 'number') {
+                time = userData;
+            } else if (typeof userData === 'object') {
+                time = userData.time;
+                if (userData.tab && tabNames[userData.tab] && name !== currentUser) {
+                    tabStr = `在看${tabNames[userData.tab]}`;
+                }
+            }
+            
+            // 20秒內有反應視為在線 (因為每5秒會同步)
+            if ((now - time) < 20000 && name !== currentUser) {
+                onlineTexts.push(`<strong style="color:var(--primary); font-size:13px;">${name}</strong>${tabStr ? `<span style="color:#888; font-weight:normal; font-size:11px; margin-left:2px;">(${tabStr})</span>` : ''}`);
+            }
+        });
+        
+        const el = document.getElementById('online-users-text'); 
+        if(el) {
+            el.innerHTML = onlineTexts.length > 0 ? `${onlineTexts.join('、')} <span style="color:var(--secondary); margin-left:4px;">🟢 連線中</span>` : `目前僅你一人在線`; 
+        }
+    }
+
     function addOneDay() { showCustomDialog("確定要將旅程延長一天嗎？", true, () => { withLoader(() => { const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }); }); }
     
     function changeDayIndex(idx) { withLoader(() => { activeDayIndex = idx; localStorage.setItem('app_lastDayIdx', idx); renderItinerary(); const mapTab = document.getElementById('tab-map'); if(mapTab && mapTab.classList.contains('active')) renderMapRoute(); syncFromCloud(false, true); }, 150); }
@@ -1168,8 +1232,11 @@
       let mapDaysHtml = ''; 
       for(let i=0; i<totalDays; i++) { 
           const count = (p.plans || []).filter(plan => plan && plan.dayIdx === i).length; 
-          daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}</button>`; 
-          mapDaysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天 ${count > 0 ? `<span class="day-badge">${count}</span>` : ''}</button>`; 
+          // 修正：為數字加上獨立的膠囊背景樣式與間距，避免文字黏在一起
+          const badgeHtml = count > 0 ? `<span style="margin-left: 6px; padding: 2px 8px; border-radius: 12px; background: ${i === activeDayIndex ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.06)'}; font-size: 12px;">${count}</span>` : '';
+          
+          daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天${badgeHtml}</button>`; 
+          mapDaysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天${badgeHtml}</button>`; 
       }
       const dayBtnsEl = document.getElementById('day-buttons'); if (dayBtnsEl) dayBtnsEl.innerHTML = daysHtml + `<button class="day-btn day-add-btn hide-in-archive hide-in-export" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
       
@@ -1178,15 +1245,16 @@
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex); const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
       
       const wishlistCount = p.wishlist ? p.wishlist.length : 0;
-      const wishlistBadge = wishlistCount > 0 ? `<span class="notification-dot" style="display:flex; right:-6px; top:-6px;">${wishlistCount}</span>` : '';
+      // 修復2：待排按鈕的紅點提示樣式
+      const wishlistBadge = wishlistCount > 0 ? `<span style="background:var(--danger); color:white; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:10px; margin-left:4px; animation: pulseRed 2s infinite;">${wishlistCount}</span>` : '';
       
       const headerTextEl = document.getElementById('itinerary-date-header-text'); if (headerTextEl) headerTextEl.innerHTML = `第 ${activeDayIndex + 1} 天 <span style="font-size:16px; font-weight:700; color:var(--text-muted); margin-left:4px;">(${dayStr})</span>`;
       
       const headerBtns = document.getElementById('itinerary-header-actions');
       if (headerBtns) {
           headerBtns.innerHTML = `
-              <button class="btn-small" style="position:relative; background:#F8FAFC; color:var(--secondary); font-weight:800; border:1px solid #CBD5E1; border-radius:10px; padding:6px 10px; font-size:12px; box-shadow:none; cursor:pointer;" onclick="openWishlistModal()">🎒 待排 ${wishlistBadge}</button>
-              <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:10px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:14px; margin-right:2px; line-height:1;">+</span> 新增</button>
+              <button class="btn-small" style="background:#F8FAFC; color:var(--secondary); font-weight:800; border:1px solid #CBD5E1; border-radius:10px; padding:6px 10px; font-size:12px; box-shadow:none; cursor:pointer; display:inline-flex; align-items:center;" onclick="openWishlistModal()">🎒 待排 ${wishlistBadge}</button>
+              <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:10px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:14px; margin-right:2px; line-height:1;">+</span> 新增</button>
           `;
       }
 
@@ -1196,7 +1264,7 @@
       const dutyDriverTextEl = document.getElementById('duty-driver-text'); if (dutyDriverTextEl) dutyDriverTextEl.textContent = todaysDuty.driver || '無';
       const dutyGuideTextEl = document.getElementById('duty-guide-text'); if (dutyGuideTextEl) dutyGuideTextEl.textContent = todaysDuty.guide || '無';
 
-      const list = document.getElementById('plan-list'); const dayPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === activeDayIndex).sort((a,b) => a.time.localeCompare(b.time));
+      const list = document.getElementById('plan-list'); const dayPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === activeDayIndex).sort((a,b) => (a.time || '').localeCompare(b.time || ''));
       if(!list) return;
 
       if(dayPlans.length === 0) {
@@ -1265,17 +1333,24 @@
                       if (evt.oldIndex === evt.newIndex) return;
                       withLoader(() => {
                           const curP = getCurProject();
-                          const curDayPlans = (curP.plans || []).filter(pl => pl && pl.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time));
+                          const curDayPlans = (curP.plans || []).filter(pl => pl && pl.dayIdx === activeDayIndex).sort((a,b)=>(a.time || '').localeCompare(b.time || ''));
+                          
+                          // 修復2：業界標準作法 - 固定當天的所有「時間槽」，只交換裡面的「行程」
+                          const timeSlots = curDayPlans.map(pl => pl.time);
+                          
                           const movedPlanId = parseInt(evt.item.getAttribute('data-id'));
                           const movedPlan = curDayPlans.find(pl => pl.id === movedPlanId);
-                          curDayPlans.splice(evt.oldIndex, 1); curDayPlans.splice(evt.newIndex, 0, movedPlan);
-                          let runningTime = curDayPlans[0].time;
+                          
+                          curDayPlans.splice(evt.oldIndex, 1);
+                          curDayPlans.splice(evt.newIndex, 0, movedPlan);
+                          
+                          // 將原本的時間槽，依序重新賦予給新排序的行程
                           for (let i = 0; i < curDayPlans.length; i++) {
-                              curDayPlans[i].time = runningTime; let stay = curDayPlans[i].stay || 60;
-                              if (i < curDayPlans.length - 1) runningTime = addMinutesToTime(runningTime, stay + 15); 
+                              curDayPlans[i].time = timeSlots[i];
                           }
+                          
                           curDayPlans.forEach(cp => { const idx = curP.plans.findIndex(x => x && x.id === cp.id); if (idx > -1) curP.plans[idx].time = cp.time; });
-                          updateCurProject(curP); renderItinerary(); showSync("✅ 順序已調整，時間已自動順延", 1500);
+                          updateCurProject(curP); renderItinerary(); showSync("✅ 行程已重新排序換位", 1500);
                       }, 100);
                   }
               });
@@ -1317,9 +1392,10 @@
       if(!place || !time) { showCustomDialog("請輸入時間與景點名稱"); return false; }
       const p = getCurProject(); if(!p.plans) p.plans = [];
       
-      const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && x.id != editId);
+      // 修復1：嚴格判斷時間重複防呆 (確保 ID 型別轉換正確)
+      const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && String(x.id) !== String(editId));
       if (isDuplicate) {
-          showCustomDialog(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請更換一個時間。`);
+          showCustomDialog(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請手動更換一個時間。`);
           return false;
       }
 
@@ -1342,7 +1418,7 @@
     function cancelEditPlan() { document.getElementById('plan-place').value = ''; document.getElementById('edit-plan-id').value = ''; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-form-title').innerHTML = "編輯行程"; document.getElementById('save-plan-btn').innerHTML = "儲存"; document.getElementById('cancel-edit-btn').style.display = "none"; document.getElementById('plan-form-card').classList.remove('edit-mode-active'); document.getElementById('plan-form-card').style.display = 'none'; }
     function delPlan(id) { showCustomDialog("確定刪除此行程？", true, () => { withLoader(() => { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); }); }); }
     
-    function exportTextItinerary() { const p = getCurProject(); const dayPlans = (p.plans || []).filter(plan => plan.dayIdx === activeDayIndex).sort((a,b)=>a.time.localeCompare(b.time)); if(dayPlans.length === 0) return showCustomDialog("這天還沒有行程可以複製喔！"); let text = `📍 ${p.location} - 第 ${activeDayIndex + 1} 天行程\n\n`; dayPlans.forEach((plan, i) => { text += `${i+1}. [${plan.time}] ${plan.place}\n`; }); copyText(text, "📋 行程已複製"); }
+    function exportTextItinerary() { const p = getCurProject(); const dayPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === activeDayIndex).sort((a,b)=>(a.time || '').localeCompare(b.time || '')); if(dayPlans.length === 0) return showCustomDialog("這天還沒有行程可以複製喔！"); let text = `📍 ${p.location} - 第 ${activeDayIndex + 1} 天行程\n\n`; dayPlans.forEach((plan, i) => { text += `${i+1}. [${plan.time}] ${plan.place}\n`; }); copyText(text, "📋 行程已複製"); }
 
     function exportItineraryToImage() {
         if(typeof html2canvas === 'undefined') return showCustomDialog("匯出工具載入中，請稍候重試");
@@ -1367,12 +1443,22 @@
     function renderWishlist() {
         const p = getCurProject(); if(!p.wishlist) p.wishlist = []; const container = document.getElementById('wishlist-container');
         if(p.wishlist.length === 0) { if(container) container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-weight:bold; padding: 20px 0;">口袋名單空空如也，快加點什麼吧！</div>`; return; }
-        if(container) container.innerHTML = p.wishlist.map(item => `<div class="card-panel" style="padding:16px; margin-bottom:12px;"><div style="font-weight:800; font-size:16px; margin-bottom:8px;">${item.place}</div><div style="display:flex; gap:8px;"><button class="btn btn-action btn-small" style="flex:1; color:white !important;" onclick="moveWishlistToPlan(${item.id})">➕ 加入今日</button><button class="btn-outline btn-small" style="flex:1;" onclick="delWishlist(${item.id})">刪除</button></div></div>`).join('');
+        if(container) container.innerHTML = p.wishlist.map(item => `
+        <div class="card-panel" style="padding:16px; margin-bottom:12px;">
+            <div style="font-weight:800; font-size:16px; margin-bottom:4px;">${item.place}</div>
+            <!-- 修復2：標註建立者 -->
+            <div style="font-size:11px; color:var(--text-muted); font-weight:bold; margin-bottom:12px;">由 ${item.creator || '提議者'} 新增</div>
+            <div style="display:flex; gap:8px;">
+                <button class="btn btn-action btn-small" style="flex:1; color:white !important;" onclick="moveWishlistToPlan(${item.id})">➕ 加入今日</button>
+                <button class="btn-outline btn-small" style="flex:1;" onclick="delWishlist(${item.id})">刪除</button>
+            </div>
+        </div>`).join('');
     }
-    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return; const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); showSync("✅ 已加入口袋名單", 1000); }
+    // 修復2：口袋名單儲存時記錄 currentUser
+    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return; const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null, creator: currentUser }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); showSync("✅ 已加入口袋名單", 1000); }
     function addSheetToWishlist() {
         if(!currentSheetSelection) return; const nameInput = document.getElementById('sheet-place-name-input'); const finalName = nameInput ? nameInput.value : currentSheetSelection.name;
-        const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: finalName, lat: currentSheetSelection.lat, lng: currentSheetSelection.lng }); updateCurProject(p); closeBottomSheet(); showSync("✅ 已收藏至口袋名單", 1500);
+        const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: finalName, lat: currentSheetSelection.lat, lng: currentSheetSelection.lng, creator: currentUser }); updateCurProject(p); closeBottomSheet(); showSync("✅ 已收藏至口袋名單", 1500);
     }
     function moveWishlistToPlan(id) {
         const p = getCurProject(); const itemIdx = p.wishlist.findIndex(x => x.id === id); if(itemIdx === -1) return; const item = p.wishlist[itemIdx];
@@ -1422,6 +1508,7 @@
         if(activeClickMarker) map.removeLayer(activeClickMarker); 
         activeClickMarker = L.marker(center, {icon: createCustomMapIcon()}).addTo(map);
         
+        // 修復3：加入 zh-TW 語言偏好參數，盡力讓 AI 回傳中文翻譯
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${center.lat}&lon=${center.lng}&zoom=18&addressdetails=1&accept-language=zh-TW,zh;q=0.9,en;q=0.8`).then(res => res.json())
         .then(data => { let placeName = data.name || (data.address && (data.address.road || data.address.suburb || data.address.city)) || "📍 自選地點"; if(placeName === "📍 自選地點" && data.display_name) placeName = data.display_name.split(',')[0]; openBottomSheet(placeName, data.display_name || '無詳細地址', center.lat, center.lng); })
         .catch(() => { openBottomSheet("📍 自選地點", "經緯度：" + center.lat.toFixed(4) + ", " + center.lng.toFixed(4), center.lat, center.lng); });
@@ -1477,6 +1564,7 @@
         try {
             const p = getCurProject(); 
             if(p && p.start && p.end) {
+                // 修復1：強固的日期防呆，如果解析失敗就預設為 1 天，保證視窗能開
                 const startD = new Date(p.start.split(' to ')[0].split(' 至 ')[0]); 
                 const endD = new Date(p.end.split(' to ').pop().split(' 至 ').pop()); 
                 if(!isNaN(startD) && !isNaN(endD)) totalDays = Math.max(1, Math.floor((endD - startD) / 86400000) + 1);
@@ -1514,7 +1602,7 @@
     function renderMapRoute() {
       if(!map) return; mapMarkers.forEach(m => map.removeLayer(m)); mapMarkers = []; if(routeLine) map.removeLayer(routeLine); if(activeClickMarker) map.removeLayer(activeClickMarker);
       const p = getCurProject(); 
-      const targetPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === activeDayIndex && plan.lat && plan.lng).sort((a,b)=>a.time.localeCompare(b.time));
+      const targetPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === activeDayIndex && plan.lat && plan.lng).sort((a,b)=>(a.time || '').localeCompare(b.time || ''));
 
       if(targetPlans.length === 0) return;
       const latlngs = [];
@@ -1533,11 +1621,23 @@
         const p = getCurProject(); let activeCurrs = Array.isArray(p.activeCurrencies) ? p.activeCurrencies : ['JPY']; let html = '';
         for (const [code, info] of Object.entries(CURRENCY_MAP)) {
             const isChecked = activeCurrs.includes(code) ? 'checked' : ''; const rateText = liveRates[code] ? `1 ${code} ≈ ${liveRates[code].toFixed(4)} 台幣` : '匯率載入中...';
-            html += `<label class="checkbox-item" style="padding:12px; background:white; margin-bottom:8px; border-radius:12px; border:1px solid var(--border); cursor:pointer;"><div style="flex:1;"><strong style="font-size:15px; color:var(--text-main);">${info.flag} ${info.name} (${code})</strong><div style="font-size:12px; color:var(--secondary); font-weight:bold; margin-top:4px;">即時匯率: ${rateText}</div></div><input type="checkbox" class="currency-checkbox" value="${code}" style="display:none;" ${isChecked}><div class="toggle-switch"></div></label>`;
+            // 修復4：加上 currency-item-row 供搜尋過濾使用
+            html += `<label class="checkbox-item currency-item-row" data-name="${info.name} ${code}" style="padding:12px; background:white; margin-bottom:8px; border-radius:12px; border:1px solid var(--border); cursor:pointer;"><div style="flex:1;"><strong style="font-size:15px; color:var(--text-main);">${info.flag} ${info.name} (${code})</strong><div style="font-size:12px; color:var(--secondary); font-weight:bold; margin-top:4px;">即時匯率: ${rateText}</div></div><input type="checkbox" class="currency-checkbox" value="${code}" style="display:none;" ${isChecked}><div class="toggle-switch"></div></label>`;
         }
-        const listEl = document.getElementById('currency-selection-list'); if(listEl) listEl.innerHTML = html; openModal('exchange-rate-modal');
+        const listEl = document.getElementById('currency-selection-list'); if(listEl) listEl.innerHTML = html; 
+        const searchInput = document.getElementById('currency-search-input'); if(searchInput) searchInput.value = '';
+        openModal('exchange-rate-modal');
     }
     
+    // 修復4：幣別搜尋功能函式
+    function filterCurrencies() {
+        const q = document.getElementById('currency-search-input').value.toLowerCase();
+        document.querySelectorAll('.currency-item-row').forEach(row => {
+            const name = row.getAttribute('data-name').toLowerCase();
+            row.style.display = name.includes(q) ? 'flex' : 'none';
+        });
+    }
+
     function saveExchangeRate() {
         const checkboxes = document.querySelectorAll('.currency-checkbox'); let selected = []; checkboxes.forEach(cb => { if(cb.checked) selected.push(cb.value); });
         const p = getCurProject(); p.activeCurrencies = selected; updateCurProject(p);
