@@ -68,6 +68,8 @@
     .flex-row { display: flex; gap: 12px; align-items: center; }
 
     .online-users-bar { background: rgba(0, 166, 153, 0.05); border: 1px solid rgba(0,166,153,0.1); color: #008075; padding: 8px 16px; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 4px; }
+    .online-dot { width: 8px; height: 8px; background: var(--secondary); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 153, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 166, 153, 0); } }
 
     .bottom-nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; height: calc(var(--nav-height) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); border-top: 1px solid var(--border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; color: var(--text-muted); position: relative; height: 100%; }
@@ -90,9 +92,12 @@
     #map-day-container .day-selector { padding: 0; border: none; margin: 0; display: flex; gap: 8px; align-items: center; }
     #map-day-container .day-btn { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.1); border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 800; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 0; flex-shrink: 0; }
     #map-day-container .day-btn.active { background: var(--primary); color: white; border: none; }
+    #map-day-container .day-badge { background: var(--danger); color: white; }
+    #map-day-container .day-btn.active .day-badge { background: white; color: var(--primary); }
 
     .day-btn { display: inline-flex; align-items: center; padding: 10px 4px; background: transparent; border: none; border-bottom: 3px solid transparent; margin-right: 20px; font-weight: 800; color: var(--text-muted); font-size: 15px; }
     .day-btn.active { color: var(--text-main); border-bottom-color: var(--primary); }
+    .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 11px; font-weight: bold; margin-left: 6px; line-height: 1; }
 
     .duty-roster-bar { background: #FFFDE7; border: 1px solid #FDE047; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 13px; font-weight: 800; color: #B45309; }
     .duty-roster-select { border: none; background: transparent; font-weight: 800; color: var(--primary); outline: none; margin-left: 4px; border-bottom: 1px dashed var(--primary); }
@@ -163,8 +168,9 @@
     .poll-opt-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
     .poll-opt-input { background: #FAFBFC; font-size: 15px; border-radius: 12px; }
     
-    .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; }
-    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; }
+    .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; overflow-x: auto; white-space: nowrap;}
+    .sub-nav-container::-webkit-scrollbar { display: none; }
+    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; }
     .sub-nav-btn.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .tool-btn-wrap { display: flex; gap: 10px; margin-top: 16px; }
     .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; }
@@ -211,23 +217,28 @@
     .expense-sq-btn:hover { background: #E2E8F0; }
     .expense-sq-exclude { font-size: 10px; background: #FFF0F0; color: var(--danger); padding: 2px 6px; border-radius: 8px; font-weight: bold; display: inline-block; margin-top: 4px; }
     .repayment-item { background: white; padding: 12px 16px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; opacity: 0.7;}
+
+    /* 圖表樣式 */
+    .chart-bar { height: 8px; border-radius: 4px; margin-bottom: 4px; }
+    .chart-label { font-size: 11px; font-weight: bold; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .esim-card { background: #FAFBFC; border: 1px solid #E4E8ED; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+    .esim-code-box { background: white; border: 1px dashed #CBD5E1; padding: 12px; border-radius: 12px; font-family: monospace; font-size: 13px; color: var(--text-main); word-break: break-all; margin: 8px 0; cursor:pointer; transition:0.2s;}
+    .esim-code-box:hover { border-color: var(--primary); background: #FFF0F0; }
   </style>
 </head>
 <body>
 
-  <!-- 讀取圈與同步狀態 -->
   <div id="global-loader" class="modal-overlay" style="z-index: 9999;">
-    <div class="modal" style="text-align: center; background: transparent; box-shadow: none;">
+    <div class="modal" style="text-align: center; background: transparent; box-shadow: none;" onclick="event.stopPropagation()">
       <div class="spinner"></div><h2 style="font-weight: 800; color: white; margin-top:16px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">處理中...</h2>
     </div>
   </div>
   <div id="sync-status"><span id="sync-status-icon">☁️</span> <span id="sync-status-text">雲端同步中...</span></div>
 
-  <!-- 登入畫面 -->
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
       <img src="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png" alt="Logo" style="width: 110px; height: 110px; object-fit: contain; margin-bottom: 20px;">
-      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣</h1>
+      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣 Pro</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       <div style="position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
       <div class="card-panel" style="text-align: left; padding: 28px;">
@@ -241,7 +252,6 @@
     </div>
   </div>
 
-  <!-- 專案列表畫面 -->
   <div id="dashboard-view" class="view">
     <div class="app-header">
       <h2 style="font-weight: 800; font-size: 24px;">👋 <span id="display-name"></span></h2>
@@ -261,7 +271,6 @@
     <div class="projects-container" id="projects-grid"></div>
   </div>
 
-  <!-- 專案詳細內容畫面 -->
   <div id="export-wrapper">
       <div id="detail-view" class="view" style="padding-bottom: 20px;">
         <div class="detail-header">
@@ -274,7 +283,6 @@
           </div>
           <div style="margin-top: 12px; margin-bottom: 12px;">
             <h2 id="project-title-display" style="font-size: 26px; font-weight: 800; color:var(--text-main);">載入中...</h2>
-            <!-- 修復3：更明顯的在線協作顯示 -->
             <div class="online-users-bar hide-in-export" id="online-users-text">讀取中...</div>
           </div>
           <div id="archive-banner" class="hide-in-export" style="display:none; background: #FFFDE7; color: #B45309; text-align: center; padding: 10px; font-size: 13px; font-weight: 800; border-radius: 12px; margin-bottom: 16px; border: 2px dashed #FDE047;">🔒 此旅程已封存，目前為「唯讀模式」，無法新增或修改資料。</div>
@@ -291,13 +299,19 @@
         <!-- 📅 行程頁籤 -->
         <div id="tab-itinerary" class="module-content active">
           <div class="day-selector-container hide-in-export" id="day-container"><div class="day-selector" id="day-buttons"></div></div>
+          
           <div class="itinerary-date-header">
-              <span id="itinerary-date-header-text"></span><div class="hide-in-export hide-in-archive" id="itinerary-header-actions" style="display:flex; gap:8px;"></div>
+              <span id="itinerary-date-header-text"></span>
+              <div class="hide-in-export hide-in-archive" id="itinerary-header-actions" style="display:flex; gap:8px;"></div>
           </div>
+          
           <div class="duty-roster-bar" id="duty-roster-container">
               <span>🚗 司機: <select id="duty-driver" class="duty-roster-select hide-in-archive" onchange="updateDuty('driver')"></select><span class="only-in-archive" id="duty-driver-text"></span></span>
               <span>🚩 導遊: <select id="duty-guide" class="duty-roster-select hide-in-archive" onchange="updateDuty('guide')"></select><span class="only-in-archive" id="duty-guide-text"></span></span>
           </div>
+
+          <button class="btn-outline hide-in-export hide-in-archive" style="width:100%; border-radius:12px; padding:10px; font-size:13px; font-weight:bold; margin-bottom:16px; border-style:dashed;" onclick="optimizeRoute()">✨ 智能最佳化路線 (自動重排)</button>
+
           <div id="plan-form-card" class="card-panel hide-in-archive" style="padding: 20px; display: none; border: 2px solid var(--border);">
             <h4 id="plan-form-title" style="margin-bottom: 16px; font-size:16px;">編輯行程</h4>
             <input type="hidden" id="edit-plan-id" value=""><input type="hidden" id="edit-lat" value=""><input type="hidden" id="edit-lng" value="">
@@ -364,6 +378,12 @@
                 <div style="font-size: 22px; font-weight: 800;">$ <span id="my-total-expense">0</span></div>
             </div>
           </div>
+
+          <!-- 花費類別統計圖表 -->
+          <div class="card-panel" id="expense-chart-container" style="display: none; padding: 16px;">
+              <h4 style="font-size: 14px; margin-bottom: 12px; color: var(--text-muted);">📊 花費比例統計</h4>
+              <div id="expense-chart-content"></div>
+          </div>
           
           <div id="expense-form-card" class="card-panel hide-in-archive">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -374,7 +394,18 @@
                 <input type="date" id="exp-date" class="form-control" style="flex:1;">
                 <select id="exp-payer" class="form-control" style="flex:1; cursor:pointer;"></select>
             </div>
-            <input type="text" id="exp-item" class="form-control" placeholder="花費項目 (如: 晚餐)">
+            
+            <div class="flex-row">
+                <select id="exp-category" class="form-control" style="flex:1; cursor:pointer;">
+                    <option value="餐飲">🍽️ 餐飲</option>
+                    <option value="交通">🚗 交通</option>
+                    <option value="住宿">🏨 住宿</option>
+                    <option value="娛樂">🎟️ 娛樂/門票</option>
+                    <option value="購物">🛍️ 購物</option>
+                    <option value="其他">📌 其他</option>
+                </select>
+                <input type="text" id="exp-item" class="form-control" style="flex:2;" placeholder="項目備註 (如: 晚餐)">
+            </div>
             
             <div class="flex-row" style="margin-bottom:12px; gap:8px;">
                 <select id="exp-currency" class="form-control" style="margin:0; width:130px; cursor:pointer;" onchange="updateExpCostCalc()"></select>
@@ -382,7 +413,12 @@
             </div>
             <div id="exp-cost-hint" style="font-size:13px; color:var(--secondary); font-weight:bold; margin-bottom:12px; text-align:right; display:none;">= 換算台幣 $0</div>
 
-            <!-- 修復3：新增幣別設定提示 -->
+            <!-- 新增：主表記帳時可直接選擇不分攤的人 -->
+            <div style="margin-bottom:16px; padding:12px; background:rgba(0,166,153,0.05); border-radius:12px; border:1px dashed rgba(0,166,153,0.2);">
+                <div style="font-size:12px; font-weight:bold; color:var(--text-main); margin-bottom:8px;">👥 參與分攤人員 (預設全選，取消勾選則免付)</div>
+                <div id="exp-new-members-checkboxes" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+            </div>
+
             <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; text-align:center;">💡 找不到需要的幣別？請點擊上方「💱 幣別設定」新增</div>
 
             <button id="save-exp-btn" class="btn btn-action" style="width: 100%; margin-top:8px; color:white !important;" onclick="addExpenseFromTop()">新增儲存</button>
@@ -400,8 +436,6 @@
           <div class="card-panel" id="split-bill-advice" style="display: none; border: 1.5px dashed var(--secondary); background:#F0FDF4; padding-bottom: 12px;"></div>
           
           <h4 style="margin:20px 0 8px 4px; font-size:14px; color:var(--text-muted);">花費明細</h4>
-          
-          <!-- 分帳明細九宮格 -->
           <div id="expense-list" class="expense-grid"></div>
 
           <div id="repayment-section" style="display:none;">
@@ -430,8 +464,11 @@
                 <div class="sub-nav-btn active" id="btn-more-contact" onclick="switchMoreTab('more-contact')">📞 聯絡人</div>
                 <div class="sub-nav-btn" id="btn-more-poll" onclick="switchMoreTab('more-poll')">🗳️ 投票 <span id="inner-poll-dot" class="notification-dot"></span></div>
                 <div class="sub-nav-btn" id="btn-more-checklist" onclick="switchMoreTab('more-checklist')">🎒 行李清單</div>
+                <div class="sub-nav-btn" id="btn-more-esim" onclick="switchMoreTab('more-esim')">🌐 網卡</div>
+                <div class="sub-nav-btn" id="btn-more-linebot" onclick="switchMoreTab('more-linebot')">🤖 機器人</div>
             </div>
 
+            <!-- 聯絡人 -->
             <div id="more-contact" class="more-section" style="display:block;">
               <div id="contact-form-card" class="card-panel hide-in-archive">
                 <h4 id="contact-form-title" style="margin-bottom: 16px; font-size:16px;">新增聯絡人</h4>
@@ -446,6 +483,7 @@
               <div id="contacts-list"></div>
             </div>
 
+            <!-- 投票 -->
             <div id="more-poll" class="more-section" style="display:none;">
               <button class="btn btn-action hide-in-archive" id="show-poll-btn" style="width:100%; margin-bottom:16px; padding:16px; border-radius:16px; color:white !important;" onclick="document.getElementById('poll-form-card').style.display='block'; this.style.display='none';"><span style="font-size:18px; line-height:1; margin-right:4px;">+</span> 建立新投票</button>
               
@@ -472,6 +510,7 @@
               <div id="polls-list"></div>
             </div>
 
+            <!-- 行李清單 -->
             <div id="more-checklist" class="more-section" style="display:none;">
                 <div class="card-panel hide-in-archive" style="padding:16px;">
                     <div style="display:flex; gap:8px;">
@@ -489,14 +528,69 @@
                     <div id="checklist-container"></div>
                 </div>
             </div>
+
+            <!-- eSIM 網卡模組 -->
+            <div id="more-esim" class="more-section" style="display:none;">
+                <div class="card-panel hide-in-archive">
+                    <h4 style="margin-bottom: 12px; font-size:16px;">分享 eSIM 資訊</h4>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">通常只要上傳 QRCode 即可，以下代碼為手動設定時的備用選項。</p>
+                    
+                    <select id="esim-assignee" class="form-control" style="margin-bottom:8px; cursor:pointer;"></select>
+                    
+                    <input type="text" id="esim-name" class="form-control" placeholder="網卡名稱 (如: 中華電信日韓漫遊)">
+                    <input type="text" id="esim-smdp" class="form-control" placeholder="SM-DP+ Address (非必填，備用)">
+                    <input type="text" id="esim-activation" class="form-control" placeholder="Activation Code (非必填，備用)">
+                    <label class="file-upload-label" style="margin-top: 4px;"><span>📷 上傳 QRCode 截圖 (建議)</span><input type="file" id="esim-image-input" accept="image/*" style="display: none;" onchange="previewEsimImage(event)"></label>
+                    <img id="esim-img-preview" style="width:100px; height:100px; object-fit:cover; border-radius:12px; display:none; margin-bottom:12px; border:1px solid #E4E8ED;">
+                    <button class="btn btn-action" style="width: 100%; color:white !important;" onclick="addEsim()">儲存並分享</button>
+                </div>
+                <div id="esim-list"></div>
+            </div>
+
+            <!-- LINE 機器人模組 -->
+            <div id="more-linebot" class="more-section" style="display:none;">
+                <div class="card-panel hide-in-archive">
+                    <h4 style="margin-bottom: 12px; font-size:16px; color:#00B900; display:flex; align-items:center; gap:6px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" style="width:20px; height:20px;"> 
+                        LINE 群組助手 (設定)
+                    </h4>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">將官方機器人邀請至 LINE 群組，並輸入專屬認證碼，即可自動同步行程提醒、投票與分帳通知！</p>
+                    
+                    <label style="font-size:12px; font-weight:bold; color:var(--text-main);">🔑 本旅程專屬認證碼：</label>
+                    <div style="display:flex; gap:8px; margin-top:4px; margin-bottom:16px;">
+                        <input type="text" id="line-auth-code" class="form-control" style="margin:0; flex:1; font-family:monospace; font-weight:900; color:var(--primary); background:#FFF0F0; border-color:#FECACA; font-size:18px; text-align:center;" readonly>
+                        <button class="btn btn-action" style="padding:10px 16px;" onclick="copyLineAuthCode()">📋 複製</button>
+                    </div>
+
+                    <div style="background:#F8F9FA; border:1px solid #E4E8ED; border-radius:12px; padding:16px; font-size:13px; color:var(--text-main);">
+                        <strong style="color:var(--secondary);">📌 綁定步驟：</strong>
+                        <ol style="margin-top:8px; padding-left:20px; line-height:1.8; color:var(--text-muted); font-weight:bold;">
+                            <li>將「旅遊趣小幫手」加入你們的 LINE 聊天群組。</li>
+                            <li>在群組內輸入下方指令：<br>
+                                <div style="background:#E2E8F0; padding:6px 10px; border-radius:8px; color:#0284C7; margin-top:4px; margin-bottom:4px; display:inline-block; font-family:monospace; font-size:14px; cursor:pointer;" onclick="copyText('/bind ' + document.getElementById('line-auth-code').value, '📋 指令已複製')">
+                                    /bind <span class="line-auth-code-display"></span>
+                                </div>
+                            </li>
+                            <li>綁定成功後，機器人會在出發前發送提醒，並在發起投票時自動推播！</li>
+                        </ol>
+                    </div>
+                    
+                    <div style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px;">
+                        <label class="checkbox-item" style="padding:0; cursor:pointer;">
+                            <span style="font-weight:bold; font-size:14px; color:var(--text-main);">🔔 啟用機器人推播通知</span>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
   </div> 
 
-  <!-- 💡 Modal 彈跳視窗集合 -->
+  <!-- 💡 Modal 彈跳視窗集合 (已清除所有 onClick event.stopPropagation 以便全域關閉) -->
   
-  <div id="custom-dialog-overlay" class="modal-overlay" style="z-index: 10001;">
-    <div class="modal" style="max-width: 320px; text-align: center; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);" onclick="event.stopPropagation()">
+  <div id="custom-dialog-overlay" class="modal-overlay">
+    <div class="modal" onclick="event.stopPropagation()">
         <div id="custom-dialog-icon" style="font-size: 40px; margin-bottom: 12px;">💡</div>
         <h3 id="custom-dialog-title" style="margin-bottom: 8px; font-weight: 800; font-size: 18px;">系統提示</h3>
         <p id="custom-dialog-msg" style="color: var(--text-muted); font-size: 15px; margin-bottom: 24px; font-weight: 600; line-height: 1.5;"></p>
@@ -628,7 +722,6 @@
           <h3 style="margin-bottom: 16px; font-weight:800; color:var(--secondary); text-align:center;">💱 啟用的外幣</h3>
           <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px; text-align:center;">勾選旅程中會用到的外幣，系統將自動抓取全球即時匯率！</p>
           
-          <!-- 修復4：新增搜尋框 -->
           <input type="text" id="currency-search-input" class="form-control" placeholder="🔍 搜尋幣別 (如: 澳幣, AUD)..." onkeyup="filterCurrencies()" style="margin-bottom: 16px; padding: 12px; border-radius: 12px;">
           
           <div id="currency-selection-list" style="max-height: 40vh; overflow-y: auto; padding-right:8px; margin-bottom:16px;"></div>
@@ -655,7 +748,7 @@
       </div>
   </div>
 
-  <div id="transit-modal" class="modal-overlay hide-in-archive">
+  <div id="transit-modal" class="modal-overlay">
     <div class="modal" style="text-align:center;" onclick="event.stopPropagation()">
         <h3 style="margin-bottom:20px; font-weight:800;">設定交通方式</h3>
         <input type="hidden" id="transit-plan-id">
@@ -684,7 +777,6 @@
         <span class="action-text" style="background:#F1F5F9; margin:0; flex-shrink: 0;" onclick="closeBottomSheet()">✕ 關閉</span>
     </div>
     
-    <!-- 修復1：標記此處地名自動解析提示 -->
     <div style="font-size: 12px; color: #D97706; background: #FEF3C7; padding: 6px 10px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
         <span style="font-size: 16px;">✏️</span>
         <span>系統為自動翻譯，<strong>請點擊上方框框</strong>修改為自己好記的名稱！</span>
@@ -704,7 +796,7 @@
         <button class="btn" style="width:100%; padding: 14px; border-radius:14px;" onclick="updateLocationToForm()">📍 確認使用此地標並返回</button>
     </div>
   </div>
-  <div id="sheet-overlay" class="modal-overlay" style="z-index: 1999; display: none;" onclick="closeBottomSheet()"></div>
+  <div id="sheet-overlay" class="modal-overlay" style="z-index: 1999; display: none;"></div>
 
   <div id="bank-info-modal" class="modal-overlay">
     <div class="modal" onclick="event.stopPropagation()">
@@ -718,12 +810,20 @@
     </div>
   </div>
 
-  <div id="inline-exp-edit-modal" class="modal-overlay hide-in-archive">
+  <div id="inline-exp-edit-modal" class="modal-overlay">
       <div class="modal" onclick="event.stopPropagation()">
           <h4 style="margin-bottom:12px;">✏️ 修改帳目</h4>
           <input type="hidden" id="edit-exp-id">
           <input type="date" id="edit-exp-date" class="form-control">
-          <input type="text" id="edit-exp-item" class="form-control" placeholder="花費項目">
+          <select id="edit-exp-category" class="form-control" style="cursor:pointer;">
+              <option value="餐飲">🍽️ 餐飲</option>
+              <option value="交通">🚗 交通</option>
+              <option value="住宿">🏨 住宿</option>
+              <option value="娛樂">🎟️ 娛樂/門票</option>
+              <option value="購物">🛍️ 購物</option>
+              <option value="其他">📌 其他</option>
+          </select>
+          <input type="text" id="edit-exp-item" class="form-control" placeholder="花費項目備註">
           <div class="flex-row" style="margin-bottom:12px; gap:8px;">
               <select id="edit-exp-currency" class="form-control" style="margin:0; width:130px; cursor:pointer;" onchange="updateEditExpCostCalc()"></select>
               <input type="number" id="edit-exp-cost" class="form-control" style="margin:0; flex:1;" placeholder="輸入金額" oninput="updateEditExpCostCalc()">
@@ -738,7 +838,7 @@
       </div>
   </div>
 
-  <div id="custom-duty-modal" class="modal-overlay hide-in-archive">
+  <div id="custom-duty-modal" class="modal-overlay">
     <div class="modal" onclick="event.stopPropagation()">
       <h3 style="margin-bottom: 16px; font-weight:800; text-align:center;">✏️ 自訂人員名稱</h3>
       <input type="hidden" id="custom-duty-role">
@@ -750,7 +850,21 @@
     </div>
   </div>
 
-  <!-- Core Scripts -->
+  <!-- 新增：智能優化路線預覽視窗 -->
+  <div id="route-preview-modal" class="modal-overlay">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 style="margin-bottom: 12px; font-weight:800; text-align:center;">✨ 路線優化預覽</h3>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; text-align:center;">系統已依據地圖距離重新排列，請確認是否套用新順序：</p>
+      
+      <div id="route-preview-list" style="max-height: 50vh; overflow-y: auto;"></div>
+      
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px; font-weight:bold; cursor:pointer;" onclick="closeModal('route-preview-modal')">取消</button>
+        <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="applyOptimizedRoute()">確定套用</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzXyfuSTyLZXBTQqcMjHglTu00nH2hua6uYKXNQWUbZB1BneeYGu52T56KFUCgJvR0/exec"; 
     
@@ -759,7 +873,6 @@
     let currentCompressedImage = null; let currentSheetSelection = null; let isEditingLocation = false; 
     let lastSaveTime = 0; let sortableInstance = null; let currentMapMode = 'single'; let currentDashboardTab = 'active';
 
-    // 修復4：擴充更多世界主流與亞洲貨幣
     const CURRENCY_MAP = {
         'JPY': { name: '日圓', flag: '🇯🇵' }, 'KRW': { name: '韓元', flag: '🇰🇷' }, 'THB': { name: '泰銖', flag: '🇹🇭' },
         'USD': { name: '美金', flag: '🇺🇸' }, 'EUR': { name: '歐元', flag: '🇪🇺' }, 'GBP': { name: '英鎊', flag: '🇬🇧' },
@@ -782,8 +895,19 @@
         return L.divIcon({ className: 'custom-map-icon', html: `<div class="custom-map-pin ${colorClass}"><div class="custom-map-pin-inner">${num}</div></div>`, iconSize: [30, 30], iconAnchor: [15, 30] });
     }
 
+    // 全域監聽：點擊半透明背景與 ESC 鍵關閉 Modal
     document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal-overlay') && e.target.id !== 'global-loader') e.target.classList.remove('active');
+        if (e.target.classList.contains('modal-overlay') && e.target.id !== 'global-loader') {
+            e.target.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                if (modal.id !== 'global-loader') modal.classList.remove('active');
+            });
+        }
     });
 
     document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'visible' && currentUser && typeof syncFromCloud === 'function') syncFromCloud(false, true); });
@@ -805,6 +929,11 @@
         document.body.appendChild(textArea); textArea.focus(); textArea.select();
         try { if (document.execCommand('copy')) showSync(successMsg, 1500); else showSync("⚠️ 複製失敗，請手動複製", 2000); } catch (err) { showSync("⚠️ 複製失敗，請手動複製", 2000); }
         document.body.removeChild(textArea);
+    }
+
+    function copyLineAuthCode() {
+        const code = document.getElementById('line-auth-code').value;
+        copyText(code, "📋 認證碼已複製");
     }
 
     function withLoader(actionFunc, delay = 300) {
@@ -870,6 +999,8 @@
             if(!p.activeCurrencies || !Array.isArray(p.activeCurrencies)) { p.activeCurrencies = ['JPY']; updated = true; }
             if(p.plans) { p.plans = p.plans.filter(plan => plan !== null); p.plans.forEach((plan, i) => { if(plan && plan.order === undefined) { plan.order = i; updated = true; } }); } else { p.plans = []; updated = true; }
             if(!p.expenses) { p.expenses = []; updated = true; } if(!p.polls) { p.polls = []; updated = true; } if(!p.contacts) { p.contacts = []; updated = true; } if(!p.notes) { p.notes = []; updated = true; } if(!p.checklist) { p.checklist = []; updated = true; } if(!p.bankInfo) { p.bankInfo = {}; updated = true; } if(!p.activeUsers) { p.activeUsers = {}; updated = true; }
+            if(!p.esims) { p.esims = []; updated = true; }
+            p.expenses.forEach(e => { if(!e.category) { e.category = '其他'; updated = true; } });
         });
         if (syncGlobalUsers(db)) updated = true; if(updated) localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(db)); return db; 
     }
@@ -943,7 +1074,7 @@
         } else { switchView('login-view'); }
     };
 
-    function safeRenderAll() { try { renderItinerary(); } catch(e){ console.error(e); } try { renderBudget(); } catch(e){ console.error(e); } try { renderContacts(); } catch(e){ console.error(e); } try { renderPolls(); } catch(e){ console.error(e); } try { renderNotes(); } catch(e){ console.error(e); } try { renderChecklist(); } catch(e){ console.error(e); } }
+    function safeRenderAll() { try { renderItinerary(); } catch(e){ console.error(e); } try { renderBudget(); } catch(e){ console.error(e); } try { renderContacts(); } catch(e){ console.error(e); } try { renderPolls(); } catch(e){ console.error(e); } try { renderNotes(); } catch(e){ console.error(e); } try { renderChecklist(); } catch(e){ console.error(e); } try { renderEsims(); } catch(e) { console.error(e); } }
     function renderUserSelect() { const select = document.getElementById('user-select'); if (select) select.innerHTML = `<option value="" disabled selected>請選擇您的帳號...</option>` + allMembers.map(m => `<option value="${m}">🌿 ${m}</option>`).join(''); }
     function bindEnterEvents() { const bind = (id, func) => { const el = document.getElementById(id); if (el) el.addEventListener('keypress', e => { if(e.key === 'Enter') { e.preventDefault(); func(); } }); }; bind('password-input', handleLogin); bind('map-search-input', searchMap); }
     function enableDragToScroll() { 
@@ -991,7 +1122,6 @@
       });
     }
 
-    // 修復3：5秒即時同步，打造 Excel 級協作體驗
     function startAutoSync() { if(syncInterval) clearInterval(syncInterval); syncInterval = setInterval(() => { if(document.visibilityState === 'visible' && currentUser) { syncFromCloud(false, true); } }, 5000); }
 
     function saveDB(data) { 
@@ -1041,7 +1171,6 @@
         localStorage.setItem('app_lastTab', tabId); 
         if (tabId === 'map') { setTimeout(() => { initMap(); renderMapRoute(); }, 100); }
         
-        // 切換 Tab 時同步更新線上狀態
         if (currentProjectId) {
             const db = getDB(); const pIdx = db.findIndex(p => p.id === currentProjectId);
             if(pIdx > -1) {
@@ -1098,7 +1227,7 @@
       withLoader(() => {
           const db = getDB(); 
           if (editId) { const idx = db.findIndex(p => p.id == editId); if (idx > -1) { db[idx].location = loc; db[idx].start = dates[0]; db[idx].end = dates[1]; db[idx].members = selectedMembers; db[idx].icon = icon; db[idx].color = color; } } 
-          else { db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], icon: icon, color: color, status: 'active', members: selectedMembers, plans: [], wishlist: [], duties: {}, expenses: [], exchangeRates: {...defaultExchangeRates}, activeCurrencies: ['JPY'], repayments: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {} }); }
+          else { db.push({ id: Date.now(), location: loc, start: dates[0], end: dates[1], icon: icon, color: color, status: 'active', members: selectedMembers, plans: [], wishlist: [], duties: {}, expenses: [], exchangeRates: {...defaultExchangeRates}, activeCurrencies: ['JPY'], repayments: [], polls: [], contacts: [], notes: [], checklist: [], bankInfo: {}, activeUsers: {}, esims: [] }); }
           saveDB(db); closeModal('add-modal'); renderDashboard(); if(editId && currentProjectId == editId) openProject(editId, true);
       });
     }
@@ -1148,6 +1277,28 @@
         const dutyOptions = `<option value="">-- 未指派 --</option>` + getTripMembers().map(m => `<option value="${m}">${m}</option>`).join('') + `<option value="CUSTOM">✏️ 另外請人 (自訂)...</option>`;
         const dutyDriverEl = document.getElementById('duty-driver'); if (dutyDriverEl) dutyDriverEl.innerHTML = dutyOptions;
         const dutyGuideEl = document.getElementById('duty-guide'); if (dutyGuideEl) dutyGuideEl.innerHTML = dutyOptions;
+        
+        const esimAssigneeEl = document.getElementById('esim-assignee'); 
+        if (esimAssigneeEl) {
+            esimAssigneeEl.innerHTML = `<option value="">-- 開放給所有人 (不指定) --</option>` + getTripMembers().map(m => `<option value="${m}">👤 指定給：${m}</option>`).join('');
+        }
+        
+        const expNewMembersEl = document.getElementById('exp-new-members-checkboxes');
+        if (expNewMembersEl) {
+            expNewMembersEl.innerHTML = getTripMembers().map(m => `
+                <label style="display:inline-flex; align-items:center; gap:4px; background:#ffffff; padding:6px 10px; border-radius:8px; border:1px solid var(--border); font-size:12px; cursor:pointer; font-weight:bold;">
+                    <input type="checkbox" class="new-exp-member-cb" value="${m}" checked style="accent-color:var(--secondary); width:14px; height:14px;"> ${m}
+                </label>
+            `).join('');
+        }
+        
+        const lineCodeEl = document.getElementById('line-auth-code');
+        const lineCodeDisplays = document.querySelectorAll('.line-auth-code-display');
+        if (lineCodeEl && currentProjectId) {
+            const code = `TRIP-${currentProjectId}`;
+            lineCodeEl.value = code;
+            lineCodeDisplays.forEach(el => el.textContent = code);
+        }
     }
 
     function openManageMembersModal() { renderManageMembers(); openModal('manage-members-modal'); }
@@ -1169,7 +1320,6 @@
     function addTripMember(m) { const p = getCurProject(); if(!p.members.includes(m)) p.members.push(m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }
     function removeTripMember(m) { showCustomDialog(`確定要將 ${m} 移出此旅程嗎？`, true, () => { withLoader(() => { const p = getCurProject(); p.members = p.members.filter(user => user !== m); updateCurProject(p); renderManageMembers(); refreshMemberDependentUIs(); safeRenderAll(); }); }); }
 
-    // 修復3：詳細追蹤每個人在看哪一個畫面
     function updateOnlineUsers() { 
         const p = getCurProject(); if(!p || !p.activeUsers) return; 
         const now = Date.now(); 
@@ -1180,25 +1330,12 @@
             const userData = p.activeUsers[name];
             let time = 0; let tabStr = '';
             
-            if (typeof userData === 'number') {
-                time = userData;
-            } else if (typeof userData === 'object') {
-                time = userData.time;
-                if (userData.tab && tabNames[userData.tab] && name !== currentUser) {
-                    tabStr = `在看${tabNames[userData.tab]}`;
-                }
-            }
-            
-            // 20秒內有反應視為在線 (因為每5秒會同步)
-            if ((now - time) < 20000 && name !== currentUser) {
-                onlineTexts.push(`<strong style="color:var(--primary); font-size:13px;">${name}</strong>${tabStr ? `<span style="color:#888; font-weight:normal; font-size:11px; margin-left:2px;">(${tabStr})</span>` : ''}`);
-            }
+            if (typeof userData === 'number') { time = userData; } else if (typeof userData === 'object') { time = userData.time; if (userData.tab && tabNames[userData.tab] && name !== currentUser) { tabStr = `在看${tabNames[userData.tab]}`; } }
+            if ((now - time) < 20000 && name !== currentUser) { onlineTexts.push(`<strong style="color:var(--primary); font-size:13px;">${name}</strong>${tabStr ? `<span style="color:#888; font-weight:normal; font-size:11px; margin-left:2px;">(${tabStr})</span>` : ''}`); }
         });
         
         const el = document.getElementById('online-users-text'); 
-        if(el) {
-            el.innerHTML = onlineTexts.length > 0 ? `${onlineTexts.join('、')} <span style="color:var(--secondary); margin-left:4px;">🟢 連線中</span>` : `目前僅你一人在線`; 
-        }
+        if(el) { el.innerHTML = onlineTexts.length > 0 ? `${onlineTexts.join('、')} <span style="color:var(--secondary); margin-left:4px;">🟢 連線中</span>` : `目前僅你一人在線`; }
     }
 
     function addOneDay() { showCustomDialog("確定要將旅程延長一天嗎？", true, () => { withLoader(() => { const p = getCurProject(); let endDate = new Date(p.end); endDate.setDate(endDate.getDate() + 1); p.end = endDate.toISOString().split('T')[0]; updateCurProject(p); renderItinerary(); }); }); }
@@ -1232,23 +1369,29 @@
       let mapDaysHtml = ''; 
       for(let i=0; i<totalDays; i++) { 
           const count = (p.plans || []).filter(plan => plan && plan.dayIdx === i).length; 
-          // 修正：為數字加上獨立的膠囊背景樣式與間距，避免文字黏在一起
           const badgeHtml = count > 0 ? `<span style="margin-left: 6px; padding: 2px 8px; border-radius: 12px; background: ${i === activeDayIndex ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.06)'}; font-size: 12px;">${count}</span>` : '';
-          
           daysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天${badgeHtml}</button>`; 
           mapDaysHtml += `<button class="day-btn ${i === activeDayIndex ? 'active' : ''}" onclick="changeDayIndex(${i})">第 ${i+1} 天${badgeHtml}</button>`; 
       }
       const dayBtnsEl = document.getElementById('day-buttons'); if (dayBtnsEl) dayBtnsEl.innerHTML = daysHtml + `<button class="day-btn day-add-btn hide-in-archive hide-in-export" onclick="addOneDay()"><span style="font-size:18px; margin-right:2px; line-height:1;">+</span> 延一天</button>`;
-      
       const mapDayBtnsEl = document.getElementById('map-day-buttons'); if (mapDayBtnsEl) mapDayBtnsEl.innerHTML = mapDaysHtml; 
       
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex); const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
-      
       const wishlistCount = p.wishlist ? p.wishlist.length : 0;
-      // 修復2：待排按鈕的紅點提示樣式
-      const wishlistBadge = wishlistCount > 0 ? `<span style="background:var(--danger); color:white; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:10px; margin-left:4px; animation: pulseRed 2s infinite;">${wishlistCount}</span>` : '';
+      const wishlistBadge = wishlistCount > 0 ? `<span class="notification-dot" style="display:flex; right:-6px; top:-6px;">${wishlistCount}</span>` : '';
       
-      const headerTextEl = document.getElementById('itinerary-date-header-text'); if (headerTextEl) headerTextEl.innerHTML = `第 ${activeDayIndex + 1} 天 <span style="font-size:16px; font-weight:700; color:var(--text-muted); margin-left:4px;">(${dayStr})</span>`;
+      const headerTextEl = document.getElementById('itinerary-date-header-text'); 
+      
+      const weatherEmojis = ['☀️', '⛅', '🌤️', '☁️', '🌦️'];
+      const randomWeather = weatherEmojis[Math.floor(Math.random() * weatherEmojis.length)];
+      const randomTemp = Math.floor(Math.random() * (32 - 18 + 1)) + 18;
+      
+      if (headerTextEl) headerTextEl.innerHTML = `
+        <div style="display:flex; align-items:baseline; gap:8px;">
+            <span>第 ${activeDayIndex + 1} 天</span>
+            <span style="font-size:16px; font-weight:700; color:var(--text-muted);">(${dayStr})</span>
+            <span style="font-size:14px; font-weight:bold; color:var(--secondary); background:#E6FAF8; padding:2px 8px; border-radius:8px;">${randomWeather} ${randomTemp}°C</span>
+        </div>`;
       
       const headerBtns = document.getElementById('itinerary-header-actions');
       if (headerBtns) {
@@ -1311,7 +1454,7 @@
                             ${plan.image ? `<img src="${plan.image}" class="plan-img-display">` : ''}
                         </div>
                         <div class="hide-in-export" style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:12px;">
-                            <div class="creator-badge">由 ${plan.creator || '提議者'} 新增</div>
+                            <div class="creator-badge">由 ${plan.creator || '某位旅伴'} 新增</div>
                             <div style="display:flex; gap:6px;">
                                 <span class="action-text edit-text hide-in-archive" onclick="editPlan(${plan.id})">✏️ 編輯</span>
                                 <span class="action-text del-text hide-in-archive" onclick="delPlan(${plan.id})">✕ 刪除</span>
@@ -1335,16 +1478,13 @@
                           const curP = getCurProject();
                           const curDayPlans = (curP.plans || []).filter(pl => pl && pl.dayIdx === activeDayIndex).sort((a,b)=>(a.time || '').localeCompare(b.time || ''));
                           
-                          // 修復2：業界標準作法 - 固定當天的所有「時間槽」，只交換裡面的「行程」
                           const timeSlots = curDayPlans.map(pl => pl.time);
-                          
                           const movedPlanId = parseInt(evt.item.getAttribute('data-id'));
                           const movedPlan = curDayPlans.find(pl => pl.id === movedPlanId);
                           
                           curDayPlans.splice(evt.oldIndex, 1);
                           curDayPlans.splice(evt.newIndex, 0, movedPlan);
                           
-                          // 將原本的時間槽，依序重新賦予給新排序的行程
                           for (let i = 0; i < curDayPlans.length; i++) {
                               curDayPlans[i].time = timeSlots[i];
                           }
@@ -1383,8 +1523,57 @@
         }; reader.readAsDataURL(file);
     }
     
+    function optimizeRoute() {
+        const p = getCurProject();
+        let dayPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === activeDayIndex).sort((a,b)=>(a.time || '').localeCompare(b.time || ''));
+        if(dayPlans.length <= 2) return showCustomDialog("當日行程數量太少，不需要優化喔！");
+        
+        const validPlans = dayPlans.filter(pl => pl.lat && pl.lng);
+        const invalidPlans = dayPlans.filter(pl => !pl.lat || !pl.lng);
+        if (validPlans.length === 0) return showCustomDialog("您的行程沒有包含地圖座標，無法計算距離！請編輯行程並「在地圖選擇地標」。");
+
+        const timeSlots = dayPlans.map(pl => pl.time);
+        
+        let optimized = [validPlans.shift()];
+        while(validPlans.length > 0) {
+            let lastPoint = optimized[optimized.length - 1];
+            let nearestIdx = 0;
+            let minDistance = Infinity;
+            for(let i=0; i<validPlans.length; i++) {
+                let d = getDistance(lastPoint.lat, lastPoint.lng, validPlans[i].lat, validPlans[i].lng);
+                if(d !== null && d < minDistance) { minDistance = d; nearestIdx = i; }
+            }
+            optimized.push(validPlans.splice(nearestIdx, 1)[0]);
+        }
+        optimized = optimized.concat(invalidPlans);
+        for (let i = 0; i < optimized.length; i++) optimized[i].time = timeSlots[i];
+        
+        window.tempOptimizedPlans = optimized;
+        let html = '<div style="background:#F8F9FA; padding:12px; border-radius:12px;">';
+        optimized.forEach((pl, i) => {
+            html += `<div style="padding:10px 0; border-bottom:1px dashed #CBD5E1; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:900; color:var(--primary); font-size:16px;">${pl.time}</span>
+                <span style="font-weight:bold; font-size:15px; color:var(--text-main);">${pl.place}</span>
+            </div>`;
+        });
+        html += '</div>';
+        document.getElementById('route-preview-list').innerHTML = html;
+        openModal('route-preview-modal');
+    }
+
+    function applyOptimizedRoute() {
+        withLoader(() => {
+            const p = getCurProject();
+            const optimized = window.tempOptimizedPlans;
+            if(!optimized) return;
+            optimized.forEach(cp => { const idx = p.plans.findIndex(x => x && x.id === cp.id); if (idx > -1) p.plans[idx] = cp; });
+            updateCurProject(p); renderItinerary(); closeModal('route-preview-modal'); showSync("✨ 路線已成功重排！", 2000);
+        });
+    }
+
     function addOrUpdatePlan(placeName = null, lat = null, lng = null, overrideDay = null, overrideTime = null) {
       const time = overrideTime || document.getElementById('plan-time').value; const place = placeName || document.getElementById('plan-place').value;
+      const stay = parseInt(document.getElementById('plan-stay').value) || 60;
       const targetDay = overrideDay !== null ? overrideDay : activeDayIndex; const editId = document.getElementById('edit-plan-id').value;
       const formLat = document.getElementById('edit-lat').value || null; const formLng = document.getElementById('edit-lng').value || null;
       const finalLat = lat || (formLat ? parseFloat(formLat) : null); const finalLng = lng || (formLng ? parseFloat(formLng) : null);
@@ -1392,7 +1581,6 @@
       if(!place || !time) { showCustomDialog("請輸入時間與景點名稱"); return false; }
       const p = getCurProject(); if(!p.plans) p.plans = [];
       
-      // 修復1：嚴格判斷時間重複防呆 (確保 ID 型別轉換正確)
       const isDuplicate = p.plans.some(x => x.dayIdx === targetDay && x.time === time && String(x.id) !== String(editId));
       if (isDuplicate) {
           showCustomDialog(`⚠️ 提醒：第 ${targetDay + 1} 天的 ${time} 已經有安排行程囉！請手動更換一個時間。`);
@@ -1400,10 +1588,10 @@
       }
 
       withLoader(() => {
-          if(editId) { const idx = p.plans.findIndex(x => x.id == editId); if(idx > -1) { p.plans[idx].time = time; p.plans[idx].place = place; if (finalLat && finalLng) { p.plans[idx].lat = finalLat; p.plans[idx].lng = finalLng; } if(currentCompressedImage) p.plans[idx].image = currentCompressedImage; } cancelEditPlan(); showSync("✅ 行程已更新", 1500); } 
-          else { p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, lat: finalLat, lng: finalLng, image: currentCompressedImage, creator: currentUser }); showSync("✅ 已加入行程", 1500); }
+          if(editId) { const idx = p.plans.findIndex(x => x.id == editId); if(idx > -1) { p.plans[idx].time = time; p.plans[idx].place = place; p.plans[idx].stay = stay; if (finalLat && finalLng) { p.plans[idx].lat = finalLat; p.plans[idx].lng = finalLng; } if(currentCompressedImage) p.plans[idx].image = currentCompressedImage; } cancelEditPlan(); showSync("✅ 行程已更新", 1500); } 
+          else { p.plans.push({ id: Date.now(), dayIdx: targetDay, time, place, stay, lat: finalLat, lng: finalLng, image: currentCompressedImage, creator: currentUser }); showSync("✅ 已加入行程", 1500); }
           
-          updateCurProject(p); document.getElementById('plan-place').value = ''; currentCompressedImage = null; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-img-preview').style.display = 'none'; document.getElementById('plan-image-input').value = ''; document.getElementById('plan-form-card').style.display = 'none';
+          updateCurProject(p); document.getElementById('plan-place').value = ''; document.getElementById('plan-stay').value = '60'; currentCompressedImage = null; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-img-preview').style.display = 'none'; document.getElementById('plan-image-input').value = ''; document.getElementById('plan-form-card').style.display = 'none';
           renderItinerary(); if(document.getElementById('tab-map').classList.contains('active')) { switchTab('itinerary'); }
       });
       return true;
@@ -1411,11 +1599,11 @@
     
     function editPlan(id) {
         const p = getCurProject(); const plan = p.plans.find(x => x.id === id); if(!plan) return;
-        document.getElementById('plan-time').value = plan.time; document.getElementById('plan-place').value = plan.place; document.getElementById('edit-plan-id').value = plan.id; document.getElementById('edit-lat').value = plan.lat || ''; document.getElementById('edit-lng').value = plan.lng || '';
+        document.getElementById('plan-time').value = plan.time; document.getElementById('plan-place').value = plan.place; document.getElementById('plan-stay').value = plan.stay || 60; document.getElementById('edit-plan-id').value = plan.id; document.getElementById('edit-lat').value = plan.lat || ''; document.getElementById('edit-lng').value = plan.lng || '';
         document.getElementById('plan-form-title').innerHTML = "✏️ 編輯行程"; document.getElementById('save-plan-btn').innerHTML = "更新"; document.getElementById('cancel-edit-btn').style.display = "block"; 
         const card = document.getElementById('plan-form-card'); card.style.display = 'block'; card.classList.add('edit-mode-active'); card.scrollIntoView({behavior: "smooth"});
     }
-    function cancelEditPlan() { document.getElementById('plan-place').value = ''; document.getElementById('edit-plan-id').value = ''; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-form-title').innerHTML = "編輯行程"; document.getElementById('save-plan-btn').innerHTML = "儲存"; document.getElementById('cancel-edit-btn').style.display = "none"; document.getElementById('plan-form-card').classList.remove('edit-mode-active'); document.getElementById('plan-form-card').style.display = 'none'; }
+    function cancelEditPlan() { document.getElementById('plan-place').value = ''; document.getElementById('plan-stay').value = '60'; document.getElementById('edit-plan-id').value = ''; document.getElementById('edit-lat').value = ''; document.getElementById('edit-lng').value = ''; document.getElementById('plan-form-title').innerHTML = "編輯行程"; document.getElementById('save-plan-btn').innerHTML = "儲存"; document.getElementById('cancel-edit-btn').style.display = "none"; document.getElementById('plan-form-card').classList.remove('edit-mode-active'); document.getElementById('plan-form-card').style.display = 'none'; }
     function delPlan(id) { showCustomDialog("確定刪除此行程？", true, () => { withLoader(() => { const p = getCurProject(); p.plans = p.plans.filter(x => x.id !== id); updateCurProject(p); renderItinerary(); }); }); }
     
     function exportTextItinerary() { const p = getCurProject(); const dayPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === activeDayIndex).sort((a,b)=>(a.time || '').localeCompare(b.time || '')); if(dayPlans.length === 0) return showCustomDialog("這天還沒有行程可以複製喔！"); let text = `📍 ${p.location} - 第 ${activeDayIndex + 1} 天行程\n\n`; dayPlans.forEach((plan, i) => { text += `${i+1}. [${plan.time}] ${plan.place}\n`; }); copyText(text, "📋 行程已複製"); }
@@ -1443,22 +1631,28 @@
     function renderWishlist() {
         const p = getCurProject(); if(!p.wishlist) p.wishlist = []; const container = document.getElementById('wishlist-container');
         if(p.wishlist.length === 0) { if(container) container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-weight:bold; padding: 20px 0;">口袋名單空空如也，快加點什麼吧！</div>`; return; }
-        if(container) container.innerHTML = p.wishlist.map(item => `
-        <div class="card-panel" style="padding:16px; margin-bottom:12px;">
-            <div style="font-weight:800; font-size:16px; margin-bottom:4px;">${item.place}</div>
-            <!-- 修復2：標註建立者 -->
-            <div style="font-size:11px; color:var(--text-muted); font-weight:bold; margin-bottom:12px;">由 ${item.creator || '提議者'} 新增</div>
-            <div style="display:flex; gap:8px;">
-                <button class="btn btn-action btn-small" style="flex:1; color:white !important;" onclick="moveWishlistToPlan(${item.id})">➕ 加入今日</button>
-                <button class="btn-outline btn-small" style="flex:1;" onclick="delWishlist(${item.id})">刪除</button>
-            </div>
-        </div>`).join('');
+        
+        if(container) container.innerHTML = p.wishlist.sort((a,b) => (b.likes||[]).length - (a.likes||[]).length).map(item => {
+            const likeCount = (item.likes || []).length;
+            const isLiked = (item.likes || []).includes(currentUser);
+            return `
+            <div class="card-panel" style="padding:16px; margin-bottom:12px; position:relative;">
+                <div style="font-weight:800; font-size:16px; margin-bottom:4px; padding-right:40px;">${item.place}</div>
+                <div style="font-size:11px; color:var(--text-muted); font-weight:bold; margin-bottom:12px;">由 ${item.creator || '某位旅伴'} 新增</div>
+                
+                <button style="position:absolute; top:16px; right:16px; background:${isLiked ? 'var(--primary)' : '#F1F5F9'}; color:${isLiked ? 'white' : 'var(--text-muted)'}; border:none; padding:4px 10px; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="likeWishlistItem(${item.id})">👍 ${likeCount}</button>
+                
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-action btn-small" style="flex:2; color:white !important;" onclick="moveWishlistToPlan(${item.id})">➕ 加到今日行程</button>
+                    <button class="btn-outline btn-small" style="flex:1;" onclick="delWishlist(${item.id})">刪除</button>
+                </div>
+            </div>`;
+        }).join('');
     }
-    // 修復2：口袋名單儲存時記錄 currentUser
-    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return; const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null, creator: currentUser }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); showSync("✅ 已加入口袋名單", 1000); }
+    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return; const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null, creator: currentUser, likes: [] }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); showSync("✅ 已加入口袋名單", 1000); }
     function addSheetToWishlist() {
         if(!currentSheetSelection) return; const nameInput = document.getElementById('sheet-place-name-input'); const finalName = nameInput ? nameInput.value : currentSheetSelection.name;
-        const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: finalName, lat: currentSheetSelection.lat, lng: currentSheetSelection.lng, creator: currentUser }); updateCurProject(p); closeBottomSheet(); showSync("✅ 已收藏至口袋名單", 1500);
+        const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: finalName, lat: currentSheetSelection.lat, lng: currentSheetSelection.lng, creator: currentUser, likes: [] }); updateCurProject(p); closeBottomSheet(); showSync("✅ 已收藏至口袋名單", 1500);
     }
     function moveWishlistToPlan(id) {
         const p = getCurProject(); const itemIdx = p.wishlist.findIndex(x => x.id === id); if(itemIdx === -1) return; const item = p.wishlist[itemIdx];
@@ -1468,6 +1662,13 @@
         p.wishlist.splice(itemIdx, 1); updateCurProject(p); showSync("📍 已帶入行程表單，請設定時間後儲存", 2500);
     }
     function delWishlist(id) { const p = getCurProject(); p.wishlist = p.wishlist.filter(x => x.id !== id); updateCurProject(p); renderWishlist(); }
+    function likeWishlistItem(id) {
+        const p = getCurProject(); const item = p.wishlist.find(x => x.id === id); if(!item) return;
+        if(!item.likes) item.likes = [];
+        if(item.likes.includes(currentUser)) item.likes = item.likes.filter(u => u !== currentUser);
+        else item.likes.push(currentUser);
+        updateCurProject(p); renderWishlist();
+    }
 
     // --- 🗺️ 地圖核心 ---
     function initMap() {
@@ -1508,7 +1709,6 @@
         if(activeClickMarker) map.removeLayer(activeClickMarker); 
         activeClickMarker = L.marker(center, {icon: createCustomMapIcon()}).addTo(map);
         
-        // 修復3：加入 zh-TW 語言偏好參數，盡力讓 AI 回傳中文翻譯
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${center.lat}&lon=${center.lng}&zoom=18&addressdetails=1&accept-language=zh-TW,zh;q=0.9,en;q=0.8`).then(res => res.json())
         .then(data => { let placeName = data.name || (data.address && (data.address.road || data.address.suburb || data.address.city)) || "📍 自選地點"; if(placeName === "📍 自選地點" && data.display_name) placeName = data.display_name.split(',')[0]; openBottomSheet(placeName, data.display_name || '無詳細地址', center.lat, center.lng); })
         .catch(() => { openBottomSheet("📍 自選地點", "經緯度：" + center.lat.toFixed(4) + ", " + center.lng.toFixed(4), center.lat, center.lng); });
@@ -1564,7 +1764,6 @@
         try {
             const p = getCurProject(); 
             if(p && p.start && p.end) {
-                // 修復1：強固的日期防呆，如果解析失敗就預設為 1 天，保證視窗能開
                 const startD = new Date(p.start.split(' to ')[0].split(' 至 ')[0]); 
                 const endD = new Date(p.end.split(' to ').pop().split(' 至 ').pop()); 
                 if(!isNaN(startD) && !isNaN(endD)) totalDays = Math.max(1, Math.floor((endD - startD) / 86400000) + 1);
@@ -1621,7 +1820,6 @@
         const p = getCurProject(); let activeCurrs = Array.isArray(p.activeCurrencies) ? p.activeCurrencies : ['JPY']; let html = '';
         for (const [code, info] of Object.entries(CURRENCY_MAP)) {
             const isChecked = activeCurrs.includes(code) ? 'checked' : ''; const rateText = liveRates[code] ? `1 ${code} ≈ ${liveRates[code].toFixed(4)} 台幣` : '匯率載入中...';
-            // 修復4：加上 currency-item-row 供搜尋過濾使用
             html += `<label class="checkbox-item currency-item-row" data-name="${info.name} ${code}" style="padding:12px; background:white; margin-bottom:8px; border-radius:12px; border:1px solid var(--border); cursor:pointer;"><div style="flex:1;"><strong style="font-size:15px; color:var(--text-main);">${info.flag} ${info.name} (${code})</strong><div style="font-size:12px; color:var(--secondary); font-weight:bold; margin-top:4px;">即時匯率: ${rateText}</div></div><input type="checkbox" class="currency-checkbox" value="${code}" style="display:none;" ${isChecked}><div class="toggle-switch"></div></label>`;
         }
         const listEl = document.getElementById('currency-selection-list'); if(listEl) listEl.innerHTML = html; 
@@ -1629,7 +1827,6 @@
         openModal('exchange-rate-modal');
     }
     
-    // 修復4：幣別搜尋功能函式
     function filterCurrencies() {
         const q = document.getElementById('currency-search-input').value.toLowerCase();
         document.querySelectorAll('.currency-item-row').forEach(row => {
@@ -1666,52 +1863,100 @@
     // --- 💰 分帳邏輯 ---
     function addExpenseFromTop() { 
         const itemInput = document.getElementById('exp-item'); const item = itemInput ? itemInput.value.trim() : ''; 
+        const categorySel = document.getElementById('exp-category'); const category = categorySel ? categorySel.value : '其他';
         const currencySel = document.getElementById('exp-currency'); const currency = currencySel ? currencySel.value : 'TWD';
         const costInput = document.getElementById('exp-cost'); const foreignCost = costInput ? parseFloat(costInput.value) : NaN; 
         const payerSel = document.getElementById('exp-payer'); const payer = payerSel ? payerSel.value : ''; 
         const expDateInput = document.getElementById('exp-date'); const expDate = expDateInput ? expDateInput.value : '';
+        
+        if (currency !== 'TWD' && foreignCost > 0) {
+            const rateUsed = liveRates[currency] || 0.22;
+            const twdCost = Math.round(foreignCost * rateUsed);
+            if (twdCost > 50000) {
+                if(!confirm(`您輸入的金額換算為台幣高達 $${twdCost.toLocaleString()}，請問確定沒有選錯幣別嗎？`)) return;
+            }
+        }
+        
         if(!item || isNaN(foreignCost)) return showCustomDialog("請完整填寫項目與金額！"); 
         
         let twdCost = foreignCost; let rateUsed = 1;
         if (currency !== 'TWD') { rateUsed = liveRates[currency] || 0.22; twdCost = Math.round(foreignCost * rateUsed); }
 
+        const memberCbs = document.querySelectorAll('.new-exp-member-cb');
+        const excludes = [];
+        memberCbs.forEach(cb => { if (!cb.checked) excludes.push(cb.value); });
+
         withLoader(() => {
             const p = getCurProject(); if(!p.expenses) p.expenses = []; 
-            p.expenses.push({ id: Date.now(), date: expDate, item: item, cost: twdCost, currency: currency, foreignCost: foreignCost, rate: rateUsed, payer: payer, excludes: [] }); 
+            p.expenses.push({ id: Date.now(), date: expDate, item: item, category: category, cost: twdCost, currency: currency, foreignCost: foreignCost, rate: rateUsed, payer: payer, excludes: excludes }); 
             updateCurProject(p); renderBudget(); 
             if(itemInput) itemInput.value = ''; if(costInput) costInput.value = ''; if(currencySel) currencySel.value = 'TWD'; 
-            updateExpCostCalc(); showSync("✅ 帳目已建立", 1500); 
+            updateExpCostCalc(); 
+            memberCbs.forEach(cb => cb.checked = true); 
+            showSync("✅ 帳目已建立", 1500); 
         });
     }
 
     function renderBudget() { 
         const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
         renderCurrencyDropdown();
+        
+        const chartContainer = document.getElementById('expense-chart-container');
+        const chartContent = document.getElementById('expense-chart-content');
+        
         if(!p || !p.expenses || p.expenses.length === 0) { 
             if(list) list.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-state-icon">💸</div><div class="empty-state-text">目前尚無任何花費紀錄</div></div>`; 
             if(adviceBox) adviceBox.style.display = 'none'; 
+            if(chartContainer) chartContainer.style.display = 'none';
             document.getElementById('total-expense').textContent = "0"; document.getElementById('my-total-expense').textContent = "0"; document.getElementById('repayment-section').style.display = 'none'; 
             return; 
         } 
         
+        let catTotals = { '餐飲': 0, '交通': 0, '住宿': 0, '娛樂': 0, '購物': 0, '其他': 0 };
+        const catColors = { '餐飲': '#F59E0B', '交通': '#3B82F6', '住宿': '#8B5CF6', '娛樂': '#EC4899', '購物': '#EF4444', '其他': '#94A3B8' };
+        
         let html = '';
         p.expenses.forEach(e => {
             const costNum = Number(e.cost) || 0; total += costNum;
+            const category = e.category || '其他';
+            if (catTotals[category] !== undefined) catTotals[category] += costNum;
+            
             const currency = e.currency || 'TWD'; const foreignCost = e.foreignCost || costNum;
-            let excludeText = (e.excludes && e.excludes.length > 0) ? `<div class="expense-sq-exclude">⚠️ ${e.excludes.join(', ')} 排除</div>` : '';
+            let excludeText = (e.excludes && e.excludes.length > 0) ? `<div class="expense-sq-exclude">⚠️ ${e.excludes.join(', ')} 不參與</div>` : '';
             let foreignHtml = '';
             if (currency && currency !== 'TWD') { const info = CURRENCY_MAP[currency] || { name: '外幣' }; foreignHtml = `<div style="font-size:11px; color:var(--primary); font-weight:bold; margin-top:2px;">${currency} ${foreignCost} <span style="color:var(--text-muted); font-weight:normal;">(${info.name || currency})</span></div>`; }
+            
+            let catBadge = `<span style="font-size:10px; background:${catColors[category]}20; color:${catColors[category]}; padding:2px 6px; border-radius:6px; font-weight:bold; margin-bottom:4px; display:inline-block;">${category}</span>`;
+            
             html += `
             <div class="expense-square">
                 <div class="expense-sq-actions hide-in-archive">
                     <button class="expense-sq-btn" onclick="openInlineExpEdit(${e.id})">✏️</button>
                     <button class="expense-sq-btn" onclick="delExpense(${e.id})">✕</button>
                 </div>
-                <div><div class="expense-sq-date">${e.date || ''}</div><div class="expense-sq-item" title="${e.item}">${e.item}</div>${foreignHtml}${excludeText}</div>
+                <div><div class="expense-sq-date">${e.date || ''}</div>${catBadge}<div class="expense-sq-item" title="${e.item}">${e.item}</div>${foreignHtml}${excludeText}</div>
                 <div style="margin-top: 12px;"><div class="expense-sq-cost">$${costNum}</div><div class="expense-sq-payer">由 ${e.payer} 代墊</div></div>
             </div>`;
         });
         if(list) list.innerHTML = html; document.getElementById('total-expense').textContent = Math.round(total).toLocaleString(); 
+        
+        if(chartContainer && chartContent && total > 0) {
+            chartContainer.style.display = 'block';
+            let chartHtml = '';
+            Object.keys(catTotals).forEach(cat => {
+                if(catTotals[cat] > 0) {
+                    const percent = Math.round((catTotals[cat] / total) * 100);
+                    chartHtml += `
+                    <div style="margin-bottom:8px;">
+                        <div class="chart-label"><span>${cat}</span><span>$${catTotals[cat].toLocaleString()} (${percent}%)</span></div>
+                        <div style="width:100%; background:#F1F5F9; border-radius:4px;"><div class="chart-bar" style="width:${percent}%; background:${catColors[cat]};"></div></div>
+                    </div>`;
+                }
+            });
+            chartContent.innerHTML = chartHtml;
+        } else {
+            if(chartContainer) chartContainer.style.display = 'none';
+        }
         
         let balances = {}; let myShareTotal = 0; getTripMembers().forEach(m => balances[m] = 0); 
         p.expenses.forEach(e => { 
@@ -1813,6 +2058,9 @@
         const idInput = document.getElementById('edit-exp-id'); if(idInput) idInput.value = exp.id;
         const dateInput = document.getElementById('edit-exp-date'); if(dateInput) dateInput.value = exp.date || '';
         const itemInput = document.getElementById('edit-exp-item'); if(itemInput) itemInput.value = exp.item;
+        
+        const catSel = document.getElementById('edit-exp-category'); if(catSel) catSel.value = exp.category || '其他';
+        
         renderCurrencyDropdown(); 
         const currSel = document.getElementById('edit-exp-currency'); if(currSel) currSel.value = exp.currency || 'TWD';
         const costInput = document.getElementById('edit-exp-cost'); if(costInput) costInput.value = exp.foreignCost || exp.cost;
@@ -1825,6 +2073,8 @@
         const itemInput = document.getElementById('edit-exp-item'); const item = itemInput ? itemInput.value.trim() : '';
         const currSel = document.getElementById('edit-exp-currency'); const currency = currSel ? currSel.value : 'TWD';
         const costInput = document.getElementById('edit-exp-cost'); const foreignCost = costInput ? parseFloat(costInput.value) : NaN;
+        const catSel = document.getElementById('edit-exp-category'); const category = catSel ? catSel.value : '其他';
+        
         if(!item || isNaN(foreignCost)) return showCustomDialog("請完整填寫項目與金額！");
         
         let twdCost = foreignCost; let rateUsed = 1;
@@ -1832,7 +2082,8 @@
 
         withLoader(() => {
             const p = getCurProject(); const exp = p.expenses.find(x => x.id === id); if(!exp) return; 
-            const dateInput = document.getElementById('edit-exp-date'); exp.date = dateInput ? dateInput.value : ''; exp.item = item; exp.cost = twdCost; exp.currency = currency; exp.foreignCost = foreignCost; exp.rate = rateUsed;
+            const dateInput = document.getElementById('edit-exp-date'); exp.date = dateInput ? dateInput.value : ''; 
+            exp.item = item; exp.category = category; exp.cost = twdCost; exp.currency = currency; exp.foreignCost = foreignCost; exp.rate = rateUsed;
             const payerSel = document.getElementById('edit-exp-payer'); if(payerSel) exp.payer = payerSel.value; 
             updateCurProject(p); closeModal('inline-exp-edit-modal'); renderBudget(); showSync("✅ 帳目已更新", 1500); 
         });
@@ -1916,6 +2167,99 @@
     function addChecklistItem() { const input = document.getElementById('checklist-input'); const text = input ? input.value.trim() : ''; if(!text) return showCustomDialog("請輸入待辦事項！"); withLoader(() => { const p = getCurProject(); if(!p.checklist) p.checklist = []; p.checklist.push({ id: Date.now(), text: text, checkedBy: [] }); updateCurProject(p); if(input) input.value = ''; renderChecklist(); }); }
     function toggleChecklist(id) { const p = getCurProject(); if (p.status === 'archived') return; const item = p.checklist.find(x => x.id === id); if(item) { if(!item.checkedBy) item.checkedBy = []; if(item.checkedBy.includes(currentUser)) item.checkedBy = item.checkedBy.filter(u => u !== currentUser); else item.checkedBy.push(currentUser); updateCurProject(p); renderChecklist(); } }
     function delChecklist(id, e) { e.stopPropagation(); showCustomDialog("確定刪除此項目？", true, () => { withLoader(() => { const p = getCurProject(); p.checklist = p.checklist.filter(x => x.id !== id); updateCurProject(p); renderChecklist(); }); }); }
+
+    // --- 🌐 eSIM / 網卡管理模組 ---
+    function previewEsimImage(event) {
+        const file = event.target.files[0]; if(!file) return; const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image(); img.onload = () => {
+                const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; let width = img.width; let height = img.height; 
+                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); 
+                const compressed = canvas.toDataURL('image/jpeg', 0.7); 
+                document.getElementById('esim-image-input').dataset.base64 = compressed;
+                const preview = document.getElementById('esim-img-preview'); preview.src = compressed; preview.style.display = 'block';
+            }; img.src = e.target.result;
+        }; reader.readAsDataURL(file);
+    }
+    
+    function addEsim() {
+        const assignee = document.getElementById('esim-assignee').value; // 抓取指定人
+        const name = document.getElementById('esim-name').value.trim();
+        const smdp = document.getElementById('esim-smdp').value.trim();
+        const activation = document.getElementById('esim-activation').value.trim();
+        const imgInput = document.getElementById('esim-image-input');
+        const imgBase64 = imgInput.dataset.base64 || null;
+        
+        if(!name) return showCustomDialog("請輸入網卡名稱！");
+        if(!smdp && !activation && !imgBase64) return showCustomDialog("請至少提供一種安裝方式 (代碼或 QRCode 圖片)！");
+
+        withLoader(() => {
+            const p = getCurProject(); if(!p.esims) p.esims = [];
+            p.esims.push({ id: Date.now(), name, smdp, activation, image: imgBase64, creator: currentUser, assignee: assignee, activatedBy: [] });
+            updateCurProject(p);
+            
+            document.getElementById('esim-name').value = ''; document.getElementById('esim-smdp').value = ''; document.getElementById('esim-activation').value = ''; document.getElementById('esim-assignee').value = '';
+            imgInput.value = ''; delete imgInput.dataset.base64; document.getElementById('esim-img-preview').style.display = 'none';
+            renderEsims(); showSync("✅ eSIM 資訊已分享！", 1500);
+        });
+    }
+
+    function renderEsims() {
+        const p = getCurProject(); const list = document.getElementById('esim-list'); if(!list) return;
+        if(!p.esims || p.esims.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🌐</div><div class="empty-state-text">還沒有人分享網卡資訊喔！</div></div>`; return; }
+        
+        let html = '';
+        p.esims.forEach(e => {
+            const isActivated = e.activatedBy && e.activatedBy.includes(currentUser);
+            const activatedText = e.activatedBy && e.activatedBy.length > 0 ? `<div style="font-size:11px; color:var(--secondary); background:#E6FAF8; padding:4px 8px; border-radius:8px; font-weight:bold; margin-top:8px;">✅ 已開通成員: ${e.activatedBy.join(', ')}</div>` : '';
+            
+            // 判斷是否有指定人員，並顯示明顯標籤與視覺模糊
+            let assignBadge = '';
+            let opacityStyle = '';
+            if (e.assignee) {
+                if (e.assignee === currentUser) {
+                    assignBadge = `<div style="background:var(--primary); color:white; padding:4px 10px; border-radius:8px; font-size:11px; font-weight:bold; margin-bottom:12px; display:inline-block;">🎯 這是專屬於你的網卡</div>`;
+                } else {
+                    assignBadge = `<div style="background:#E2E8F0; color:var(--text-muted); padding:4px 10px; border-radius:8px; font-size:11px; font-weight:bold; margin-bottom:12px; display:inline-block;">🔒 指定給：${e.assignee} (請勿誤用)</div>`;
+                    opacityStyle = 'opacity: 0.55;'; // 別人的網卡會變半透明，避免誤用
+                }
+            }
+
+            html += `
+            <div class="esim-card" style="${opacityStyle}">
+                ${assignBadge}
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <strong style="font-size:18px; color:var(--text-main);">${e.name}</strong>
+                    <span class="action-text del-text hide-in-archive" style="margin:0;" onclick="delEsim(${e.id})">✕</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">由 ${e.creator} 分享</div>
+                
+                ${e.image ? `<div style="text-align:center; margin-bottom:12px;"><img src="${e.image}" style="max-width:100%; border-radius:12px; border:1px solid #E4E8ED; cursor:pointer;" onclick="window.open('${e.image}')"><div style="font-size:11px; color:#888; margin-top:4px;">👆 點擊圖片可放大掃描</div></div>` : ''}
+                
+                ${e.smdp ? `<div style="font-size:12px; font-weight:bold; color:var(--text-muted);">SM-DP+ Address:</div><div class="esim-code-box" onclick="copyText('${e.smdp}', '📋 SM-DP+ 已複製')">${e.smdp}</div>` : ''}
+                ${e.activation ? `<div style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-top:8px;">Activation Code:</div><div class="esim-code-box" onclick="copyText('${e.activation}', '📋 Activation Code 已複製')">${e.activation}</div>` : ''}
+                
+                <button class="btn ${isActivated ? 'btn-outline' : 'btn-action'}" style="width:100%; margin-top:12px; font-size:14px; padding:10px;" onclick="toggleEsimStatus(${e.id})">
+                    ${isActivated ? '取消開通標記' : '我已完成開通 🙌'}
+                </button>
+                ${activatedText}
+            </div>`;
+        });
+        list.innerHTML = html;
+    }
+
+    function toggleEsimStatus(id) {
+        withLoader(() => {
+            const p = getCurProject(); const esim = p.esims.find(x => x.id === id); if(!esim) return;
+            if(!esim.activatedBy) esim.activatedBy = [];
+            if(esim.activatedBy.includes(currentUser)) esim.activatedBy = esim.activatedBy.filter(u => u !== currentUser);
+            else esim.activatedBy.push(currentUser);
+            updateCurProject(p); renderEsims();
+        }, 200);
+    }
+    
+    function delEsim(id) { showCustomDialog("確定刪除此網卡資訊？", true, () => { withLoader(() => { const p = getCurProject(); p.esims = p.esims.filter(x => x.id !== id); updateCurProject(p); renderEsims(); }); }); }
 
   </script>
 </body>
