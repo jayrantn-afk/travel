@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>旅遊趣 Pro</title>
+  <title>粗趣丸</title>
+  
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="旅遊趣">
+  <meta name="apple-mobile-web-app-title" content="粗趣丸">
+  <!-- 換回 GitHub Logo -->
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png">
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -19,11 +21,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
+    /* 乾淨高質感配色 */
     :root {
-      --primary: #FF5A5F; --primary-hover: #E35156; --secondary: #00A699; 
-      --danger: #FF3B30; --bg-color: #F4F7FC; --surface: #ffffff; 
-      --text-main: #1A1A1A; --text-muted: #666666; --border: #E4E8ED; 
-      --shadow: rgba(0, 0, 0, 0.06) 0px 8px 24px; --radius: 20px; --nav-height: 65px;
+      --primary: #FF5A5F; 
+      --primary-hover: #E35156; 
+      --secondary: #00A699; 
+      --danger: #FF3B30; 
+      --bg-color: #F4F7FC; 
+      --surface: #ffffff; 
+      --text-main: #1A1A1A; 
+      --text-muted: #666666; 
+      --border: #E4E8ED; 
+      --shadow: rgba(0, 0, 0, 0.06) 0px 8px 24px; 
+      --radius: 20px;
+      --nav-height: 65px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: calc(var(--nav-height) + 20px); overflow-x: hidden; }
@@ -33,58 +44,70 @@
     .view.active { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2); }
-    .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3); }
-    .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2); }
-    .btn-small { padding: 10px 16px; font-size: 14px; border-radius: 12px; box-shadow: none; }
+    /* 按鈕與表單 */
+    .btn { padding: 14px 24px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);}
+    .btn:hover { filter: brightness(0.95); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(255, 90, 95, 0.3);}
+    .btn:active:not(:disabled) { transform: scale(0.96); box-shadow: 0 2px 6px rgba(255, 90, 95, 0.2);}
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    
+    .btn-small { padding: 10px 16px; font-size: 14px; border-radius: 12px; box-shadow: none;}
     .btn-action { background: var(--secondary); color: #ffffff !important; box-shadow: 0 4px 10px rgba(0, 166, 153, 0.2); }
     .btn-action:hover { box-shadow: 0 6px 14px rgba(0, 166, 153, 0.3); }
-    .btn-outline { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-main); box-shadow: none; }
-    .btn-outline:hover { background: #F8F9FA; border-color: #CBD5E1; }
     
-    .form-control { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; font-weight: 500; }
+    .btn-outline { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-main); box-shadow: none; }
+    .btn-outline:hover { background: #F8F9FA; border-color: #CBD5E1;}
+    .form-control { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 16px; margin-bottom: 12px; background: #FAFBFC; transition: 0.2s; font-weight: 500;}
     .form-control:focus { border-color: var(--primary); outline: none; background: var(--surface); }
     
+    /* 卡片與容器 */
     .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .create-project-card { border: 2px dashed #CBD5E1; padding: 24px; border-radius: 20px; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .create-project-card { border: 2px dashed #CBD5E1; background: transparent; padding: 24px; border-radius: 20px; text-align: center; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .create-project-card:hover { border-color: var(--primary); color: var(--primary); background: rgba(255,90,95,0.02); }
-    .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.02); overflow: hidden; }
+    
+    .project-card { position: relative; background: var(--surface); padding: 24px; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.02); overflow: hidden;}
     .project-card:hover { border-color: var(--primary); transform: translateY(-2px); }
     
+    /* 狀態標籤 */
     .status-badge { position: absolute; top: 16px; left: 16px; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .status-badge.upcoming { background: #FFFDE7; color: #F59E0B; border: 1px solid #FDE047; }
     .status-badge.ongoing { background: #FEF2F2; color: var(--danger); border: 1px solid #FECACA; animation: pulseRed 2s infinite; }
     .status-badge.past { background: #F1F5F9; color: var(--text-muted); border: 1px solid #E2E8F0; }
     .status-badge.archived-badge { background: #E2E8F0; color: #475569; border: 1px solid #CBD5E1; }
 
-    .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); }
-    .edit-btn-card { position: absolute; top: 16px; right: 56px; background: #F1F5F9; color: var(--text-main); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; }
-    .archive-btn-card { position: absolute; top: 16px; right: 96px; background: #F8FAFC; color: var(--text-main); border: 1px solid #E2E8F0; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; }
+    /* 刪除與編輯專案按鈕 */
+    .del-btn-card { position: absolute; top: 16px; right: 16px; background: var(--danger); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(255,59,48,0.3); transition: 0.2s; }
+    .del-btn-card:hover { transform: scale(1.15); background: #E53935; }
+    .edit-btn-card { position: absolute; top: 16px; right: 56px; background: #F1F5F9; color: var(--text-main); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s; }
+    .edit-btn-card:hover { transform: scale(1.15); background: #E2E8F0; }
+    .archive-btn-card { position: absolute; top: 16px; right: 96px; background: #F8FAFC; color: var(--text-main); border: 1px solid #E2E8F0; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s; }
+    .archive-btn-card:hover { transform: scale(1.15); }
 
     .dash-tabs-container { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 4px; }
-    .dash-tab { padding: 8px 16px; border-radius: 12px; font-size: 15px; font-weight: 800; color: var(--text-muted); }
+    .dash-tab { padding: 8px 16px; border-radius: 12px; font-size: 15px; font-weight: 800; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
     .dash-tab.active { color: var(--primary); background: rgba(255,90,95,0.08); }
-    .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative; }
+    .card-panel { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.02); position: relative;}
     .flex-row { display: flex; gap: 12px; align-items: center; }
 
-    .online-users-bar { background: rgba(0, 166, 153, 0.05); border: 1px solid rgba(0,166,153,0.1); color: #008075; padding: 8px 16px; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 4px; }
+    .online-users-bar { background: rgba(0, 166, 153, 0.05); border: 1px solid rgba(0,166,153,0.1); color: #008075; padding: 8px 16px; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 4px;}
     .online-dot { width: 8px; height: 8px; background: var(--secondary); border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 153, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 166, 153, 0); } }
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 153, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 166, 153, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 153, 0); } }
 
+    /* 底部導航 */
     .bottom-nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; height: calc(var(--nav-height) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); border-top: 1px solid var(--border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; color: var(--text-muted); position: relative; height: 100%; }
-    .nav-item:hover, .nav-item.active { color: var(--primary); }
-    .nav-icon { font-size: 22px; margin-bottom: 2px; filter: grayscale(100%) opacity(0.5); position: relative; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; color: var(--text-muted); transition: 0.2s; position: relative; height: 100%; }
+    .nav-item:hover { color: var(--primary); }
+    .nav-icon { font-size: 22px; margin-bottom: 2px; transition: 0.2s; filter: grayscale(100%) opacity(0.5); position: relative;}
     .nav-text { font-size: 11px; font-weight: 700; }
+    .nav-item.active { color: var(--primary); }
     .nav-item.active .nav-icon { filter: none; transform: translateY(-2px); }
     
     .module-content { display: none; }
     .module-content.active { display: block; animation: fadeIn 0.2s; }
-    
-    .notification-dot { display: none; position: absolute; top: -4px; right: -10px; min-width: 18px; height: 18px; padding: 0 4px; background: var(--danger); color: white; border-radius: 10px; font-size: 10px; font-weight: bold; align-items: center; justify-content: center; border: 2px solid white; animation: pulseRed 2s infinite; z-index: 10; display: flex; }
-    @keyframes pulseRed { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); } }
+    .notification-dot { display: none; position: absolute; top: -4px; right: -10px; min-width: 18px; height: 18px; padding: 0 4px; background: var(--danger); color: white; border-radius: 10px; font-size: 10px; font-weight: bold; align-items: center; justify-content: center; border: 2px solid white; animation: pulseRed 2s infinite; z-index: 10;}
+    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
 
-    .day-selector-container { position: sticky; top: 0; margin: 0 -20px 20px -20px; background: var(--bg-color); z-index: 100; padding-top: 10px; }
+    /* 天數選擇器 */
+    .day-selector-container { position: sticky; top: 0; margin: 0 -20px 20px -20px; background: var(--bg-color); z-index: 100; padding-top: 10px;}
     .day-selector { padding: 0 20px 10px 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; cursor: grab; border-bottom: 1px solid var(--border); }
     .day-selector::-webkit-scrollbar { display: none; }
     
@@ -92,96 +115,107 @@
     #map-day-container .day-selector { padding: 0; border: none; margin: 0; display: flex; gap: 8px; align-items: center; }
     #map-day-container .day-btn { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.1); border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 800; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 0; flex-shrink: 0; }
     #map-day-container .day-btn.active { background: var(--primary); color: white; border: none; }
-    #map-day-container .day-badge { background: var(--danger); color: white; }
-    #map-day-container .day-btn.active .day-badge { background: white; color: var(--primary); }
 
-    .day-btn { display: inline-flex; align-items: center; padding: 10px 4px; background: transparent; border: none; border-bottom: 3px solid transparent; margin-right: 20px; font-weight: 800; color: var(--text-muted); font-size: 15px; }
+    .day-btn { display: inline-flex; align-items: center; padding: 10px 4px; background: transparent; border: none; border-bottom: 3px solid transparent; margin-right: 20px; font-weight: 800; color: var(--text-muted); transition: 0.2s; font-size: 15px; border-radius: 0; }
+    .day-btn:hover { color: var(--primary); }
     .day-btn.active { color: var(--text-main); border-bottom-color: var(--primary); }
     .day-badge { background: var(--danger); color: white; border-radius: 12px; padding: 2px 6px; font-size: 11px; font-weight: bold; margin-left: 6px; line-height: 1; }
 
     .duty-roster-bar { background: #FFFDE7; border: 1px solid #FDE047; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 13px; font-weight: 800; color: #B45309; }
-    .duty-roster-select { border: none; background: transparent; font-weight: 800; color: var(--primary); outline: none; margin-left: 4px; border-bottom: 1px dashed var(--primary); }
+    .duty-roster-select { border: none; background: transparent; font-weight: 800; color: var(--primary); outline: none; margin-left: 4px; border-bottom: 1px dashed var(--primary); cursor: pointer; }
     
-    .itinerary-date-header { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    /* 日期標題區與時間軸 */
+    .itinerary-date-header { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;}
     .timeline-container { padding-top: 10px; }
     .plan-row { display: flex; position: relative; }
     .plan-time-col { width: 70px; flex-shrink: 0; text-align: right; padding-right: 12px; padding-top: 18px; position: relative; z-index: 2; }
-    .plan-time-text { font-weight: 800; font-size: 15px; color: var(--text-main); letter-spacing: -0.5px; display:block; }
-    .plan-time-end { font-weight: 600; font-size: 11px; color: var(--text-muted); display:block; margin-top: 2px; }
+    .plan-time-text { font-weight: 800; font-size: 15px; color: var(--text-main); letter-spacing: -0.5px; display: block;}
+    .plan-time-end { font-weight: 600; font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
     .plan-timeline-line { position: absolute; left: 64px; top: 38px; bottom: -38px; width: 2px; background: #E4E8ED; z-index: 1; }
     .plan-row:last-child .plan-timeline-line { display: none; }
     .plan-dot { position: absolute; left: 59px; top: 22px; width: 12px; height: 12px; background: white; border-radius: 50%; z-index: 2; border: 3px solid var(--secondary); }
-    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column; }
-    .plan-card { background: var(--surface); padding: 16px 16px 16px 36px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .plan-card-col { flex: 1; padding-left: 12px; position: relative; padding-bottom: 8px; display: flex; flex-direction: column;}
+    .plan-card { background: var(--surface); padding: 16px 16px 16px 36px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); position: relative; transition: 0.2s; flex: 1; display: flex; flex-direction: column; justify-content: space-between;}
     .plan-card:hover { border-color: rgba(0,166,153,0.3); }
-    .drag-handle { position: absolute; left: 0; top: 0; bottom: 0; width: 36px; display:flex; align-items:center; justify-content:center; color: #CBD5E1; font-size: 20px; cursor: grab; z-index: 5; }
+    .drag-handle { position: absolute; left: 0; top: 0; bottom: 0; width: 36px; display: flex; align-items: center; justify-content: center; color: #CBD5E1; font-size: 20px; cursor: grab; z-index: 5; }
     .drag-handle:active { cursor: grabbing; color: var(--primary); }
-    .plan-number-badge { position: absolute; top: -8px; left: 24px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5; }
-
-    .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 64px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .transit-block { padding: 4px 10px; background: #ffffff; border: 2px solid var(--secondary); border-radius: 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: var(--secondary); box-shadow: 0 2px 6px rgba(0, 166, 153, 0.15); z-index: 20; }
+    .plan-number-badge { position: absolute; top: -8px; left: 24px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3); z-index: 5;}
+    
+    /* 交通方式選擇區塊 */
+    .transit-container { position: relative; margin-top: -8px; margin-bottom: 12px; margin-left: 64px; padding-left: 12px; border-left: 2px dashed #E4E8ED; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
+    .transit-block { padding: 4px 10px; background: #ffffff; border: 2px solid var(--secondary); border-radius: 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: var(--secondary); box-shadow: 0 2px 6px rgba(0, 166, 153, 0.15); z-index: 20; cursor: pointer; transition: 0.2s;}
     .transit-block:hover { background: var(--secondary); color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 166, 153, 0.3); }
     .transit-block::after { content: '⚙️ 修改'; font-size: 10px; font-weight: 800; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
-    .gmaps-link-btn { background: #4285F4; color: #ffffff !important; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 800; text-decoration: none; border: none; display: inline-flex; align-items: center; box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3); z-index: 20; }
+    .gmaps-link-btn { background: #4285F4; color: #ffffff !important; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 800; text-decoration: none; border: none; display: inline-flex; align-items: center; box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3); z-index: 20; transition: 0.2s;}
     .gmaps-link-btn:hover { background: #3367D6; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4); }
 
+    /* 標籤與文字 */
     .creator-badge { font-size: 11px; background: #F1F5F9; color: var(--text-muted); padding: 4px 10px; border-radius: 12px; display: inline-block; font-weight: 600; margin:0; }
-    .action-text { font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA; cursor: pointer; }
+    .action-text { cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; background: #F8F9FA;}
     .action-text:hover { filter: brightness(0.95); background: #E2E8F0; }
     .edit-text { color: var(--secondary); margin-right: 6px; }
-    .del-text { color: var(--danger); background: #FFF0F0; }
+    .del-text { color: var(--danger); background: #FFF0F0;}
     
-    .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative; }
+    /* 地圖與自訂地標 (懸浮定位) */
+    .map-search-bar { display: flex; gap: 8px; margin-bottom: 12px; position: relative;}
     .map-search-bar .form-control { margin-bottom: 0; }
     .search-results-container { position: absolute; top: 60px; left: 0; right: 0; background: white; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 500; display: none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); }
-    .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor:pointer; }
+    .search-result-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
     .search-result-item:hover { background: #F8F9FA; }
-    .map-wrapper { position: relative; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
-    #map-container { height: 500px; width: 100%; z-index: 1; }
+    .search-result-item:last-child { border-bottom: none; }
+    .map-wrapper { position: relative; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); height: 500px; }
+    #map-container { height: 100%; width: 100%; z-index: 1; }
+    .map-fab-locate { position: absolute; bottom: 30px; right: 16px; width: 46px; height: 46px; background: var(--surface); border-radius: 23px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: none; font-weight: 800; color: var(--text-main); cursor: pointer; z-index: 400; transition: 0.2s; font-size: 20px;}
     
-    .custom-map-pin { width: 30px; height: 30px; background: var(--primary); border: 3px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: -2px 2px 6px rgba(0,0,0,0.3); }
+    .custom-map-pin { width: 30px; height: 30px; background: var(--primary); border: 3px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: -2px 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
     .custom-map-pin-inner { transform: rotate(45deg); color: white; font-weight: bold; font-size: 14px; }
     .pin-blue { background: #4285F4; }
-    .day-tooltip { background: var(--surface); border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px 12px; text-align: center; line-height: 1.3; }
-    .day-tooltip-title { font-size: 11px; color: var(--secondary); font-weight: 800; margin-bottom: 2px; }
-    .day-tooltip-place { font-size: 14px; font-weight: bold; color: var(--text-main); }
+    .day-tooltip { background: var(--surface); border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px 12px; text-align: center; line-height: 1.3;}
+    .day-tooltip-title { font-size: 11px; color: var(--secondary); font-weight: 800; margin-bottom: 2px;}
+    .day-tooltip-place { font-size: 14px; font-weight: bold; color: var(--text-main);}
     .day-tooltip::before { display: none; }
 
-    .plan-img-preview, .plan-img-display { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid #E4E8ED; flex-shrink: 0; }
-    .plan-img-preview { display: none; margin-top: 12px; }
+    .plan-img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; display: none; border: 1px solid var(--border); margin-top: 12px; }
+    .plan-img-display { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 1px solid #E4E8ED; flex-shrink: 0; }
     .file-upload-label { display: flex; align-items: center; justify-content: center; padding: 14px; background: #f8f9fa; border: 1.5px dashed #CBD5E1; border-radius: 14px; color: var(--text-muted); font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
+    .file-upload-label:hover { background: #F1F5F9; border-color: var(--secondary); color: var(--secondary); }
     
+    /* 底部懸浮面板 */
     .bottom-sheet { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 24px 40px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); z-index: 2000; transition: bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .bottom-sheet.active { bottom: 0; }
     .sheet-handle { width: 40px; height: 5px; background: #E4E8ED; border-radius: 10px; margin: 0 auto 16px auto; }
     .sheet-input-title { font-size:20px; font-weight:800; color:var(--text-main); width:100%; padding:8px; background:#FAFBFC; border: 2px dashed #CBD5E1; border-radius:8px; transition:0.2s; }
     .sheet-input-title:focus { border-color: var(--primary); border-style: solid; outline:none; background: #FFF9F9; }
-    .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; }
+    .sheet-input-desc { font-size:14px; font-weight:500; color:var(--text-muted); border:none; border-bottom: 1px dashed #CBD5E1; width:100%; margin-bottom:16px; padding:4px 0; background:transparent; transition:0.2s; }
 
-    .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer;}
+    /* iOS 風格切換開關 */
+    .toggle-switch { position: relative; width: 46px; height: 26px; background: #CBD5E1; border-radius: 13px; transition: 0.3s; cursor: pointer; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     input:checked + .toggle-switch { background: var(--secondary); }
     input:checked + .toggle-switch::after { transform: translateX(20px); }
-    .checkbox-item { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-bottom: 1px solid var(--border); }
+    .checkbox-item { display: flex; align-items: center; justify-content: space-between; padding: 14px; border-bottom: 1px solid var(--border); cursor: pointer;}
 
     .poll-title-text { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; display: block; border-bottom: 2px solid var(--border); padding-bottom: 8px;}
     .poll-opt-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
-    .poll-opt-input { background: #FAFBFC; font-size: 15px; border-radius: 12px; }
+    .poll-opt-input { background: #FAFBFC; font-size: 15px; border-radius: 12px;}
     
+    /* 工具列導航美化 */
     .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; overflow-x: auto; white-space: nowrap;}
     .sub-nav-container::-webkit-scrollbar { display: none; }
-    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; }
+    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; position: relative; }
     .sub-nav-btn.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    
     .tool-btn-wrap { display: flex; gap: 10px; margin-top: 16px; }
-    .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; }
+    .tool-btn { flex: 1; background: #F1F5F9; color: var(--text-main); border: none; padding: 12px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; text-align: center; display: inline-block; cursor: pointer; transition: 0.2s; box-shadow: none;}
     .tool-btn.call { background: #E8F4FD; color: #0284C7; }
 
+    /* 行李清單 */
     .more-section { display: none; }
     .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor:pointer;}
-    .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;}
+    .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; font-size: 12px;}
     .checklist-item.done .check-circle { background: var(--secondary); border-color: var(--secondary); }
     .checklist-item.done .check-circle::after { content: '✓'; }
-    .checklist-text { flex: 1; font-weight: 600; font-size: 15px; }
+    .checklist-text { flex: 1; font-weight: 600; font-size: 15px; transition: 0.2s; }
     .checklist-item.done .checklist-text { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
     .checked-by-tags { font-size:10px; color:var(--secondary); background:#E6FAF8; padding:2px 6px; border-radius:8px; font-weight:bold; display:inline-block; margin-top:4px;}
 
@@ -228,7 +262,7 @@
 </head>
 <body>
 
-  <div id="global-loader" class="modal-overlay" style="z-index: 9999;">
+  <div id="global-loader" class="modal-overlay" style="z-index: 9999;" onclick="event.stopPropagation()">
     <div class="modal" style="text-align: center; background: transparent; box-shadow: none;" onclick="event.stopPropagation()">
       <div class="spinner"></div><h2 style="font-weight: 800; color: white; margin-top:16px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">處理中...</h2>
     </div>
@@ -237,7 +271,7 @@
 
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
-      <img src="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo.png" alt="Logo" style="width: 110px; height: 110px; object-fit: contain; margin-bottom: 20px;">
+      <img src="https://drive.google.com/uc?export=view&id=1T9jEV8kkxRCEQmqHT6azzL3v6PjbcwkN" alt="Logo" style="width: 110px; height: 110px; object-fit: cover; border-radius: 28px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);">
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣 Pro</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       <div style="position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
@@ -552,9 +586,9 @@
                 <div class="card-panel hide-in-archive">
                     <h4 style="margin-bottom: 12px; font-size:16px; color:#00B900; display:flex; align-items:center; gap:6px;">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" style="width:20px; height:20px;"> 
-                        LINE 群組助手 (設定)
+                        LINE 群組助手
                     </h4>
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">將官方機器人邀請至 LINE 群組，並輸入專屬認證碼，即可自動同步行程提醒、投票與分帳通知！</p>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">將官方機器人邀請至 LINE 群組，即可在群組內接收行程提醒與分帳通知！</p>
                     
                     <label style="font-size:12px; font-weight:bold; color:var(--text-main);">🔑 本旅程專屬認證碼：</label>
                     <div style="display:flex; gap:8px; margin-top:4px; margin-bottom:16px;">
@@ -562,7 +596,7 @@
                         <button class="btn btn-action" style="padding:10px 16px;" onclick="copyLineAuthCode()">📋 複製</button>
                     </div>
 
-                    <div style="background:#F8F9FA; border:1px solid #E4E8ED; border-radius:12px; padding:16px; font-size:13px; color:var(--text-main);">
+                    <div style="background:#F8F9FA; border:1px solid #E4E8ED; border-radius:12px; padding:16px; font-size:13px; color:var(--text-main); margin-bottom: 16px;">
                         <strong style="color:var(--secondary);">📌 綁定步驟：</strong>
                         <ol style="margin-top:8px; padding-left:20px; line-height:1.8; color:var(--text-muted); font-weight:bold;">
                             <li>將「旅遊趣小幫手」加入你們的 LINE 聊天群組。</li>
@@ -571,15 +605,16 @@
                                     /bind <span class="line-auth-code-display"></span>
                                 </div>
                             </li>
-                            <li>綁定成功後，機器人會在出發前發送提醒，並在發起投票時自動推播！</li>
+                            <li>機器人回覆成功後，即可使用下方推播功能！</li>
                         </ol>
                     </div>
-                    
-                    <div style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px;">
-                        <label class="checkbox-item" style="padding:0; cursor:pointer;">
-                            <span style="font-weight:bold; font-size:14px; color:var(--text-main);">🔔 啟用機器人推播通知</span>
-                            <div class="toggle-switch"></div>
-                        </label>
+
+                    <label style="font-size:12px; font-weight:bold; color:var(--text-main); display:block; margin-bottom: 8px;">主動發送通知到群組：</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <button class="btn-outline" style="padding: 12px; font-size: 12px; font-weight: bold; border-radius: 12px;" onclick="sendLineNotification('reminder')">📅 明日行程提醒</button>
+                        <button class="btn-outline" style="padding: 12px; font-size: 12px; font-weight: bold; border-radius: 12px;" onclick="sendLineNotification('budget')">💰 結算分帳提醒</button>
+                        <button class="btn-outline" style="padding: 12px; font-size: 12px; font-weight: bold; border-radius: 12px;" onclick="sendLineNotification('checklist')">🎒 行李準備提醒</button>
+                        <button class="btn-outline" style="padding: 12px; font-size: 12px; font-weight: bold; border-radius: 12px;" onclick="sendLineNotification('poll')">🗳️ 投票催票提醒</button>
                     </div>
                 </div>
             </div>
@@ -587,9 +622,9 @@
       </div>
   </div> 
 
-  <!-- 💡 Modal 彈跳視窗集合 (已清除所有 onClick event.stopPropagation 以便全域關閉) -->
+  <!-- 💡 Modal 彈跳視窗集合 -->
   
-  <div id="custom-dialog-overlay" class="modal-overlay">
+  <div id="custom-dialog-overlay" class="modal-overlay" onclick="closeModal('custom-dialog-overlay')">
     <div class="modal" onclick="event.stopPropagation()">
         <div id="custom-dialog-icon" style="font-size: 40px; margin-bottom: 12px;">💡</div>
         <h3 id="custom-dialog-title" style="margin-bottom: 8px; font-weight: 800; font-size: 18px;">系統提示</h3>
@@ -601,7 +636,7 @@
     </div>
   </div>
 
-  <div id="budget-info-modal" class="modal-overlay">
+  <div id="budget-info-modal" class="modal-overlay" onclick="closeModal('budget-info-modal')">
     <div class="modal" onclick="event.stopPropagation()">
       <h3 style="margin-bottom: 16px; font-weight:800; color:var(--secondary); text-align:center;">ℹ️ 系統如何分帳？</h3>
       <div style="color:var(--text-muted); font-size:14px; line-height:1.6; max-height:60vh; overflow-y:auto; padding-right:8px;">
@@ -624,7 +659,7 @@
     </div>
   </div>
 
-  <div id="my-expense-details-modal" class="modal-overlay">
+  <div id="my-expense-details-modal" class="modal-overlay" onclick="closeModal('my-expense-details-modal')">
     <div class="modal" onclick="event.stopPropagation()">
       <h3 style="margin-bottom: 12px; font-weight:800; color:var(--primary); text-align:center;">🕵️ 我的專屬帳單</h3>
       <div style="background: #FFFDE7; border: 1px solid #FDE047; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; color: #B45309; line-height: 1.5; font-weight: 600;">
@@ -640,7 +675,7 @@
     </div>
   </div>
 
-  <div id="add-modal" class="modal-overlay">
+  <div id="add-modal" class="modal-overlay" onclick="closeModal('add-modal')">
     <div class="modal" onclick="event.stopPropagation()">
       <h2 id="project-modal-title" style="margin-bottom: 24px; font-weight:800; font-size:22px;">✈️ 建立新旅程</h2>
       <input type="hidden" id="edit-project-id" value="">
@@ -664,7 +699,7 @@
     </div>
   </div>
 
-  <div id="manage-members-modal" class="modal-overlay">
+  <div id="manage-members-modal" class="modal-overlay" onclick="closeManageMembers()">
     <div class="modal" onclick="event.stopPropagation()">
         <h2 style="margin-bottom: 12px; font-weight:800;">👥 旅程成員管理</h2>
         <div id="manage-members-list" style="max-height: 50vh; overflow-y: auto; padding-right: 8px;"></div>
@@ -672,7 +707,7 @@
     </div>
   </div>
 
-  <div id="add-user-modal" class="modal-overlay">
+  <div id="add-user-modal" class="modal-overlay" onclick="closeModal('add-user-modal')">
     <div class="modal" onclick="event.stopPropagation()">
       <h2 style="margin-bottom: 24px; font-weight:800;">👨‍👩‍👧‍👦 新增旅伴</h2>
       <input type="text" id="new-user-name" class="form-control" placeholder="請輸入姓名">
@@ -684,7 +719,7 @@
     </div>
   </div>
 
-  <div id="admin-login-modal" class="modal-overlay">
+  <div id="admin-login-modal" class="modal-overlay" onclick="closeModal('admin-login-modal')">
     <div class="modal" style="text-align:center;" onclick="event.stopPropagation()">
       <h2 style="margin-bottom: 16px; font-weight:800;">⚙️ 管理員驗證</h2>
       <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">請輸入管理員授權密碼</p>
@@ -696,7 +731,7 @@
     </div>
   </div>
 
-  <div id="admin-dashboard-modal" class="modal-overlay">
+  <div id="admin-dashboard-modal" class="modal-overlay" onclick="closeModal('admin-dashboard-modal')">
     <div class="modal" onclick="event.stopPropagation()">
       <h2 style="margin-bottom: 16px; font-weight:800; color:var(--primary);">👑 系統管理台</h2>
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; font-weight:bold;">可修改所有人名稱與密碼，系統會自動同步歷史紀錄。</p>
@@ -705,7 +740,7 @@
     </div>
   </div>
 
-  <div id="split-exclusion-modal" class="modal-overlay">
+  <div id="split-exclusion-modal" class="modal-overlay" onclick="closeSplitExclusion()">
     <div class="modal" onclick="event.stopPropagation()">
       <h2 style="margin-bottom: 12px; font-weight:800;">⚙️ 人員分攤排除</h2>
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">選擇人員，關閉他不需要付錢的項目。</p>
@@ -717,7 +752,7 @@
     </div>
   </div>
 
-  <div id="exchange-rate-modal" class="modal-overlay">
+  <div id="exchange-rate-modal" class="modal-overlay" onclick="closeModal('exchange-rate-modal')">
       <div class="modal" onclick="event.stopPropagation()">
           <h3 style="margin-bottom: 16px; font-weight:800; color:var(--secondary); text-align:center;">💱 啟用的外幣</h3>
           <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px; text-align:center;">勾選旅程中會用到的外幣，系統將自動抓取全球即時匯率！</p>
@@ -735,7 +770,7 @@
       </div>
   </div>
 
-  <div id="wishlist-modal" class="modal-overlay">
+  <div id="wishlist-modal" class="modal-overlay" onclick="closeModal('wishlist-modal')">
       <div class="modal" style="background:#F8F9FA;" onclick="event.stopPropagation()">
           <h3 style="margin-bottom: 8px; font-weight:800; color:var(--primary);">🎒 口袋名單</h3>
           <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">先把大家想去的地方存起來，之後再排入行程吧！</p>
@@ -748,7 +783,7 @@
       </div>
   </div>
 
-  <div id="transit-modal" class="modal-overlay">
+  <div id="transit-modal" class="modal-overlay" onclick="closeModal('transit-modal')">
     <div class="modal" style="text-align:center;" onclick="event.stopPropagation()">
         <h3 style="margin-bottom:20px; font-weight:800;">設定交通方式</h3>
         <input type="hidden" id="transit-plan-id">
@@ -796,9 +831,9 @@
         <button class="btn" style="width:100%; padding: 14px; border-radius:14px;" onclick="updateLocationToForm()">📍 確認使用此地標並返回</button>
     </div>
   </div>
-  <div id="sheet-overlay" class="modal-overlay" style="z-index: 1999; display: none;"></div>
+  <div id="sheet-overlay" class="modal-overlay" style="z-index: 1999; display: none;" onclick="closeBottomSheet()"></div>
 
-  <div id="bank-info-modal" class="modal-overlay">
+  <div id="bank-info-modal" class="modal-overlay" onclick="closeModal('bank-info-modal')">
     <div class="modal" onclick="event.stopPropagation()">
       <h3 style="margin-bottom: 16px; font-weight:800; color:var(--text-main); text-align:center;">🏦 收款帳號設定</h3>
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; text-align:center;">輸入大家的帳號，結算匯款更方便！</p>
@@ -810,7 +845,7 @@
     </div>
   </div>
 
-  <div id="inline-exp-edit-modal" class="modal-overlay">
+  <div id="inline-exp-edit-modal" class="modal-overlay" onclick="closeModal('inline-exp-edit-modal')">
       <div class="modal" onclick="event.stopPropagation()">
           <h4 style="margin-bottom:12px;">✏️ 修改帳目</h4>
           <input type="hidden" id="edit-exp-id">
@@ -838,7 +873,7 @@
       </div>
   </div>
 
-  <div id="custom-duty-modal" class="modal-overlay">
+  <div id="custom-duty-modal" class="modal-overlay" onclick="cancelCustomDuty()">
     <div class="modal" onclick="event.stopPropagation()">
       <h3 style="margin-bottom: 16px; font-weight:800; text-align:center;">✏️ 自訂人員名稱</h3>
       <input type="hidden" id="custom-duty-role">
@@ -850,8 +885,7 @@
     </div>
   </div>
 
-  <!-- 新增：智能優化路線預覽視窗 -->
-  <div id="route-preview-modal" class="modal-overlay">
+  <div id="route-preview-modal" class="modal-overlay" onclick="closeModal('route-preview-modal')">
     <div class="modal" onclick="event.stopPropagation()">
       <h3 style="margin-bottom: 12px; font-weight:800; text-align:center;">✨ 路線優化預覽</h3>
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; text-align:center;">系統已依據地圖距離重新排列，請確認是否套用新順序：</p>
@@ -895,7 +929,6 @@
         return L.divIcon({ className: 'custom-map-icon', html: `<div class="custom-map-pin ${colorClass}"><div class="custom-map-pin-inner">${num}</div></div>`, iconSize: [30, 30], iconAnchor: [15, 30] });
     }
 
-    // 全域監聽：點擊半透明背景與 ESC 鍵關閉 Modal
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal-overlay') && e.target.id !== 'global-loader') {
             e.target.classList.remove('active');
@@ -934,6 +967,49 @@
     function copyLineAuthCode() {
         const code = document.getElementById('line-auth-code').value;
         copyText(code, "📋 認證碼已複製");
+    }
+
+    function sendLineNotification(type) {
+        const p = getCurProject();
+        if(!p || !p.id) return showCustomDialog("請先開啟一份旅程專案！");
+        
+        let message = "";
+        const tripName = p.location || "旅程";
+        
+        if(type === 'reminder') {
+            const nextDayIdx = activeDayIndex;
+            const dayPlans = (p.plans || []).filter(plan => plan && plan.dayIdx === nextDayIdx).sort((a,b)=>(a.time || '').localeCompare(b.time || ''));
+            if(dayPlans.length === 0) return showCustomDialog("這天沒有行程，無法發送提醒喔！");
+            
+            message = `📢【${tripName}】行程提醒！\n\n明天我們即將展開第 ${nextDayIdx + 1} 天的行程囉！\n\n📌 明日重點行程：\n`;
+            dayPlans.forEach((plan, i) => {
+                message += `${i+1}. [${plan.time}] ${plan.place}\n`;
+            });
+            message += "\n記得提早準備，祝大家有個美好的一天！🏝️";
+        } 
+        else if (type === 'budget') {
+            message = `💰【${tripName}】分帳結算提醒！\n\n旅程中的各項花費已經結算出來囉！請大家盡快到「旅遊趣」網頁版的「分帳」頁面，查看自己的個人總開銷，以及需要轉帳給誰。\n\n💳 請記得點擊「銀行帳號」圖示進行匯款，完成後按下「標記已還款」喔！`;
+        }
+        else if (type === 'checklist') {
+            message = `🎒【${tripName}】行李確認通知！\n\n主揪已發布最新的「待辦/行李清單」囉！\n出發前請務必到網頁版的「更多 -> 行李清單」確認您需要準備的物品，並勾選「已準備」！`;
+        }
+        else if (type === 'poll') {
+            const activePolls = (p.polls || []).length;
+            if(activePolls === 0) return showCustomDialog("目前沒有進行中的投票喔！");
+            message = `🗳️【${tripName}】投票催票中！\n\n目前有 ${activePolls} 個重要事項需要大家的意見！請大家盡速至「旅遊趣」網頁版的「更多 -> 投票」頁面，投下神聖的一票，幫助我們順利推進行程規劃！`;
+        }
+
+        if(message) {
+            withLoader(() => {
+                fetch(`${GAS_URL}?action=sendPush&groupId=${p.id}&message=${encodeURIComponent(message)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'Push sent') showSync("✅ 已發送 LINE 通知", 1500);
+                    else showSync("⚠️ 尚未綁定群組，請先完成上方步驟", 2500);
+                })
+                .catch(() => showSync("⚠️ 尚未綁定群組", 2000));
+            });
+        }
     }
 
     function withLoader(actionFunc, delay = 300) {
@@ -1649,7 +1725,7 @@
             </div>`;
         }).join('');
     }
-    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return; const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null, creator: currentUser, likes: [] }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); showSync("✅ 已加入口袋名單", 1000); }
+    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return showCustomDialog("請輸入待辦事項！"); const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null, creator: currentUser, likes: [] }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); showSync("✅ 已加入口袋名單", 1000); }
     function addSheetToWishlist() {
         if(!currentSheetSelection) return; const nameInput = document.getElementById('sheet-place-name-input'); const finalName = nameInput ? nameInput.value : currentSheetSelection.name;
         const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: finalName, lat: currentSheetSelection.lat, lng: currentSheetSelection.lng, creator: currentUser, likes: [] }); updateCurProject(p); closeBottomSheet(); showSync("✅ 已收藏至口袋名單", 1500);
@@ -1860,7 +1936,6 @@
         if (hint) { if (type !== 'TWD') { const rate = liveRates[type] || 0.22; hint.style.display = 'block'; hint.textContent = `= 換算台幣 NT$ ${Math.round(val * rate).toLocaleString()}`; } else { hint.style.display = 'none'; } }
     }
 
-    // --- 💰 分帳邏輯 ---
     function addExpenseFromTop() { 
         const itemInput = document.getElementById('exp-item'); const item = itemInput ? itemInput.value.trim() : ''; 
         const categorySel = document.getElementById('exp-category'); const category = categorySel ? categorySel.value : '其他';
@@ -2170,21 +2245,38 @@
 
     // --- 🌐 eSIM / 網卡管理模組 ---
     function previewEsimImage(event) {
-        const file = event.target.files[0]; if(!file) return; const reader = new FileReader();
+        const file = event.target.files[0]; 
+        if(!file) return; 
+        const reader = new FileReader();
+        
         reader.onload = (e) => {
-            const img = new Image(); img.onload = () => {
-                const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; let width = img.width; let height = img.height; 
-                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); 
+            const img = new Image(); 
+            img.onload = () => {
+                const canvas = document.createElement('canvas'); 
+                const MAX_WIDTH = 800; 
+                let width = img.width; 
+                let height = img.height; 
+                if (width > MAX_WIDTH) { 
+                    height *= MAX_WIDTH / width; 
+                    width = MAX_WIDTH; 
+                }
+                canvas.width = width; 
+                canvas.height = height; 
+                const ctx = canvas.getContext('2d'); 
+                ctx.drawImage(img, 0, 0, width, height); 
                 const compressed = canvas.toDataURL('image/jpeg', 0.7); 
                 document.getElementById('esim-image-input').dataset.base64 = compressed;
-                const preview = document.getElementById('esim-img-preview'); preview.src = compressed; preview.style.display = 'block';
-            }; img.src = e.target.result;
-        }; reader.readAsDataURL(file);
+                const preview = document.getElementById('esim-img-preview'); 
+                preview.src = compressed; 
+                preview.style.display = 'block';
+            }; 
+            img.src = e.target.result;
+        }; 
+        reader.readAsDataURL(file);
     }
     
     function addEsim() {
-        const assignee = document.getElementById('esim-assignee').value; // 抓取指定人
+        const assignee = document.getElementById('esim-assignee').value; 
         const name = document.getElementById('esim-name').value.trim();
         const smdp = document.getElementById('esim-smdp').value.trim();
         const activation = document.getElementById('esim-activation').value.trim();
@@ -2195,26 +2287,38 @@
         if(!smdp && !activation && !imgBase64) return showCustomDialog("請至少提供一種安裝方式 (代碼或 QRCode 圖片)！");
 
         withLoader(() => {
-            const p = getCurProject(); if(!p.esims) p.esims = [];
+            const p = getCurProject(); 
+            if(!p.esims) p.esims = [];
             p.esims.push({ id: Date.now(), name, smdp, activation, image: imgBase64, creator: currentUser, assignee: assignee, activatedBy: [] });
             updateCurProject(p);
             
-            document.getElementById('esim-name').value = ''; document.getElementById('esim-smdp').value = ''; document.getElementById('esim-activation').value = ''; document.getElementById('esim-assignee').value = '';
-            imgInput.value = ''; delete imgInput.dataset.base64; document.getElementById('esim-img-preview').style.display = 'none';
-            renderEsims(); showSync("✅ eSIM 資訊已分享！", 1500);
+            document.getElementById('esim-name').value = ''; 
+            document.getElementById('esim-smdp').value = ''; 
+            document.getElementById('esim-activation').value = ''; 
+            document.getElementById('esim-assignee').value = '';
+            imgInput.value = ''; 
+            delete imgInput.dataset.base64; 
+            document.getElementById('esim-img-preview').style.display = 'none';
+            renderEsims(); 
+            showSync("✅ eSIM 資訊已分享！", 1500);
         });
     }
 
     function renderEsims() {
-        const p = getCurProject(); const list = document.getElementById('esim-list'); if(!list) return;
-        if(!p.esims || p.esims.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🌐</div><div class="empty-state-text">還沒有人分享網卡資訊喔！</div></div>`; return; }
+        const p = getCurProject(); 
+        const list = document.getElementById('esim-list'); 
+        if(!list) return;
+        
+        if(!p.esims || p.esims.length === 0) { 
+            list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🌐</div><div class="empty-state-text">還沒有人分享網卡資訊喔！</div></div>`; 
+            return; 
+        }
         
         let html = '';
         p.esims.forEach(e => {
             const isActivated = e.activatedBy && e.activatedBy.includes(currentUser);
             const activatedText = e.activatedBy && e.activatedBy.length > 0 ? `<div style="font-size:11px; color:var(--secondary); background:#E6FAF8; padding:4px 8px; border-radius:8px; font-weight:bold; margin-top:8px;">✅ 已開通成員: ${e.activatedBy.join(', ')}</div>` : '';
             
-            // 判斷是否有指定人員，並顯示明顯標籤與視覺模糊
             let assignBadge = '';
             let opacityStyle = '';
             if (e.assignee) {
@@ -2222,7 +2326,7 @@
                     assignBadge = `<div style="background:var(--primary); color:white; padding:4px 10px; border-radius:8px; font-size:11px; font-weight:bold; margin-bottom:12px; display:inline-block;">🎯 這是專屬於你的網卡</div>`;
                 } else {
                     assignBadge = `<div style="background:#E2E8F0; color:var(--text-muted); padding:4px 10px; border-radius:8px; font-size:11px; font-weight:bold; margin-bottom:12px; display:inline-block;">🔒 指定給：${e.assignee} (請勿誤用)</div>`;
-                    opacityStyle = 'opacity: 0.55;'; // 別人的網卡會變半透明，避免誤用
+                    opacityStyle = 'opacity: 0.55;'; 
                 }
             }
 
@@ -2251,15 +2355,33 @@
 
     function toggleEsimStatus(id) {
         withLoader(() => {
-            const p = getCurProject(); const esim = p.esims.find(x => x.id === id); if(!esim) return;
+            const p = getCurProject(); 
+            const esim = p.esims.find(x => x.id === id); 
+            if(!esim) return;
+            
             if(!esim.activatedBy) esim.activatedBy = [];
-            if(esim.activatedBy.includes(currentUser)) esim.activatedBy = esim.activatedBy.filter(u => u !== currentUser);
-            else esim.activatedBy.push(currentUser);
-            updateCurProject(p); renderEsims();
+            
+            if(esim.activatedBy.includes(currentUser)) {
+                esim.activatedBy = esim.activatedBy.filter(u => u !== currentUser);
+            } else {
+                esim.activatedBy.push(currentUser);
+            }
+            
+            updateCurProject(p); 
+            renderEsims();
         }, 200);
     }
     
-    function delEsim(id) { showCustomDialog("確定刪除此網卡資訊？", true, () => { withLoader(() => { const p = getCurProject(); p.esims = p.esims.filter(x => x.id !== id); updateCurProject(p); renderEsims(); }); }); }
+    function delEsim(id) { 
+        showCustomDialog("確定刪除此網卡資訊？", true, () => { 
+            withLoader(() => { 
+                const p = getCurProject(); 
+                p.esims = p.esims.filter(x => x.id !== id); 
+                updateCurProject(p); 
+                renderEsims(); 
+            }); 
+        }); 
+    }
 
   </script>
 </body>
