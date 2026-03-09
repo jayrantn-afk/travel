@@ -594,7 +594,7 @@
                     <label style="font-size:12px; font-weight:bold; color:var(--text-main);">🔑 本旅程專屬認證碼：</label>
                     <div style="display:flex; gap:8px; margin-top:4px; margin-bottom:16px;">
                         <input type="text" id="line-auth-code" class="form-control" style="margin:0; flex:1; font-family:monospace; font-weight:900; color:var(--primary); background:#FFF0F0; border-color:#FECACA; font-size:18px; text-align:center;" readonly>
-                        <button class="btn btn-action" style="padding:10px 16px;" onclick="copyLineAuthCode()">📋 複製</button>
+                        <button class="btn btn-action" style="padding:10px 16px; border-radius:12px;" onclick="copyLineAuthCode()">📋 複製</button>
                     </div>
 
                     <div style="background:#F8F9FA; border:1px solid #E4E8ED; border-radius:12px; padding:16px; font-size:13px; color:var(--text-main); margin-bottom: 16px;">
@@ -606,8 +606,14 @@
                                     /bind <span class="line-auth-code-display"></span>
                                 </div>
                             </li>
-                            <li>機器人回覆成功後，即可使用下方推播功能！</li>
+                            <li>機器人回覆成功後，<strong style="color:var(--danger);">請複製回覆訊息最下方的「群組 ID」並貼到下方：</strong></li>
                         </ol>
+                        
+                        <label style="font-size:12px; font-weight:bold; color:var(--text-main); display:block; margin-top: 12px;">🔗 貼上群組 ID (C開頭的亂碼)：</label>
+                        <div style="display:flex; gap:8px; margin-top:4px;">
+                            <input type="text" id="line-group-id-input" class="form-control" style="margin:0; flex:1; font-family:monospace; font-size:14px; border-color:var(--primary);" placeholder="貼上 C 開頭的群組 ID">
+                            <button class="btn btn-action" style="padding:10px 16px; border-radius:12px; color:white !important; white-space:nowrap;" onclick="saveLineGroupId()">儲存綁定</button>
+                        </div>
                     </div>
 
                     <label style="font-size:12px; font-weight:bold; color:var(--text-main); display:block; margin-bottom: 8px;">主動發送通知到群組：</label>
@@ -1027,9 +1033,34 @@
         copyText(code, "📋 認證碼已複製");
     }
 
+    // ==========================================
+    // 儲存從 LINE 獲得的專屬 Group ID
+    // ==========================================
+    function saveLineGroupId() {
+        const input = document.getElementById('line-group-id-input');
+        const val = input ? input.value.trim() : '';
+        
+        if(!val) return showCustomDialog("請輸入群組 ID！");
+        if(!val.startsWith('C') && !val.startsWith('U') && !val.startsWith('R')) {
+            return showCustomDialog("群組 ID 格式錯誤，通常是一長串 C 開頭的英數字！");
+        }
+        
+        withLoader(() => {
+            const p = getCurProject();
+            p.lineGroupId = val;
+            updateCurProject(p);
+            showSync("✅ 群組綁定成功！現在可以發送通知了", 2000);
+        });
+    }
+
     function sendLineNotification(type) {
         const p = getCurProject();
         if(!p || !p.id) return showCustomDialog("請先開啟一份旅程專案！");
+        
+        // 核心檢查：現在強制網頁要認得 lineGroupId 才能發送
+        if(!p.lineGroupId) {
+            return showCustomDialog("⚠️ 尚未綁定群組！<br><br>請先完成上方步驟，並將機器人回覆的「群組 ID」貼到欄位中儲存。");
+        }
         
         let message = "";
         const tripName = p.location || "旅程";
@@ -1059,13 +1090,14 @@
 
         if(message) {
             withLoader(() => {
-                fetch(`${GAS_URL}?action=sendPush&groupId=${p.id}&message=${encodeURIComponent(message)}`)
+                // 注意：這裡改成了使用 p.lineGroupId 而不是 p.id
+                fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(message)}`)
                 .then(res => res.json())
                 .then(data => {
                     if(data.status === 'Push sent') showSync("✅ 已發送 LINE 通知", 1500);
-                    else showSync("⚠️ 尚未綁定群組，請先完成上方步驟", 2500);
+                    else showSync("⚠️ 發送失敗，請確認群組 ID 是否正確", 2500);
                 })
-                .catch(() => showSync("⚠️ 尚未綁定群組", 2000));
+                .catch(() => showSync("⚠️ 發送失敗，請檢查網路或群組 ID", 2000));
             });
         }
     }
@@ -1432,6 +1464,14 @@
             const code = `TRIP-${currentProjectId}`;
             lineCodeEl.value = code;
             lineCodeDisplays.forEach(el => el.textContent = code);
+        }
+
+        // ==========================================
+        // 幫「貼上群組 ID」的輸入框帶入目前的值
+        // ==========================================
+        const lineGroupIdInput = document.getElementById('line-group-id-input');
+        if (lineGroupIdInput && p) {
+            lineGroupIdInput.value = p.lineGroupId || '';
         }
     }
 
