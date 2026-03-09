@@ -271,7 +271,6 @@
 
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
-      <!-- 更新為 GitHub 的 Logo 保持一致 -->
       <img src="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo1.png" alt="Logo" style="width: 110px; height: 110px; object-fit: cover; border-radius: 28px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);">
       <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">驢遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
@@ -600,19 +599,23 @@
                     <div style="background:#F8F9FA; border:1px solid #E4E8ED; border-radius:12px; padding:16px; font-size:13px; color:var(--text-main); margin-bottom: 16px;">
                         <strong style="color:var(--secondary);">📌 綁定步驟：</strong>
                         <ol style="margin-top:8px; padding-left:20px; line-height:1.8; color:var(--text-muted); font-weight:bold;">
-                            <li>將「旅遊趣小幫手」加入你們的 LINE 聊天群組。</li>
+                            <li>將官方機器人 <strong>@320gbbnw</strong> 加入你們的 LINE 聊天群組。</li>
                             <li>在群組內輸入下方指令：<br>
                                 <div style="background:#E2E8F0; padding:6px 10px; border-radius:8px; color:#0284C7; margin-top:4px; margin-bottom:4px; display:inline-block; font-family:monospace; font-size:14px; cursor:pointer;" onclick="copyText('/bind ' + document.getElementById('line-auth-code').value, '📋 指令已複製')">
                                     /bind <span class="line-auth-code-display"></span>
                                 </div>
                             </li>
-                            <li>機器人回覆成功後，<strong style="color:var(--danger);">請複製回覆訊息最下方的「群組 ID」並貼到下方：</strong></li>
+                            <li>機器人回覆成功後，群組即綁定完成！</li>
                         </ol>
                         
-                        <label style="font-size:12px; font-weight:bold; color:var(--text-main); display:block; margin-top: 12px;">🔗 貼上群組 ID (C開頭的亂碼)：</label>
-                        <div style="display:flex; gap:8px; margin-top:4px;">
-                            <input type="text" id="line-group-id-input" class="form-control" style="margin:0; flex:1; font-family:monospace; font-size:14px; border-color:var(--primary);" placeholder="貼上 C 開頭的群組 ID">
-                            <button class="btn btn-action" style="padding:10px 16px; border-radius:12px; color:white !important; white-space:nowrap;" onclick="saveLineGroupId()">儲存綁定</button>
+                        <div id="line-group-bound-status" style="margin-top: 12px;"></div>
+                        
+                        <div id="line-group-input-area" style="display:flex; flex-direction:column; gap:4px; margin-top:8px;">
+                            <label style="font-size:11px; font-weight:bold; color:var(--text-muted);">🔗 貼上機器人回覆的群組 ID：</label>
+                            <div style="display:flex; gap:8px;">
+                                <input type="text" id="line-group-id-input" class="form-control" style="margin:0; flex:1; font-family:monospace; font-size:14px; border-color:var(--primary);" placeholder="C 開頭的群組 ID">
+                                <button class="btn btn-action" style="padding:10px 16px; border-radius:12px; color:white !important; white-space:nowrap;" onclick="saveLineGroupId()">儲存綁定</button>
+                            </div>
                         </div>
                     </div>
 
@@ -1024,7 +1027,7 @@
     function copyText(text, successMsg = "📋 已複製") {
         var textArea = document.createElement("textarea"); textArea.value = text; textArea.style.top = "0"; textArea.style.left = "0"; textArea.style.position = "fixed";
         document.body.appendChild(textArea); textArea.focus(); textArea.select();
-        try { if (document.execCommand('copy')) showSync(successMsg, 1500); else showSync("⚠️ 複製失敗，請手手動複製", 2000); } catch (err) { showSync("⚠️ 複製失敗，請手動複製", 2000); }
+        try { if (document.execCommand('copy')) showSync(successMsg, 1500); else showSync("⚠️ 複製失敗，請手動複製", 2000); } catch (err) { showSync("⚠️ 複製失敗，請手動複製", 2000); }
         document.body.removeChild(textArea);
     }
 
@@ -1038,7 +1041,10 @@
     // ==========================================
     function saveLineGroupId() {
         const input = document.getElementById('line-group-id-input');
-        const val = input ? input.value.trim() : '';
+        let val = input ? input.value.trim() : '';
+        
+        // 🛡️ 防呆機制：自動過濾掉不小心複製到的右括號 ) 或空白
+        val = val.replace(/[\)\s]/g, '');
         
         if(!val) return showCustomDialog("請輸入群組 ID！");
         if(!val.startsWith('C') && !val.startsWith('U') && !val.startsWith('R')) {
@@ -1049,6 +1055,8 @@
             const p = getCurProject();
             p.lineGroupId = val;
             updateCurProject(p);
+            if(input) input.value = val;
+            refreshMemberDependentUIs(); // 重新渲染畫面以顯示✅已綁定狀態
             showSync("✅ 群組綁定成功！現在可以發送通知了", 2000);
         });
     }
@@ -1102,6 +1110,15 @@
                 });
             });
         }
+    }
+
+    // 新增：自訂/自動推播通用函數 (背景執行，不干擾使用者操作)
+    function sendAutoLineNotification(message) {
+        const p = getCurProject();
+        if(!p || !p.lineGroupId) return; // 沒綁定群組就不發送，也不報錯
+        
+        fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(message)}`, { mode: 'no-cors' })
+        .catch(err => console.error("Auto push failed", err));
     }
 
     function withLoader(actionFunc, delay = 300) {
@@ -1174,6 +1191,8 @@
     }
 
     function getCurProject() { return getDB().find(p => p.id === currentProjectId) || null; }
+    
+    // 解決快速儲存會消失的問題 (移除了會立即干擾畫面的同步指令)
     function updateCurProject(updatedP) { const db = getDB(); const idx = db.findIndex(p => p.id === currentProjectId); if (idx > -1) { db[idx] = updatedP; saveDB(db); updateOnlineUsers(); } }
     function getTripMembers() { const p = getCurProject(); return p?.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
 
@@ -1268,8 +1287,11 @@
       ]).then(([newData, newUsersData]) => {
           if(newData && Array.isArray(newData)) {
               let newDataString = JSON.stringify(newData);
-              const currentDB = getDB(); const shouldForceOverride = currentDB.length === 0 || newData.length > currentDB.length;
-              if (shouldForceOverride || Date.now() - lastSaveTime >= 15000) { 
+              const currentDB = getDB(); 
+              const shouldForceOverride = currentDB.length === 0 || newData.length > currentDB.length;
+              
+              // 🛡️ 防丟失機制：確保剛存檔後的 30 秒內，不會被背景的舊資料洗掉
+              if (shouldForceOverride || Date.now() - lastSaveTime >= 30000) { 
                   const oldDataString = localStorage.getItem(`app_${currentWorkspace}`); 
                   if (oldDataString !== newDataString || shouldForceOverride) {
                       localStorage.setItem(`app_${currentWorkspace}`, newDataString); getDB(); 
@@ -1299,7 +1321,9 @@
           const currentTab = localStorage.getItem('app_lastTab') || 'itinerary';
           data[pIdx].activeUsers[currentUser] = { time: Date.now(), tab: currentTab }; 
       }
-      localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); enqueueSave(currentWorkspace, JSON.stringify(data)); syncFromCloud(false, true);
+      localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
+      enqueueSave(currentWorkspace, JSON.stringify(data)); 
+      // 這裡移除了立即呼叫 syncFromCloud，讓快速新增行程時不會被舊的雲端資料覆蓋
     }
 
     function handleLogin() {
@@ -1468,12 +1492,19 @@
             lineCodeDisplays.forEach(el => el.textContent = code);
         }
 
-        // ==========================================
-        // 幫「貼上群組 ID」的輸入框帶入目前的值
-        // ==========================================
+        // 🎯 更新 LINE 綁定狀態的 UI 顯示
+        const boundStatus = document.getElementById('line-group-bound-status');
+        const inputArea = document.getElementById('line-group-input-area');
         const lineGroupIdInput = document.getElementById('line-group-id-input');
-        if (lineGroupIdInput && p) {
-            lineGroupIdInput.value = p.lineGroupId || '';
+
+        if (p.lineGroupId) {
+            if(boundStatus) boundStatus.innerHTML = `<div style="background:#E6FAF8; color:var(--secondary); padding:10px; border-radius:8px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;"><span>✅ 已綁定群組ID: ${p.lineGroupId.substring(0,8)}...</span> <span style="cursor:pointer; text-decoration:underline; font-size:12px; opacity:0.8;" onclick="document.getElementById('line-group-input-area').style.display='flex'; this.style.display='none';">修改</span></div>`;
+            if(inputArea) inputArea.style.display = 'none';
+            if (lineGroupIdInput) lineGroupIdInput.value = p.lineGroupId;
+        } else {
+            if(boundStatus) boundStatus.innerHTML = `<div style="color:var(--danger); font-weight:bold; margin-bottom:4px; font-size:12px;">⚠️ 尚未綁定群組</div>`;
+            if(inputArea) inputArea.style.display = 'flex';
+            if (lineGroupIdInput) lineGroupIdInput.value = '';
         }
     }
 
@@ -1593,7 +1624,8 @@
 
       if(dayPlans.length === 0) {
           let wishlistHint = wishlistCount > 0 ? `<div style="margin-top:16px; padding:12px; background:rgba(0,166,153,0.1); border-radius:12px; color:var(--secondary); cursor:pointer; font-size:13px;" onclick="openWishlistModal()">💡 待排清單裡有 <strong>${wishlistCount}</strong> 個大家提議的景點，點擊馬上排入行程！</div>` : '';
-          list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏝️</div><div class="empty-state-text">這天還沒有排行程喔</div>${wishlistHint}</div>`;
+          // 加入巨型新增按鈕於空白狀態
+          list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏝️</div><div class="empty-state-text">這天還沒有排行程喔</div>${wishlistHint}<button class="btn btn-action hide-in-archive hide-in-export" style="margin-top:16px; width:100%; padding:14px; border-radius:16px; font-size:16px; color:white !important; box-shadow: 0 4px 12px rgba(0,166,153,0.2);" onclick="showAddPlanForm()">➕ 建立新行程</button></div>`;
       }
       else {
           let html = '';
@@ -1647,6 +1679,10 @@
             ${transitHtml}
             `;
           });
+          
+          // 在行程列表的最下方加入巨型新增按鈕
+          html += `<button class="btn btn-action hide-in-archive hide-in-export" style="width: 100%; padding: 14px; border-radius: 16px; margin-top: 12px; margin-bottom: 20px; font-size: 16px; color: white !important; box-shadow: 0 4px 12px rgba(0,166,153,0.2);" onclick="showAddPlanForm()">➕ 建立新行程</button>`;
+          
           list.innerHTML = html;
           
           if(p.status !== 'archived' && typeof Sortable !== 'undefined') {
@@ -1749,6 +1785,10 @@
             if(!optimized) return;
             optimized.forEach(cp => { const idx = p.plans.findIndex(x => x && x.id === cp.id); if (idx > -1) p.plans[idx] = cp; });
             updateCurProject(p); renderItinerary(); closeModal('route-preview-modal'); showSync("✨ 路線已成功重排！", 2000);
+
+            // 自動通知：行程重排
+            const tripName = p.location || "旅程";
+            sendAutoLineNotification(`🔄【${tripName}】行程更新通知！\n\n[${currentUser}] 剛剛重新最佳化了「第 ${activeDayIndex + 1} 天」的行程順序，請大家有空去網頁確認最新的路線喔！`);
         });
     }
 
@@ -2074,6 +2114,12 @@
             updateExpCostCalc(); 
             memberCbs.forEach(cb => cb.checked = true); 
             showSync("✅ 帳目已建立", 1500); 
+
+            // 自動通知：大額花費 (大於等於 1000 元)
+            if (twdCost >= 1000) {
+                const tripName = p.location || "旅程";
+                sendAutoLineNotification(`💰【${tripName}】大額記帳通知！\n\n[${payer}] 剛剛記了一筆大額花費：「${item}」(TWD ${twdCost.toLocaleString()})。\n請大家有空去網頁看看分帳明細喔！`);
+            }
         });
     }
 
@@ -2227,6 +2273,10 @@
                 const p = getCurProject(); if(!p.repayments) p.repayments = []; 
                 p.repayments.push({ id: Date.now(), from: from, to: to, amount: amount, date: new Date().toISOString().split('T')[0] }); 
                 updateCurProject(p); renderBudget(); showSync("✅ 已將此筆欠款結清", 1500); 
+
+                // 自動通知：還款確認
+                const tripName = p.location || "旅程";
+                sendAutoLineNotification(`✅【${tripName}】還款確認！\n\n[${to}] 已確認收到 [${from}] 匯來的 $${amount.toLocaleString()} 囉！\n目前的結算進度已更新。`);
             }); 
         }); 
     }
@@ -2309,9 +2359,17 @@
         if(!title || options.length < 2) return showCustomDialog("請輸入問題，並至少填寫兩個選項！"); 
         withLoader(() => {
             const p = getCurProject(); if(!p.polls) p.polls=[]; 
+            let isNew = false;
             if(editId) { const idx = p.polls.findIndex(x => x.id == editId); if(idx > -1) { const oldOptions = p.polls[idx].options; options.forEach(newOpt => { const matchedOld = oldOptions.find(o => o.name === newOpt.name); if(matchedOld) newOpt.voters = matchedOld.voters; }); p.polls[idx].title = title; p.polls[idx].date = pollDate; p.polls[idx].isMultipleChoice = isMultipleChoice; p.polls[idx].options = options; } cancelEditPoll(); showSync("✅ 投票已更新", 1500); } 
-            else p.polls.push({ id: Date.now(), title, date: pollDate, isMultipleChoice, creator: currentUser, options }); 
+            else { p.polls.push({ id: Date.now(), title, date: pollDate, isMultipleChoice, creator: currentUser, options }); isNew = true; } 
             updateCurProject(p); renderPolls(); const formCard = document.getElementById('poll-form-card'); if(formCard) formCard.style.display = 'none'; const btn = document.getElementById('show-poll-btn'); if(btn) btn.style.display = 'block'; 
+
+            // 自動通知：發起新投票
+            if (isNew) {
+                const tripName = p.location || "旅程";
+                const dateStr = pollDate ? ` (截止日: ${pollDate})` : '';
+                sendAutoLineNotification(`🗳️【${tripName}】新投票發布！\n\n[${currentUser}] 發起了一個新投票：「${title}」${dateStr}！\n快點進網頁投下神聖的一票吧！`);
+            }
         });
     }
     
@@ -2406,6 +2464,11 @@
             document.getElementById('esim-img-preview').style.display = 'none';
             renderEsims(); 
             showSync("✅ eSIM 資訊已分享！", 1500);
+
+            // 自動通知：分享新網卡
+            const tripName = p.location || "旅程";
+            const assignText = assignee ? `指定給：[${assignee}]` : `開放給所有人`;
+            sendAutoLineNotification(`🌐【${tripName}】網卡資訊來囉！\n\n[${currentUser}] 剛剛分享了一張「${name}」的網卡，${assignText}。\n快去網頁的「更多->網卡」掃描 QRCode 開通吧！`);
         });
     }
 
