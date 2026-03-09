@@ -1024,7 +1024,7 @@
     function copyText(text, successMsg = "📋 已複製") {
         var textArea = document.createElement("textarea"); textArea.value = text; textArea.style.top = "0"; textArea.style.left = "0"; textArea.style.position = "fixed";
         document.body.appendChild(textArea); textArea.focus(); textArea.select();
-        try { if (document.execCommand('copy')) showSync(successMsg, 1500); else showSync("⚠️ 複製失敗，請手動複製", 2000); } catch (err) { showSync("⚠️ 複製失敗，請手動複製", 2000); }
+        try { if (document.execCommand('copy')) showSync(successMsg, 1500); else showSync("⚠️ 複製失敗，請手手動複製", 2000); } catch (err) { showSync("⚠️ 複製失敗，請手動複製", 2000); }
         document.body.removeChild(textArea);
     }
 
@@ -1090,14 +1090,16 @@
 
         if(message) {
             withLoader(() => {
-                // 注意：這裡改成了使用 p.lineGroupId 而不是 p.id
-                fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(message)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if(data.status === 'Push sent') showSync("✅ 已發送 LINE 通知", 1500);
-                    else showSync("⚠️ 發送失敗，請確認群組 ID 是否正確", 2500);
+                // ⚠️【超級重點】使用 no-cors 模式強行送出，完全繞過瀏覽器 CORS 安全阻擋
+                fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(message)}`, { mode: 'no-cors' })
+                .then(() => {
+                    // 因為 no-cors 無法讀取 Google 的回傳內容，所以只要沒有斷網，我們就判定發送成功
+                    showSync("✅ 通知請求已送出！請查看 LINE", 2000);
                 })
-                .catch(() => showSync("⚠️ 發送失敗，請檢查網路或群組 ID", 2000));
+                .catch((err) => {
+                    console.error(err);
+                    showSync("⚠️ 發送失敗，請檢查網路連線", 2000);
+                });
             });
         }
     }
