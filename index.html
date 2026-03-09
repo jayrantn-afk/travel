@@ -271,8 +271,9 @@
 
   <div id="login-view" class="view">
     <div style="margin-top: 10vh; text-align: center; position:relative;">
-      <img src="https://drive.google.com/uc?export=view&id=1T9jEV8kkxRCEQmqHT6azzL3v6PjbcwkN" alt="Logo" style="width: 110px; height: 110px; object-fit: cover; border-radius: 28px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);">
-      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">旅遊趣 Pro</h1>
+      <!-- 更新為 GitHub 的 Logo 保持一致 -->
+      <img src="https://raw.githubusercontent.com/jayrantn-afk/travel/main/logo1.png" alt="Logo" style="width: 110px; height: 110px; object-fit: cover; border-radius: 28px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);">
+      <h1 style="margin-bottom: 8px; font-weight: 800; color: var(--primary); font-size: 28px;">驢遊趣</h1>
       <p style="color: var(--text-muted); margin-bottom: 32px; font-weight: bold;">輕巧規劃，說走就走</p>
       <div style="position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; opacity:0.8; background:#fff; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="openAdminLogin()" title="管理員後台">⚙️</div>
       <div class="card-panel" style="text-align: left; padding: 28px;">
@@ -900,7 +901,10 @@
   </div>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzXyfuSTyLZXBTQqcMjHglTu00nH2hua6uYKXNQWUbZB1BneeYGu52T56KFUCgJvR0/exec"; 
+    // ==========================================
+    // 🚀 更新為最新驗證成功的 GAS 網址 (不會再跳 302)
+    // ==========================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzaJzPLOtDJSwSJ4qpM__YoEILU3tHoly7C0qG3Ayp9BV1Kl_FiESg-8rBDnSGsWyVQ/exec"; 
     
     let currentUser = null; let currentWorkspace = 'FamilyTripPro'; let currentProjectId = null; let activeDayIndex = 0;
     let syncInterval = null; let map = null; let mapMarkers = []; let routeLine = null; let activeClickMarker = null; 
@@ -923,6 +927,60 @@
         fetch('https://open.er-api.com/v6/latest/TWD').then(res => res.json()).then(data => {
             if(data && data.rates) Object.keys(liveRates).forEach(currency => { if(data.rates[currency]) liveRates[currency] = 1 / data.rates[currency]; });
         }).catch(e => console.warn('抓取即時匯率失敗，使用預設值', e));
+    }
+
+    // ==========================================
+    // ☀️ 真實天氣預報 API 模組 (Open-Meteo)
+    // ==========================================
+    const weatherCache = {};
+    async function fetchRealWeather(locName, targetDateObj) {
+        if (!locName) return '🌍 地點未知';
+        const targetDateStr = targetDateObj.toISOString().split('T')[0];
+        const cacheKey = `${locName}_${targetDateStr}`;
+        if (weatherCache[cacheKey]) return weatherCache[cacheKey];
+
+        try {
+            // 1. 先用 Geocoding 找出該地點的經緯度
+            const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(locName)}&count=1&language=zh`);
+            const geoData = await geoRes.json();
+            if (!geoData.results || geoData.results.length === 0) return '🌍 尚無氣象';
+            const { latitude, longitude } = geoData.results[0];
+
+            // 2. 判斷日期 (Open-Meteo 免費版支援未來 14 天)
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const diffDays = Math.round((targetDateObj - today) / 86400000);
+
+            if (diffDays < 0) return '📅 旅程已結束';
+            if (diffDays > 14) return '📅 尚無預報 (超過14天)';
+
+            // 3. 取得當地天氣
+            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`);
+            const weatherData = await weatherRes.json();
+            
+            const dateIndex = weatherData.daily.time.indexOf(targetDateStr);
+            if (dateIndex !== -1) {
+                const maxT = weatherData.daily.temperature_2m_max[dateIndex];
+                const minT = weatherData.daily.temperature_2m_min[dateIndex];
+                const code = weatherData.daily.weathercode[dateIndex];
+                
+                // 將氣象代碼轉為 Emoji
+                let emoji = '🌤️';
+                if(code <= 1) emoji = '☀️'; 
+                else if(code <= 3) emoji = '⛅'; 
+                else if(code <= 49) emoji = '☁️'; 
+                else if(code <= 69) emoji = '🌧️'; 
+                else if(code <= 79) emoji = '🌨️'; 
+                else emoji = '⛈️';
+                
+                const result = `${emoji} ${Math.round(minT)}~${Math.round(maxT)}°C`;
+                weatherCache[cacheKey] = result;
+                return result;
+            }
+            return '🌍 尚無資料';
+        } catch(e) {
+            return '⚠️ 取得失敗';
+        }
     }
 
     function createCustomMapIcon(num = '', colorClass = '') {
@@ -1457,17 +1515,22 @@
       const wishlistBadge = wishlistCount > 0 ? `<span class="notification-dot" style="display:flex; right:-6px; top:-6px;">${wishlistCount}</span>` : '';
       
       const headerTextEl = document.getElementById('itinerary-date-header-text'); 
+      const weatherBadgeId = `weather-badge-${activeDayIndex}`;
       
-      const weatherEmojis = ['☀️', '⛅', '🌤️', '☁️', '🌦️'];
-      const randomWeather = weatherEmojis[Math.floor(Math.random() * weatherEmojis.length)];
-      const randomTemp = Math.floor(Math.random() * (32 - 18 + 1)) + 18;
-      
-      if (headerTextEl) headerTextEl.innerHTML = `
+      if (headerTextEl) {
+        headerTextEl.innerHTML = `
         <div style="display:flex; align-items:baseline; gap:8px;">
             <span>第 ${activeDayIndex + 1} 天</span>
             <span style="font-size:16px; font-weight:700; color:var(--text-muted);">(${dayStr})</span>
-            <span style="font-size:14px; font-weight:bold; color:var(--secondary); background:#E6FAF8; padding:2px 8px; border-radius:8px;">${randomWeather} ${randomTemp}°C</span>
+            <span id="${weatherBadgeId}" style="font-size:13px; font-weight:bold; color:var(--secondary); background:#E6FAF8; padding:4px 8px; border-radius:8px;">⛅ 查詢氣象...</span>
         </div>`;
+        
+        // 呼叫真實天氣 API
+        fetchRealWeather(p.location, activeD).then(weatherStr => {
+            const badge = document.getElementById(weatherBadgeId);
+            if(badge) badge.innerHTML = weatherStr;
+        });
+      }
       
       const headerBtns = document.getElementById('itinerary-header-actions');
       if (headerBtns) {
