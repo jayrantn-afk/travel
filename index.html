@@ -288,7 +288,8 @@
 
   <div id="dashboard-view" class="view">
     <div class="app-header">
-      <h2 style="font-weight: 800; font-size: 24px;">👋 <span id="display-name"></span></h2>
+      <!-- 首頁大標題加上齒輪，可點擊修改個人設定 -->
+      <h2 style="font-weight: 800; font-size: 24px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onclick="openEditProfileModal()" title="修改個人資料">👋 <span id="display-name"></span> <span style="font-size:14px; background:#E2E8F0; padding:4px 8px; border-radius:10px; color:var(--text-muted);">⚙️ 設定</span></h2>
       <div style="display: flex; gap: 8px;">
         <button class="btn-outline btn-small" onclick="withLoader(() => syncFromCloud(true))">🔄 同步最新</button>
         <button class="btn-outline btn-small" onclick="handleLogout()" style="color: var(--text-muted); box-shadow:none;">登出</button>
@@ -311,8 +312,10 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-start;" class="hide-in-export">
             <button class="btn-small" style="background:#F1F5F9; color:var(--text-main); font-weight:800; border:none; border-radius:12px; padding:8px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'" onclick="goBackToDashboard()"><span style="font-size:16px; line-height:1; margin-bottom:2px;">←</span> 返回列表</button>
             <div style="display:flex; gap:8px;">
+                <!-- 進入旅程後右上角顯示你的名字，點擊也可以修改設定 -->
+                <button class="btn-outline btn-small" style="border-radius:12px; font-weight:bold; color:var(--primary); border-color:var(--primary);" onclick="openEditProfileModal()">👤 <span id="detail-current-user"></span></button>
                 <button class="btn-outline btn-small hide-in-archive" style="border-radius:12px; font-weight:bold;" onclick="openManageMembersModal()">👥 成員</button>
-                <button class="btn-outline btn-small" style="border-radius:12px;" onclick="withLoader(() => syncFromCloud(true))">🔄 同步</button>
+                <button class="btn-outline btn-small" style="border-radius:12px;" onclick="withLoader(() => syncFromCloud(true))">🔄</button>
             </div>
           </div>
           <div style="margin-top: 12px; margin-bottom: 12px;">
@@ -599,7 +602,7 @@
                     <div style="background:#F8F9FA; border:1px solid #E4E8ED; border-radius:12px; padding:16px; font-size:13px; color:var(--text-main); margin-bottom: 16px;">
                         <strong style="color:var(--secondary);">📌 綁定步驟：</strong>
                         <ol style="margin-top:8px; padding-left:20px; line-height:1.8; color:var(--text-muted); font-weight:bold;">
-                            <li>將官方機器人 <strong>@320gbbnw</strong> 加入你們的 LINE 聊天群組。</li>
+                            <li>將官方機器人加入你們的 LINE 聊天群組。</li>
                             <li>在群組內輸入下方指令：<br>
                                 <div style="background:#E2E8F0; padding:6px 10px; border-radius:8px; color:#0284C7; margin-top:4px; margin-bottom:4px; display:inline-block; font-family:monospace; font-size:14px; cursor:pointer;" onclick="copyText('/bind ' + document.getElementById('line-auth-code').value, '📋 指令已複製')">
                                     /bind <span class="line-auth-code-display"></span>
@@ -619,7 +622,7 @@
                         </div>
                     </div>
 
-                    <label style="font-size:12px; font-weight:bold; color:var(--text-main); display:block; margin-bottom: 8px;">主動發送通知到群組：</label>
+                    <label style="font-size:12px; font-weight:bold; color:var(--text-main); display:block; margin-bottom: 8px;">手動發送通知到群組：</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <button class="btn-outline" style="padding: 12px; font-size: 12px; font-weight: bold; border-radius: 12px;" onclick="sendLineNotification('reminder')">📅 明日行程提醒</button>
                         <button class="btn-outline" style="padding: 12px; font-size: 12px; font-weight: bold; border-radius: 12px;" onclick="sendLineNotification('budget')">💰 結算分帳提醒</button>
@@ -643,6 +646,20 @@
             <button id="custom-dialog-cancel" class="btn-outline" style="flex: 1; padding: 12px; border-radius: 12px; display: none;">取消</button>
             <button id="custom-dialog-confirm" class="btn btn-action" style="flex: 1; padding: 12px; border-radius: 12px; color: white !important;">確定</button>
         </div>
+    </div>
+  </div>
+
+  <!-- 修改個人設定 Modal -->
+  <div id="edit-profile-modal" class="modal-overlay" onclick="closeModal('edit-profile-modal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2 style="margin-bottom: 12px; font-weight:800; color:var(--primary);">👤 修改個人設定</h2>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; font-weight:bold;">更改名稱後，系統會自動同步更新您所有參與的行程與分帳紀錄。</p>
+      <input type="text" id="edit-profile-name" class="form-control" placeholder="您的新名稱">
+      <input type="password" id="edit-profile-pwd" class="form-control" placeholder="您的新密碼">
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px;" onclick="closeModal('edit-profile-modal')">取消</button>
+        <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="saveUserProfile()">更新儲存</button>
+      </div>
     </div>
   </div>
 
@@ -911,7 +928,7 @@
 
   <script>
     // ==========================================
-    // 🚀 更新為最新驗證成功的 GAS 網址 (不會再跳 302)
+    // 🚀 核心 GAS 網址 (獨立版)
     // ==========================================
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxG27zOtTcBKL0SxXGkQg2aYT0YF4Wca5VIuzq4AQC6UX7BRTlG5nYoL-i-fmTz1iq2Mg/exec"; 
     
@@ -939,7 +956,7 @@
     }
 
     // ==========================================
-    // ☀️ 真實天氣預報 API 模組 (Open-Meteo)
+    // ☀️ 真實天氣預報 API 模組
     // ==========================================
     const weatherCache = {};
     async function fetchRealWeather(locName, targetDateObj) {
@@ -949,13 +966,11 @@
         if (weatherCache[cacheKey]) return weatherCache[cacheKey];
 
         try {
-            // 1. 先用 Geocoding 找出該地點的經緯度
             const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(locName)}&count=1&language=zh`);
             const geoData = await geoRes.json();
             if (!geoData.results || geoData.results.length === 0) return '🌍 尚無氣象';
             const { latitude, longitude } = geoData.results[0];
 
-            // 2. 判斷日期 (Open-Meteo 免費版支援未來 14 天)
             const today = new Date();
             today.setHours(0,0,0,0);
             const diffDays = Math.round((targetDateObj - today) / 86400000);
@@ -963,7 +978,6 @@
             if (diffDays < 0) return '📅 旅程已結束';
             if (diffDays > 14) return '📅 尚無預報 (超過14天)';
 
-            // 3. 取得當地天氣
             const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`);
             const weatherData = await weatherRes.json();
             
@@ -973,15 +987,8 @@
                 const minT = weatherData.daily.temperature_2m_min[dateIndex];
                 const code = weatherData.daily.weathercode[dateIndex];
                 
-                // 將氣象代碼轉為 Emoji
                 let emoji = '🌤️';
-                if(code <= 1) emoji = '☀️'; 
-                else if(code <= 3) emoji = '⛅'; 
-                else if(code <= 49) emoji = '☁️'; 
-                else if(code <= 69) emoji = '🌧️'; 
-                else if(code <= 79) emoji = '🌨️'; 
-                else emoji = '⛈️';
-                
+                if(code <= 1) emoji = '☀️'; else if(code <= 3) emoji = '⛅'; else if(code <= 49) emoji = '☁️'; else if(code <= 69) emoji = '🌧️'; else if(code <= 79) emoji = '🌨️'; else emoji = '⛈️';
                 const result = `${emoji} ${Math.round(minT)}~${Math.round(maxT)}°C`;
                 weatherCache[cacheKey] = result;
                 return result;
@@ -1037,14 +1044,12 @@
     }
 
     // ==========================================
-    // 儲存從 LINE 獲得的專屬 Group ID
+    // 🤖 LINE 推播通知核心
     // ==========================================
     function saveLineGroupId() {
         const input = document.getElementById('line-group-id-input');
         let val = input ? input.value.trim() : '';
-        
-        // 🛡️ 防呆機制：自動過濾掉不小心複製到的右括號 ) 或空白
-        val = val.replace(/[\)\s]/g, '');
+        val = val.replace(/[\)\s]/g, ''); // 🛡️ 防呆機制：過濾掉右括號或空白
         
         if(!val) return showCustomDialog("請輸入群組 ID！");
         if(!val.startsWith('C') && !val.startsWith('U') && !val.startsWith('R')) {
@@ -1056,19 +1061,28 @@
             p.lineGroupId = val;
             updateCurProject(p);
             if(input) input.value = val;
-            refreshMemberDependentUIs(); // 重新渲染畫面以顯示✅已綁定狀態
+            refreshMemberDependentUIs();
             showSync("✅ 群組綁定成功！現在可以發送通知了", 2000);
         });
+    }
+
+    function sendAutoLineNotification(message, isManual = false) {
+        const p = getCurProject();
+        if(!p || !p.lineGroupId) {
+            if (isManual) showCustomDialog("⚠️ 尚未綁定群組！<br><br>請先完成上方步驟，並將機器人回覆的「群組 ID」貼到欄位中儲存。");
+            return; 
+        }
+        // 永遠帶上任意門連結
+        const finalMessage = message + "\n\n🔗 點此開啟旅程：\nhttps://jayrantn-afk.github.io/travel/";
+        
+        fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(finalMessage)}`, { mode: 'no-cors' })
+        .then(() => { if(isManual) showSync("✅ 通知請求已送出！請查看 LINE", 2000); })
+        .catch(err => { console.error("Auto push failed", err); if(isManual) showSync("⚠️ 發送失敗，請檢查網路連線", 2000); });
     }
 
     function sendLineNotification(type) {
         const p = getCurProject();
         if(!p || !p.id) return showCustomDialog("請先開啟一份旅程專案！");
-        
-        // 核心檢查：現在強制網頁要認得 lineGroupId 才能發送
-        if(!p.lineGroupId) {
-            return showCustomDialog("⚠️ 尚未綁定群組！<br><br>請先完成上方步驟，並將機器人回覆的「群組 ID」貼到欄位中儲存。");
-        }
         
         let message = "";
         const tripName = p.location || "旅程";
@@ -1079,46 +1093,22 @@
             if(dayPlans.length === 0) return showCustomDialog("這天沒有行程，無法發送提醒喔！");
             
             message = `📢【${tripName}】行程提醒！\n\n明天我們即將展開第 ${nextDayIdx + 1} 天的行程囉！\n\n📌 明日重點行程：\n`;
-            dayPlans.forEach((plan, i) => {
-                message += `${i+1}. [${plan.time}] ${plan.place}\n`;
-            });
-            message += "\n記得提早準備，祝大家有個美好的一天！🏝️";
+            dayPlans.forEach((plan, i) => { message += `${i+1}. [${plan.time}] ${plan.place}\n`; });
+            message += `\n[${currentUser}] 提醒大家記得提早準備，祝有個美好的一天！🏝️`;
         } 
         else if (type === 'budget') {
-            message = `💰【${tripName}】分帳結算提醒！\n\n旅程中的各項花費已經結算出來囉！請大家盡快到「旅遊趣」網頁版的「分帳」頁面，查看自己的個人總開銷，以及需要轉帳給誰。\n\n💳 請記得點擊「銀行帳號」圖示進行匯款，完成後按下「標記已還款」喔！`;
+            message = `💰【${tripName}】分帳結算提醒！\n\n[${currentUser}] 提醒大家：\n旅程中的各項花費已經結算出來囉！請盡快到網頁版的「分帳」頁面，查看個人總開銷與還款對象。\n💳 點擊「銀行帳號」圖示進行匯款，完成後按下「標記已還款」喔！`;
         }
         else if (type === 'checklist') {
-            message = `🎒【${tripName}】行李確認通知！\n\n主揪已發布最新的「待辦/行李清單」囉！\n出發前請務必到網頁版的「更多 -> 行李清單」確認您需要準備的物品，並勾選「已準備」！`;
+            message = `🎒【${tripName}】行李確認通知！\n\n[${currentUser}] 已發布最新的「待辦/行李清單」囉！\n出發前請務必到網頁版的「更多 -> 行李清單」確認您需要準備的物品，並勾選「已準備」！`;
         }
         else if (type === 'poll') {
             const activePolls = (p.polls || []).length;
             if(activePolls === 0) return showCustomDialog("目前沒有進行中的投票喔！");
-            message = `🗳️【${tripName}】投票催票中！\n\n目前有 ${activePolls} 個重要事項需要大家的意見！請大家盡速至「旅遊趣」網頁版的「更多 -> 投票」頁面，投下神聖的一票，幫助我們順利推進行程規劃！`;
+            message = `🗳️【${tripName}】投票催票中！\n\n[${currentUser}] 提醒大家：\n目前有 ${activePolls} 個重要事項需要大家的意見！請盡速至網頁版的「更多 -> 投票」頁面，投下神聖的一票幫助行程推進！`;
         }
 
-        if(message) {
-            withLoader(() => {
-                // ⚠️【超級重點】使用 no-cors 模式強行送出，完全繞過瀏覽器 CORS 安全阻擋
-                fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(message)}`, { mode: 'no-cors' })
-                .then(() => {
-                    // 因為 no-cors 無法讀取 Google 的回傳內容，所以只要沒有斷網，我們就判定發送成功
-                    showSync("✅ 通知請求已送出！請查看 LINE", 2000);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    showSync("⚠️ 發送失敗，請檢查網路連線", 2000);
-                });
-            });
-        }
-    }
-
-    // 新增：自訂/自動推播通用函數 (背景執行，不干擾使用者操作)
-    function sendAutoLineNotification(message) {
-        const p = getCurProject();
-        if(!p || !p.lineGroupId) return; // 沒綁定群組就不發送，也不報錯
-        
-        fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(message)}`, { mode: 'no-cors' })
-        .catch(err => console.error("Auto push failed", err));
+        if(message) sendAutoLineNotification(message, true);
     }
 
     function withLoader(actionFunc, delay = 300) {
@@ -1191,12 +1181,10 @@
     }
 
     function getCurProject() { return getDB().find(p => p.id === currentProjectId) || null; }
-    
-    // 解決快速儲存會消失的問題 (移除了會立即干擾畫面的同步指令)
     function updateCurProject(updatedP) { const db = getDB(); const idx = db.findIndex(p => p.id === currentProjectId); if (idx > -1) { db[idx] = updatedP; saveDB(db); updateOnlineUsers(); } }
     function getTripMembers() { const p = getCurProject(); return p?.members || ['魏嘉宏', '魏卉姍', '魏敏軒', '魏珮芯', '陳筱雙']; }
 
-    // --- 管理員系統 ---
+    // --- 管理員與個人資料修改 ---
     function openAdminLogin() { openModal('admin-login-modal'); const el = document.getElementById('admin-pwd-input'); if(el) el.value = ''; }
     function verifyAdmin() { const input = document.getElementById('admin-pwd-input'); if(input && input.value === 'jo4aup3vm0') { closeModal('admin-login-modal'); openModal('admin-dashboard-modal'); renderAdminUsers(); } else { showCustomDialog("權限密碼錯誤！"); } }
     function renderAdminUsers() {
@@ -1204,6 +1192,68 @@
         allMembers.forEach(m => { const pwd = customUsers[m] || ''; html += `<div style="padding:16px 0; border-bottom:1px solid #E4E8ED;"><div style="display:flex; gap:8px; margin-bottom:8px;"><input type="text" id="admin-name-${m}" value="${m}" class="form-control" style="margin:0; padding:10px; font-size:14px; font-weight:bold; color:var(--primary);" placeholder="名稱"><input type="text" id="admin-pwd-${m}" value="${pwd}" class="form-control" style="margin:0; padding:10px; font-size:14px;" placeholder="密碼"></div><div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn-small btn-action" style="color:white !important;" onclick="withLoader(() => adminSaveUser('${m}'))">更新儲存</button><button class="btn-small" style="background:#FFF0F0; color:var(--danger); border:none; font-weight:bold; cursor:pointer;" onclick="adminDelUser('${m}')">刪除帳號</button></div></div>`; });
         if(list) list.innerHTML = html;
     }
+    
+    function openEditProfileModal() {
+        if(!currentUser) return;
+        document.getElementById('edit-profile-name').value = currentUser;
+        document.getElementById('edit-profile-pwd').value = authRules[currentUser] || '';
+        openModal('edit-profile-modal');
+    }
+    
+    function saveUserProfile() {
+        const nameInput = document.getElementById('edit-profile-name');
+        const pwdInput = document.getElementById('edit-profile-pwd');
+        if (!nameInput || !pwdInput) return;
+        const newName = nameInput.value.trim();
+        const newPwd = pwdInput.value.trim();
+        const oldName = currentUser;
+
+        if(!newName || !newPwd) return showCustomDialog("名稱與密碼不能為空"); 
+        if(newName !== oldName && authRules[newName]) return showCustomDialog("這個名稱已經有人用了！請換一個。");
+
+        withLoader(() => {
+            if (newName !== oldName) {
+                customUsers[newName] = newPwd; delete customUsers[oldName]; 
+                localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); 
+                authRules = { ...customUsers }; allMembers = Object.keys(authRules); saveUsersDB();
+                
+                let db = getDB();
+                db.forEach(p => {
+                    if(p.members && p.members.includes(oldName)) { p.members = p.members.filter(u=>u!==oldName); p.members.push(newName); }
+                    if(p.activeUsers && p.activeUsers[oldName]) { p.activeUsers[newName] = p.activeUsers[oldName]; delete p.activeUsers[oldName]; }
+                    if(p.plans) p.plans.forEach(x => { if(x.creator === oldName) x.creator = newName; });
+                    if(p.expenses) p.expenses.forEach(x => { if(x.payer === oldName) x.payer = newName; if(x.excludes && x.excludes.includes(oldName)) { x.excludes = x.excludes.filter(u=>u!==oldName); x.excludes.push(newName); } });
+                    if(p.repayments) p.repayments.forEach(x => { if(x.from === oldName) x.from = newName; if(x.to === oldName) x.to = newName; });
+                    if(p.polls) p.polls.forEach(x => { if(x.creator === oldName) x.creator = newName; if(x.options) x.options.forEach(opt => { if(opt.voters.includes(oldName)) { opt.voters = opt.voters.filter(u=>u!==oldName); opt.voters.push(newName); } }); });
+                    if(p.contacts) p.contacts.forEach(x => { if(x.creator === oldName) x.creator = newName; });
+                    if(p.notes) p.notes.forEach(x => { if(x.creator === oldName) x.creator = newName; });
+                    if(p.checklist) p.checklist.forEach(x => { if(x.checkedBy && x.checkedBy.includes(oldName)) { x.checkedBy = x.checkedBy.filter(u=>u!==oldName); x.checkedBy.push(newName); } });
+                    if(p.esims) p.esims.forEach(x => { if(x.creator === oldName) x.creator = newName; if(x.assignee === oldName) x.assignee = newName; if(x.activatedBy && x.activatedBy.includes(oldName)) { x.activatedBy = x.activatedBy.filter(u=>u!==oldName); x.activatedBy.push(newName); } });
+                    if(p.duties) { Object.keys(p.duties).forEach(day => { if(p.duties[day].driver === oldName) p.duties[day].driver = newName; if(p.duties[day].guide === oldName) p.duties[day].guide = newName; }); }
+                    if(p.wishlist) p.wishlist.forEach(x => { if(x.creator === oldName) x.creator = newName; if(x.likes && x.likes.includes(oldName)) { x.likes = x.likes.filter(u=>u!==oldName); x.likes.push(newName); } });
+                });
+                saveDB(db);
+                currentUser = newName; 
+                localStorage.setItem('app_savedUser', newName); 
+            } else { 
+                customUsers[oldName] = newPwd; 
+                localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); 
+                authRules = { ...customUsers }; 
+                saveUsersDB(); 
+            }
+            
+            const displayEl = document.getElementById('display-name'); if(displayEl) displayEl.textContent = currentUser;
+            const detailUserEl = document.getElementById('detail-current-user'); if(detailUserEl) detailUserEl.textContent = currentUser;
+            
+            renderUserSelect(); 
+            if(currentProjectId) { refreshMemberDependentUIs(); safeRenderAll(); } 
+            else { renderDashboard(); } 
+            
+            closeModal('edit-profile-modal');
+            showSync("✅ 個人資料已成功更新！", 1500);
+        });
+    }
+
     function adminSaveUser(oldName) {
         const newNameEl = document.getElementById(`admin-name-${oldName}`); const newPwdEl = document.getElementById(`admin-pwd-${oldName}`); if (!newNameEl || !newPwdEl) return;
         const newName = newNameEl.value.trim(); const newPwd = newPwdEl.value.trim();
@@ -1216,13 +1266,21 @@
                 if(p.activeUsers && p.activeUsers[oldName]) { p.activeUsers[newName] = p.activeUsers[oldName]; delete p.activeUsers[oldName]; }
                 if(p.plans) p.plans.forEach(x => { if(x.creator === oldName) x.creator = newName; });
                 if(p.expenses) p.expenses.forEach(x => { if(x.payer === oldName) x.payer = newName; if(x.excludes && x.excludes.includes(oldName)) { x.excludes = x.excludes.filter(u=>u!==oldName); x.excludes.push(newName); } });
+                if(p.repayments) p.repayments.forEach(x => { if(x.from === oldName) x.from = newName; if(x.to === oldName) x.to = newName; });
                 if(p.polls) p.polls.forEach(x => { if(x.creator === oldName) x.creator = newName; if(x.options) x.options.forEach(opt => { if(opt.voters.includes(oldName)) { opt.voters = opt.voters.filter(u=>u!==oldName); opt.voters.push(newName); } }); });
                 if(p.contacts) p.contacts.forEach(x => { if(x.creator === oldName) x.creator = newName; });
                 if(p.notes) p.notes.forEach(x => { if(x.creator === oldName) x.creator = newName; });
                 if(p.checklist) p.checklist.forEach(x => { if(x.checkedBy && x.checkedBy.includes(oldName)) { x.checkedBy = x.checkedBy.filter(u=>u!==oldName); x.checkedBy.push(newName); } });
+                if(p.esims) p.esims.forEach(x => { if(x.creator === oldName) x.creator = newName; if(x.assignee === oldName) x.assignee = newName; if(x.activatedBy && x.activatedBy.includes(oldName)) { x.activatedBy = x.activatedBy.filter(u=>u!==oldName); x.activatedBy.push(newName); } });
+                if(p.duties) { Object.keys(p.duties).forEach(day => { if(p.duties[day].driver === oldName) p.duties[day].driver = newName; if(p.duties[day].guide === oldName) p.duties[day].guide = newName; }); }
+                if(p.wishlist) p.wishlist.forEach(x => { if(x.creator === oldName) x.creator = newName; if(x.likes && x.likes.includes(oldName)) { x.likes = x.likes.filter(u=>u!==oldName); x.likes.push(newName); } });
             });
             saveDB(db);
-            if(currentUser === oldName) { currentUser = newName; localStorage.setItem('app_savedUser', newName); const el = document.getElementById('display-name'); if(el) el.textContent = currentUser; }
+            if(currentUser === oldName) { 
+                currentUser = newName; localStorage.setItem('app_savedUser', newName); 
+                const displayEl = document.getElementById('display-name'); if(displayEl) displayEl.textContent = currentUser; 
+                const detailUserEl = document.getElementById('detail-current-user'); if(detailUserEl) detailUserEl.textContent = currentUser;
+            }
         } else { customUsers[oldName] = newPwd; localStorage.setItem(`app_users_${currentWorkspace}`, JSON.stringify(customUsers)); authRules = { ...customUsers }; saveUsersDB(); }
         renderAdminUsers(); renderUserSelect(); if(currentProjectId) { openProject(currentProjectId, true); } else { renderDashboard(); } showSync("✅ 帳號資料已全域更新", 1500);
     }
@@ -1240,7 +1298,10 @@
 
         const savedUser = localStorage.getItem('app_savedUser');
         if(savedUser && authRules[savedUser]) {
-            currentUser = savedUser; const displayEl = document.getElementById('display-name'); if (displayEl) displayEl.textContent = currentUser; 
+            currentUser = savedUser; 
+            const displayEl = document.getElementById('display-name'); if (displayEl) displayEl.textContent = currentUser; 
+            const detailUserEl = document.getElementById('detail-current-user'); if(detailUserEl) detailUserEl.textContent = currentUser;
+            
             const loader = document.getElementById('global-loader'); if (loader) loader.classList.add('active'); 
             
             const savedProjectId = localStorage.getItem('app_lastProj'); const savedTabId = localStorage.getItem('app_lastTab') || 'itinerary';
@@ -1290,7 +1351,6 @@
               const currentDB = getDB(); 
               const shouldForceOverride = currentDB.length === 0 || newData.length > currentDB.length;
               
-              // 🛡️ 防丟失機制：確保剛存檔後的 30 秒內，不會被背景的舊資料洗掉
               if (shouldForceOverride || Date.now() - lastSaveTime >= 30000) { 
                   const oldDataString = localStorage.getItem(`app_${currentWorkspace}`); 
                   if (oldDataString !== newDataString || shouldForceOverride) {
@@ -1323,14 +1383,16 @@
       }
       localStorage.setItem(`app_${currentWorkspace}`, JSON.stringify(data)); 
       enqueueSave(currentWorkspace, JSON.stringify(data)); 
-      // 這裡移除了立即呼叫 syncFromCloud，讓快速新增行程時不會被舊的雲端資料覆蓋
     }
 
     function handleLogin() {
       const userSel = document.getElementById('user-select'); const u = userSel ? userSel.value : null; const pwdInput = document.getElementById('password-input'); const p = pwdInput ? pwdInput.value : '';
       if (!u) return showCustomDialog("請先選擇您的帳號！");
       if (authRules[u] === p) {
-        currentUser = u; localStorage.setItem('app_savedUser', currentUser); const displayEl = document.getElementById('display-name'); if(displayEl) displayEl.textContent = currentUser; 
+        currentUser = u; 
+        localStorage.setItem('app_savedUser', currentUser); 
+        const displayEl = document.getElementById('display-name'); if(displayEl) displayEl.textContent = currentUser; 
+        const detailUserEl = document.getElementById('detail-current-user'); if(detailUserEl) detailUserEl.textContent = currentUser;
         const loader = document.getElementById('global-loader'); if(loader) loader.classList.add('active'); 
         syncFromCloud(false).then(() => { renderDashboard(); switchView('dashboard-view'); if(loader) loader.classList.remove('active'); startAutoSync(); });
       } else showCustomDialog("密碼錯誤，請重新輸入！");
@@ -1492,7 +1554,6 @@
             lineCodeDisplays.forEach(el => el.textContent = code);
         }
 
-        // 🎯 更新 LINE 綁定狀態的 UI 顯示
         const boundStatus = document.getElementById('line-group-bound-status');
         const inputArea = document.getElementById('line-group-input-area');
         const lineGroupIdInput = document.getElementById('line-group-id-input');
@@ -1585,6 +1646,8 @@
       
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex); const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
       const wishlistCount = p.wishlist ? p.wishlist.length : 0;
+      
+      // ✅ 修正：待排按鈕的紅點提示
       const wishlistBadge = wishlistCount > 0 ? `<span class="notification-dot" style="display:flex; right:-6px; top:-6px;">${wishlistCount}</span>` : '';
       
       const headerTextEl = document.getElementById('itinerary-date-header-text'); 
@@ -1598,7 +1661,6 @@
             <span id="${weatherBadgeId}" style="font-size:13px; font-weight:bold; color:var(--secondary); background:#E6FAF8; padding:4px 8px; border-radius:8px;">⛅ 查詢氣象...</span>
         </div>`;
         
-        // 呼叫真實天氣 API
         fetchRealWeather(p.location, activeD).then(weatherStr => {
             const badge = document.getElementById(weatherBadgeId);
             if(badge) badge.innerHTML = weatherStr;
@@ -1608,7 +1670,7 @@
       const headerBtns = document.getElementById('itinerary-header-actions');
       if (headerBtns) {
           headerBtns.innerHTML = `
-              <button class="btn-small" style="background:#F8FAFC; color:var(--secondary); font-weight:800; border:1px solid #CBD5E1; border-radius:10px; padding:6px 10px; font-size:12px; box-shadow:none; cursor:pointer; display:inline-flex; align-items:center;" onclick="openWishlistModal()">🎒 待排 ${wishlistBadge}</button>
+              <button class="btn-small" style="background:#F8FAFC; color:var(--secondary); font-weight:800; border:1px solid #CBD5E1; border-radius:10px; padding:6px 10px; font-size:12px; box-shadow:none; cursor:pointer; display:inline-flex; align-items:center; position: relative;" onclick="openWishlistModal()">🎒 待排 ${wishlistBadge}</button>
               <button class="btn-small" style="background:var(--primary); color:white; font-weight:800; border:none; display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:10px; cursor:pointer; box-shadow: 0 2px 8px rgba(255,90,95,0.3);" onclick="showAddPlanForm()"><span style="font-size:14px; margin-right:2px; line-height:1;">+</span> 新增</button>
           `;
       }
@@ -1624,7 +1686,6 @@
 
       if(dayPlans.length === 0) {
           let wishlistHint = wishlistCount > 0 ? `<div style="margin-top:16px; padding:12px; background:rgba(0,166,153,0.1); border-radius:12px; color:var(--secondary); cursor:pointer; font-size:13px;" onclick="openWishlistModal()">💡 待排清單裡有 <strong>${wishlistCount}</strong> 個大家提議的景點，點擊馬上排入行程！</div>` : '';
-          // 加入巨型新增按鈕於空白狀態
           list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏝️</div><div class="empty-state-text">這天還沒有排行程喔</div>${wishlistHint}<button class="btn btn-action hide-in-archive hide-in-export" style="margin-top:16px; width:100%; padding:14px; border-radius:16px; font-size:16px; color:white !important; box-shadow: 0 4px 12px rgba(0,166,153,0.2);" onclick="showAddPlanForm()">➕ 建立新行程</button></div>`;
       }
       else {
@@ -1680,9 +1741,7 @@
             `;
           });
           
-          // 在行程列表的最下方加入巨型新增按鈕
           html += `<button class="btn btn-action hide-in-archive hide-in-export" style="width: 100%; padding: 14px; border-radius: 16px; margin-top: 12px; margin-bottom: 20px; font-size: 16px; color: white !important; box-shadow: 0 4px 12px rgba(0,166,153,0.2);" onclick="showAddPlanForm()">➕ 建立新行程</button>`;
-          
           list.innerHTML = html;
           
           if(p.status !== 'archived' && typeof Sortable !== 'undefined') {
@@ -1870,19 +1929,19 @@
             </div>`;
         }).join('');
     }
-    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return showCustomDialog("請輸入待辦事項！"); const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null, creator: currentUser, likes: [] }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); showSync("✅ 已加入口袋名單", 1000); }
+    function addWishlistItem() { const input = document.getElementById('wishlist-input'); const text = input ? input.value.trim() : ''; if(!text) return showCustomDialog("請輸入待辦事項！"); const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: text, lat: null, lng: null, creator: currentUser, likes: [] }); updateCurProject(p); if(input) input.value = ''; renderWishlist(); renderItinerary(); showSync("✅ 已加入口袋名單", 1000); }
     function addSheetToWishlist() {
         if(!currentSheetSelection) return; const nameInput = document.getElementById('sheet-place-name-input'); const finalName = nameInput ? nameInput.value : currentSheetSelection.name;
-        const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: finalName, lat: currentSheetSelection.lat, lng: currentSheetSelection.lng, creator: currentUser, likes: [] }); updateCurProject(p); closeBottomSheet(); showSync("✅ 已收藏至口袋名單", 1500);
+        const p = getCurProject(); if(!p.wishlist) p.wishlist = []; p.wishlist.push({ id: Date.now(), place: finalName, lat: currentSheetSelection.lat, lng: currentSheetSelection.lng, creator: currentUser, likes: [] }); updateCurProject(p); closeBottomSheet(); renderItinerary(); showSync("✅ 已收藏至口袋名單", 1500);
     }
     function moveWishlistToPlan(id) {
         const p = getCurProject(); const itemIdx = p.wishlist.findIndex(x => x.id === id); if(itemIdx === -1) return; const item = p.wishlist[itemIdx];
         closeModal('wishlist-modal'); showAddPlanForm();
         const placeInput = document.getElementById('plan-place'); if(placeInput) placeInput.value = item.place;
         if(item.lat) { const latEl = document.getElementById('edit-lat'); if(latEl) latEl.value = item.lat; const lngEl = document.getElementById('edit-lng'); if(lngEl) lngEl.value = item.lng; }
-        p.wishlist.splice(itemIdx, 1); updateCurProject(p); showSync("📍 已帶入行程表單，請設定時間後儲存", 2500);
+        p.wishlist.splice(itemIdx, 1); updateCurProject(p); renderItinerary(); showSync("📍 已帶入行程表單，請設定時間後儲存", 2500);
     }
-    function delWishlist(id) { const p = getCurProject(); p.wishlist = p.wishlist.filter(x => x.id !== id); updateCurProject(p); renderWishlist(); }
+    function delWishlist(id) { const p = getCurProject(); p.wishlist = p.wishlist.filter(x => x.id !== id); updateCurProject(p); renderWishlist(); renderItinerary(); }
     function likeWishlistItem(id) {
         const p = getCurProject(); const item = p.wishlist.find(x => x.id === id); if(!item) return;
         if(!item.likes) item.likes = [];
@@ -2364,7 +2423,6 @@
             else { p.polls.push({ id: Date.now(), title, date: pollDate, isMultipleChoice, creator: currentUser, options }); isNew = true; } 
             updateCurProject(p); renderPolls(); const formCard = document.getElementById('poll-form-card'); if(formCard) formCard.style.display = 'none'; const btn = document.getElementById('show-poll-btn'); if(btn) btn.style.display = 'block'; 
 
-            // 自動通知：發起新投票
             if (isNew) {
                 const tripName = p.location || "旅程";
                 const dateStr = pollDate ? ` (截止日: ${pollDate})` : '';
@@ -2465,7 +2523,6 @@
             renderEsims(); 
             showSync("✅ eSIM 資訊已分享！", 1500);
 
-            // 自動通知：分享新網卡
             const tripName = p.location || "旅程";
             const assignText = assignee ? `指定給：[${assignee}]` : `開放給所有人`;
             sendAutoLineNotification(`🌐【${tripName}】網卡資訊來囉！\n\n[${currentUser}] 剛剛分享了一張「${name}」的網卡，${assignText}。\n快去網頁的「更多->網卡」掃描 QRCode 開通吧！`);
