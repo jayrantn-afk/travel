@@ -654,8 +654,13 @@
     <div class="modal" onclick="event.stopPropagation()">
       <h2 style="margin-bottom: 12px; font-weight:800; color:var(--primary);">👤 修改個人設定</h2>
       <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; font-weight:bold;">更改名稱後，系統會自動同步更新您所有參與的行程與分帳紀錄。</p>
+      
+      <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">帳號名稱</label>
       <input type="text" id="edit-profile-name" class="form-control" placeholder="您的新名稱">
+      
+      <label style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:4px; display:block;">登入密碼</label>
       <input type="password" id="edit-profile-pwd" class="form-control" placeholder="您的新密碼">
+      
       <div style="display: flex; gap: 12px; margin-top: 12px;">
         <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px;" onclick="closeModal('edit-profile-modal')">取消</button>
         <button class="btn btn-action" style="flex:1; padding: 14px; color:white !important;" onclick="saveUserProfile()">更新儲存</button>
