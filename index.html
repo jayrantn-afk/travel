@@ -19,6 +19,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- 新增：引入 Mammoth.js 用於自動解析使用者上傳的 Word 檔 (.docx) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
   <style>
     /* 乾淨高質感配色 */
@@ -199,10 +201,10 @@
     .poll-opt-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
     .poll-opt-input { background: #FAFBFC; font-size: 15px; border-radius: 12px;}
     
-    /* 工具列導航美化 */
-    .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; overflow-x: auto; white-space: nowrap;}
+    /* 工具列導航美化 - 確保不跑版 */
+    .sub-nav-container { display: flex; background: #F1F5F9; border-radius: 16px; padding: 4px; margin-bottom: 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch;}
     .sub-nav-container::-webkit-scrollbar { display: none; }
-    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; position: relative; }
+    .sub-nav-btn { flex: 1; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 800; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.3s; position: relative; display: inline-block;}
     .sub-nav-btn.active { background: var(--surface); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     
     .tool-btn-wrap { display: flex; gap: 10px; margin-top: 16px; }
@@ -262,7 +264,8 @@
 </head>
 <body>
 
-  <div id="global-loader" class="modal-overlay" style="z-index: 9999;" onclick="event.stopPropagation()">
+  <!-- 修改 z-index 確保永遠在所有元素最上層 -->
+  <div id="global-loader" class="modal-overlay" style="z-index: 10000;" onclick="event.stopPropagation()">
     <div class="modal" style="text-align: center; background: transparent; box-shadow: none;" onclick="event.stopPropagation()">
       <div class="spinner"></div><h2 style="font-weight: 800; color: white; margin-top:16px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">處理中...</h2>
     </div>
@@ -288,7 +291,6 @@
 
   <div id="dashboard-view" class="view">
     <div class="app-header">
-      <!-- 首頁大標題加上齒輪，可點擊修改個人設定 -->
       <h2 style="font-weight: 800; font-size: 24px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onclick="openEditProfileModal()" title="修改個人資料">👋 <span id="display-name"></span> <span style="font-size:14px; background:#E2E8F0; padding:4px 8px; border-radius:10px; color:var(--text-muted);">⚙️ 設定</span></h2>
       <div style="display: flex; gap: 8px;">
         <button class="btn-outline btn-small" onclick="withLoader(() => syncFromCloud(true))">🔄 同步最新</button>
@@ -312,7 +314,6 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-start;" class="hide-in-export">
             <button class="btn-small" style="background:#F1F5F9; color:var(--text-main); font-weight:800; border:none; border-radius:12px; padding:8px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'" onclick="goBackToDashboard()"><span style="font-size:16px; line-height:1; margin-bottom:2px;">←</span> 返回列表</button>
             <div style="display:flex; gap:8px;">
-                <!-- 進入旅程後右上角顯示你的名字，點擊也可以修改設定 -->
                 <button class="btn-outline btn-small" style="border-radius:12px; font-weight:bold; color:var(--primary); border-color:var(--primary);" onclick="openEditProfileModal()">👤 <span id="detail-current-user"></span></button>
                 <button class="btn-outline btn-small hide-in-archive" style="border-radius:12px; font-weight:bold;" onclick="openManageMembersModal()">👥 成員</button>
                 <button class="btn-outline btn-small" style="border-radius:12px;" onclick="withLoader(() => syncFromCloud(true))">🔄</button>
@@ -365,10 +366,19 @@
                 <button id="save-plan-btn" class="btn" style="flex: 2;" onclick="addOrUpdatePlan()">儲存</button>
             </div>
           </div>
+          
           <div class="timeline-container" id="plan-list"></div>
+          
           <div class="hide-in-export hide-in-archive" style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px; align-items: center;">
             <button class="btn-small btn-action" style="padding: 10px 24px; border-radius: 12px; font-weight:800; width:100%; font-size: 14px;" onclick="exportItineraryToImage()">🖨️ 匯出精美圖片行程</button>
-            <button class="btn-small btn-outline" style="border: 1px dashed #CBD5E1; color:var(--text-muted); font-weight:800; background:white; padding: 10px 24px; box-shadow: none; width:100%; font-size: 14px;" onclick="exportTextItinerary()">📋 複製純文字行程</button>
+            <!-- 修改：改為下載空白 Word 模板 -->
+            <button class="btn-small btn-action" style="background:#2B579A; padding: 10px 24px; border-radius: 12px; font-weight:800; width:100%; font-size: 14px;" onclick="downloadBlankWordTemplate()">📄 下載空白行程 Word 模板</button>
+            
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <!-- 修改：更新按鈕文字 -->
+                <button class="btn-small btn-outline" style="flex:1; border: 1px dashed #CBD5E1; color:var(--text-muted); font-weight:800; background:white; padding: 10px 24px; box-shadow: none; font-size: 14px;" onclick="openSmartImportModal()">📝 智能 Word 匯入</button>
+                <button class="btn-small btn-outline" style="flex:1; border: 1px dashed #CBD5E1; color:var(--text-muted); font-weight:800; background:white; padding: 10px 24px; box-shadow: none; font-size: 14px;" onclick="exportTextItinerary()">📋 複製純文字</button>
+            </div>
           </div>
         </div>
 
@@ -450,7 +460,6 @@
             </div>
             <div id="exp-cost-hint" style="font-size:13px; color:var(--secondary); font-weight:bold; margin-bottom:12px; text-align:right; display:none;">= 換算台幣 $0</div>
 
-            <!-- 新增：主表記帳時可直接選擇不分攤的人 -->
             <div style="margin-bottom:16px; padding:12px; background:rgba(0,166,153,0.05); border-radius:12px; border:1px dashed rgba(0,166,153,0.2);">
                 <div style="font-size:12px; font-weight:bold; color:var(--text-main); margin-bottom:8px;">👥 參與分攤人員 (預設全選，取消勾選則免付)</div>
                 <div id="exp-new-members-checkboxes" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
@@ -591,20 +600,21 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" style="width:20px; height:20px;"> 
                         LINE 群組助手
                     </h4>
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">將官方機器人邀請至 LINE 群組，即可在群組內接收行程提醒與分帳通知！</p>
+                    <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">將官方機器人邀請至 LINE 群組，即可在群組內接收行程提醒與分帳通知！</p>
                     
-                    <label style="font-size:12px; font-weight:bold; color:var(--text-main);">🔑 本旅程專屬認證碼：</label>
+                    <!-- 需求1與2：改為純顯示機器人 ID 供複製，拿掉驗證碼單獨區塊 -->
+                    <label style="font-size:12px; font-weight:bold; color:var(--text-main);">🔍 LINE 機器人 ID (加好友用)：</label>
                     <div style="display:flex; gap:8px; margin-top:4px; margin-bottom:16px;">
-                        <input type="text" id="line-auth-code" class="form-control" style="margin:0; flex:1; font-family:monospace; font-weight:900; color:var(--primary); background:#FFF0F0; border-color:#FECACA; font-size:18px; text-align:center;" readonly>
-                        <button class="btn btn-action" style="padding:10px 16px; border-radius:12px;" onclick="copyLineAuthCode()">📋 複製</button>
+                        <input type="text" value="@320gbbnw" class="form-control" style="margin:0; flex:1; font-family:monospace; font-weight:900; color:#00B900; background:#F0FDF4; border-color:#BBF7D0; font-size:18px; text-align:center;" readonly>
+                        <button class="btn btn-action" style="padding:10px 16px; border-radius:12px;" onclick="copyText('@320gbbnw', '📋 機器人 ID 已複製')">📋 複製 ID</button>
                     </div>
 
                     <div style="background:#F8F9FA; border:1px solid #E4E8ED; border-radius:12px; padding:16px; font-size:13px; color:var(--text-main); margin-bottom: 16px;">
                         <strong style="color:var(--secondary);">📌 綁定步驟：</strong>
                         <ol style="margin-top:8px; padding-left:20px; line-height:1.8; color:var(--text-muted); font-weight:bold;">
-                            <li>將官方機器人加入你們的 LINE 聊天群組。</li>
-                            <li>在群組內輸入下方指令：<br>
-                                <div style="background:#E2E8F0; padding:6px 10px; border-radius:8px; color:#0284C7; margin-top:4px; margin-bottom:4px; display:inline-block; font-family:monospace; font-size:14px; cursor:pointer;" onclick="copyText('/bind ' + document.getElementById('line-auth-code').value, '📋 指令已複製')">
+                            <li>搜尋上方 ID 將機器人加入你們的 LINE 聊天群組。</li>
+                            <li>在群組內輸入專屬綁定指令：<br>
+                                <div style="background:#E2E8F0; padding:6px 10px; border-radius:8px; color:#0284C7; margin-top:4px; margin-bottom:4px; display:inline-block; font-family:monospace; font-size:14px; cursor:pointer;" onclick="copyBindCommand()">
                                     /bind <span class="line-auth-code-display"></span>
                                 </div>
                             </li>
@@ -646,6 +656,27 @@
             <button id="custom-dialog-cancel" class="btn-outline" style="flex: 1; padding: 12px; border-radius: 12px; display: none;">取消</button>
             <button id="custom-dialog-confirm" class="btn btn-action" style="flex: 1; padding: 12px; border-radius: 12px; color: white !important;">確定</button>
         </div>
+    </div>
+  </div>
+
+  <!-- 需求2：智能文字匯入 Modal -->
+  <div id="smart-import-modal" class="modal-overlay" onclick="closeModal('smart-import-modal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 style="margin-bottom: 12px; font-weight:800; color:var(--primary);">📝 智能 Word 匯入</h3>
+      
+      <!-- 新增：Word 檔案上傳區塊 -->
+      <label class="file-upload-label" style="display:block; text-align:center; padding:20px; background:#E8F4FD; border-color:#0284C7; color:#0284C7; margin-bottom:16px;">
+          <span style="font-size:15px; font-weight:800;">📄 點此上傳填寫好的 Word 檔 (.docx)</span>
+          <input type="file" id="word-file-input" accept=".docx" style="display: none;" onchange="handleWordUpload(event)">
+      </label>
+      
+      <div style="text-align:center; font-size:12px; font-weight:bold; color:var(--text-muted); margin-bottom:12px;">如果檔案無法讀取，您也可以直接在下方貼上 Word 裡的內容：<br><span style="color:var(--primary);">系統會自動根據「第 X 天」標題，將行程分類到正確的日期！</span></div>
+      <textarea id="smart-import-text" class="form-control" rows="6" placeholder="請直接將 Word 內容全選並複製貼上到這裡..."></textarea>
+      
+      <div style="display: flex; gap: 12px; margin-top: 16px;">
+        <button class="btn-outline" style="flex:1; padding: 14px; border-radius:16px;" onclick="closeModal('smart-import-modal')">取消</button>
+        <button class="btn btn-action" style="flex:2; padding: 14px; border-radius:16px; color:white !important;" onclick="processSmartImport()">確認並解析</button>
+      </div>
     </div>
   </div>
 
@@ -980,10 +1011,12 @@
             today.setHours(0,0,0,0);
             const diffDays = Math.round((targetDateObj - today) / 86400000);
 
-            if (diffDays < 0) return '📅 旅程已結束';
+            // 修改3：支援歷史天氣查詢 (Open-Meteo 支援過去 90 天)
+            if (diffDays < -90) return '📅 歷史資料已過期';
             if (diffDays > 14) return '📅 尚無預報 (超過14天)';
 
-            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`);
+            // 加入 past_days=92 參數，讓過去的日期也能抓到資料
+            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&past_days=92&timezone=auto`);
             const weatherData = await weatherRes.json();
             
             const dateIndex = weatherData.daily.time.indexOf(targetDateStr);
@@ -1048,6 +1081,12 @@
         copyText(code, "📋 認證碼已複製");
     }
 
+    // 新增：拷貝綁定指令功能
+    function copyBindCommand() {
+        const code = document.querySelector('.line-auth-code-display').textContent;
+        copyText(`/bind ${code}`, "📋 指令已複製");
+    }
+
     // ==========================================
     // 🤖 LINE 推播通知核心
     // ==========================================
@@ -1059,6 +1098,11 @@
         if(!val) return showCustomDialog("請輸入群組 ID！");
         if(!val.startsWith('C') && !val.startsWith('U') && !val.startsWith('R')) {
             return showCustomDialog("群組 ID 格式錯誤，通常是一長串 C 開頭的英數字！");
+        }
+        
+        // 修改2：防呆機制 - 限定 LINE 群組/房間/用戶 ID 必須剛好為 33 個字元
+        if(val.length !== 33) {
+            return showCustomDialog("群組 ID 長度錯誤！標準的 ID 為 33 個字元，請確認有沒有多複製或少複製到空格。");
         }
         
         withLoader(() => {
@@ -1078,7 +1122,7 @@
             return; 
         }
         // 永遠帶上任意門連結
-        const finalMessage = message + "\n\n🔗 點此開啟旅程：\nhttps://jayrantn-afk.github.io/travel/";
+        const finalMessage = message + "\n\n🔗 點此開啟驢遊趣：\nhttps://jayrantn-afk.github.io/travel/";
         
         fetch(`${GAS_URL}?action=sendPush&groupId=${p.lineGroupId}&message=${encodeURIComponent(finalMessage)}`, { mode: 'no-cors' })
         .then(() => { if(isManual) showSync("✅ 通知請求已送出！請查看 LINE", 2000); })
@@ -1551,11 +1595,10 @@
             `).join('');
         }
         
-        const lineCodeEl = document.getElementById('line-auth-code');
+        // 修改：直接針對 class 渲染即可
         const lineCodeDisplays = document.querySelectorAll('.line-auth-code-display');
-        if (lineCodeEl && currentProjectId) {
+        if (currentProjectId) {
             const code = `TRIP-${currentProjectId}`;
-            lineCodeEl.value = code;
             lineCodeDisplays.forEach(el => el.textContent = code);
         }
 
@@ -1652,7 +1695,6 @@
       const activeD = new Date(start); activeD.setDate(activeD.getDate() + activeDayIndex); const dayStr = `${String(activeD.getMonth()+1).padStart(2,'0')}/${String(activeD.getDate()).padStart(2,'0')} 星期${weekDays[activeD.getDay()]}`;
       const wishlistCount = p.wishlist ? p.wishlist.length : 0;
       
-      // ✅ 修正：待排按鈕的紅點提示
       const wishlistBadge = wishlistCount > 0 ? `<span class="notification-dot" style="display:flex; right:-6px; top:-6px;">${wishlistCount}</span>` : '';
       
       const headerTextEl = document.getElementById('itinerary-date-header-text'); 
@@ -1850,7 +1892,6 @@
             optimized.forEach(cp => { const idx = p.plans.findIndex(x => x && x.id === cp.id); if (idx > -1) p.plans[idx] = cp; });
             updateCurProject(p); renderItinerary(); closeModal('route-preview-modal'); showSync("✨ 路線已成功重排！", 2000);
 
-            // 自動通知：行程重排
             const tripName = p.location || "旅程";
             sendAutoLineNotification(`🔄【${tripName}】行程更新通知！\n\n[${currentUser}] 剛剛重新最佳化了「第 ${activeDayIndex + 1} 天」的行程順序，請大家有空去網頁確認最新的路線喔！`);
         });
@@ -1910,6 +1951,230 @@
                 console.error(err);
             });
         }, 500);
+    }
+
+    // --- 需求 2: 下載空白 Word 模板 (升級多天數版) ---
+    function downloadBlankWordTemplate() {
+        const p = getCurProject();
+        let totalDays = 1;
+        try {
+            if(p && p.start && p.end) {
+                const startD = new Date(p.start.split(' to ')[0].split(' 至 ')[0]); 
+                const endD = new Date(p.end.split(' to ').pop().split(' 至 ').pop()); 
+                if(!isNaN(startD) && !isNaN(endD)) totalDays = Math.max(1, Math.floor((endD - startD) / 86400000) + 1);
+            }
+        } catch(e) {}
+
+        let html = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset='utf-8'>
+            <title>空白行程模板</title>
+            <style>
+                body { font-family: "Microsoft JhengHei", sans-serif; line-height: 1.6; }
+                table { border-collapse: collapse; width: 100%; margin-top: 10px; margin-bottom: 30px; }
+                th, td { border: 1px solid #dddddd; padding: 12px; text-align: left; vertical-align: middle; }
+                th { background-color: #f8f9fa; color: #333; font-weight: bold; }
+                .hint { color: #666; font-size: 14px; background: #f0f8ff; padding: 10px; border-left: 4px solid #0284C7;}
+                h2 { color: #FF5A5F; border-bottom: 2px solid #FF5A5F; padding-bottom: 5px; }
+            </style>
+        </head>
+        <body>
+            <h1 style="text-align: center;">${p.location} 行程規劃總表</h1>
+            <div class="hint">
+                <p>📝 <strong>填寫說明 (非常重要)：</strong><br>
+                1. <strong>請勿刪除「第 X 天」的標題</strong>，系統需要靠這幾個字來知道行程是哪一天的。<br>
+                2. <strong>時間</strong>：請填寫 24 小時制（如 09:00）。<br>
+                3. <strong>景點名稱</strong>：填寫景點，若附上含 <code>@經緯度</code> 的 Google Maps 網址，系統會自動幫您定位。<br>
+                4. <strong>停留(分鐘)</strong>：請填寫純數字預估停留時間。</p>
+            </div>`;
+
+        // 自動生成每一天的表格
+        for(let i=0; i<totalDays; i++) {
+            html += `
+            <h2>第 ${i + 1} 天</h2>
+            <table>
+                <tr>
+                    <th style="width: 20%;">時間</th>
+                    <th style="width: 60%;">景點名稱 (可貼上地圖網址)</th>
+                    <th style="width: 20%;">停留(分鐘)</th>
+                </tr>
+                <tr><td>09:00</td><td></td><td>60</td></tr>
+                <tr><td>10:00</td><td></td><td>60</td></tr>
+                <tr><td>12:00</td><td></td><td>90</td></tr>
+                <tr><td>14:00</td><td></td><td>120</td></tr>
+                <tr><td>16:30</td><td></td><td>60</td></tr>
+            </table>`;
+        }
+        
+        html += `</body></html>`;
+
+        const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${p.location}_空白行程模板.doc`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showSync("📄 已為您產生多天數 Word 表格模板！", 2000);
+    }
+
+    // --- 需求 2: 處理 Word (.docx) 上傳 ---
+    function handleWordUpload(event) {
+        if(typeof mammoth === 'undefined') return showCustomDialog("解析套件載入中，請稍候重試");
+        const file = event.target.files[0];
+        if(!file) return;
+
+        showSync("📄 正在讀取 Word...", 3000);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            mammoth.extractRawText({arrayBuffer: e.target.result})
+                .then(function(result) {
+                    const text = result.value;
+                    document.getElementById('smart-import-text').value = text;
+                    document.getElementById('word-file-input').value = '';
+                    showSync("✅ Word 讀取成功！請點擊確認解析", 2000);
+                })
+                .catch(function(err) {
+                    showCustomDialog("讀取失敗！請確認您上傳的是「.docx」格式，或嘗試直接貼上文字。");
+                    console.log(err);
+                });
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // --- 需求 2: 智能文字/Word 匯入處理 (升級多天數解析) ---
+    function openSmartImportModal() {
+        const el = document.getElementById('smart-import-text');
+        if(el) el.value = '';
+        openModal('smart-import-modal');
+    }
+
+    function processSmartImport() {
+        const el = document.getElementById('smart-import-text');
+        const text = el ? el.value : '';
+        if(!text.trim()) return showCustomDialog("請先貼上行程文字！");
+        
+        const lines = text.split('\n');
+        let addedCount = 0;
+        const p = getCurProject();
+        if(!p.plans) p.plans = [];
+
+        // 計算總天數，防止匯入到不存在的天數
+        let totalDays = 1;
+        try {
+            if(p.start && p.end) {
+                const startD = new Date(p.start.split(' to ')[0].split(' 至 ')[0]); 
+                const endD = new Date(p.end.split(' to ').pop().split(' 至 ').pop()); 
+                if(!isNaN(startD) && !isNaN(endD)) totalDays = Math.max(1, Math.floor((endD - startD) / 86400000) + 1);
+            }
+        } catch(e) {}
+
+        let currentParsingDayIdx = activeDayIndex; // 預設匯入到目前頁面停留的天數
+
+        lines.forEach(line => {
+            if (!line.trim()) return; // 忽略空行
+            
+            // 核心邏輯：偵測「第 X 天」標題，自動切換匯入目標天數
+            const dayMatch = line.match(/第\s*(\d+)\s*天/);
+            if (dayMatch) {
+                let parsedDay = parseInt(dayMatch[1]) - 1;
+                // 確保天數在合理範圍內
+                if (parsedDay >= 0 && parsedDay < totalDays) {
+                    currentParsingDayIdx = parsedDay;
+                }
+                return; // 這行是標題，直接跳過不當作景點解析
+            }
+
+            let time = null, rawPlace = null, stay = 60;
+            let isMatched = false;
+
+            // 1. 優先嘗試解析「表格格式」(Word 複製貼上時，欄位之間會以 Tab \t 分隔)
+            if (line.includes('\t')) {
+                const parts = line.split('\t').map(p => p.trim());
+                // 找出哪一欄符合時間格式 (如 09:00)
+                let timeIdx = parts.findIndex(p => /^(\d{1,2}[:：]\d{2})$/.test(p));
+                if (timeIdx !== -1) {
+                    time = parts[timeIdx];
+                    rawPlace = parts[timeIdx + 1] || "";
+                    // 第三欄若為數字則作為停留時間
+                    if (parts[timeIdx + 2] && !isNaN(parseInt(parts[timeIdx + 2]))) {
+                        stay = parseInt(parts[timeIdx + 2]);
+                    }
+                    isMatched = true;
+                }
+            }
+
+            // 2. 如果不是表格，備用方案解析純文字 (如：09:00 台北車站 120)
+            if (!isMatched) {
+                const match = line.match(/(\d{1,2}[:：]\d{2})\s+(.*)/);
+                if (match) {
+                    time = match[1];
+                    rawPlace = match[2].trim();
+                    
+                    // 嘗試抓取文字結尾的數字作為停留時間
+                    const stayMatch = rawPlace.match(/(.+?)\s+(\d+)$/);
+                    if (stayMatch) {
+                        rawPlace = stayMatch[1].trim();
+                        stay = parseInt(stayMatch[2]);
+                    }
+                    isMatched = true;
+                }
+            }
+
+            // 處理已抓取到的資料
+            if (isMatched && rawPlace) {
+                let timeStr = time.replace('：', ':');
+                let parts = timeStr.split(':');
+                let finalTime = `${parts[0].padStart(2, '0')}:${parts[1]}`;
+                
+                // 智能解析 Google Maps 網址與經緯度
+                let lat = null, lng = null;
+                const urlMatch = rawPlace.match(/(https?:\/\/[^\s]+)/);
+                if (urlMatch) {
+                    const url = urlMatch[1];
+                    rawPlace = rawPlace.replace(url, '').trim(); // 從景點名稱中移除網址
+                    
+                    // 嘗試從網址中解析 @lat,lng 或 !3dlat!4dlng
+                    const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+                    if (coordMatch) {
+                        lat = parseFloat(coordMatch[1]);
+                        lng = parseFloat(coordMatch[2]);
+                    }
+                }
+                
+                let place = rawPlace || "未命名景點";
+                if(place === "景點名稱" || place.includes("可貼上地圖網址")) return; // 過濾掉表格標題列
+                
+                // 防呆機制：避免使用者重複上傳同一個 Word 檔導致重複建立行程
+                const isDuplicate = p.plans.some(x => x.dayIdx === currentParsingDayIdx && x.time === finalTime);
+                
+                if (!isDuplicate) {
+                    p.plans.push({ 
+                        id: Date.now() + Math.floor(Math.random() * 10000) + addedCount, // 確保 ID 唯一性
+                        dayIdx: currentParsingDayIdx, 
+                        time: finalTime, 
+                        place: place, 
+                        stay: stay,
+                        lat: lat, 
+                        lng: lng,
+                        creator: currentUser 
+                    });
+                    addedCount++;
+                }
+            }
+        });
+
+        if (addedCount > 0) {
+            updateCurProject(p);
+            renderItinerary();
+            closeModal('smart-import-modal');
+            showSync(`✅ 成功智能解析並分類匯入 ${addedCount} 筆行程！`, 2000);
+            if(el) el.value = '';
+        } else {
+            showCustomDialog("找不到符合格式的行程或行程皆已存在！\n請確保填寫了「時間」與「景點名稱」，或沒有重複匯入。");
+        }
     }
 
     function openWishlistModal() { renderWishlist(); openModal('wishlist-modal'); }
@@ -2179,7 +2444,6 @@
             memberCbs.forEach(cb => cb.checked = true); 
             showSync("✅ 帳目已建立", 1500); 
 
-            // 自動通知：大額花費 (大於等於 1000 元)
             if (twdCost >= 1000) {
                 const tripName = p.location || "旅程";
                 sendAutoLineNotification(`💰【${tripName}】大額記帳通知！\n\n[${payer}] 剛剛記了一筆大額花費：「${item}」(TWD ${twdCost.toLocaleString()})。\n請大家有空去網頁看看分帳明細喔！`);
@@ -2188,7 +2452,11 @@
     }
 
     function renderBudget() { 
-        const p = getCurProject(); const list = document.getElementById('expense-list'); const adviceBox = document.getElementById('split-bill-advice'); let total = 0; 
+        const p = getCurProject(); 
+        const list = document.getElementById('expense-list'); 
+        const adviceBox = document.getElementById('split-bill-advice'); 
+        let total = 0; 
+
         renderCurrencyDropdown();
         
         const chartContainer = document.getElementById('expense-chart-container');
@@ -2338,7 +2606,6 @@
                 p.repayments.push({ id: Date.now(), from: from, to: to, amount: amount, date: new Date().toISOString().split('T')[0] }); 
                 updateCurProject(p); renderBudget(); showSync("✅ 已將此筆欠款結清", 1500); 
 
-                // 自動通知：還款確認
                 const tripName = p.location || "旅程";
                 sendAutoLineNotification(`✅【${tripName}】還款確認！\n\n[${to}] 已確認收到 [${from}] 匯來的 $${amount.toLocaleString()} 囉！\n目前的結算進度已更新。`);
             }); 
